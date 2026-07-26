@@ -352,7 +352,7 @@ local function answerQuestion(text)
 end
 
 -- ============================================================
--- AUTO-TYPE LOGIK (AUS KRIMO HUB)
+-- AUTO-TYPE LOGIK (AUS KRIMO HUB - DEINE LOGIK)
 -- ============================================================
 
 local Announcements = nil
@@ -364,12 +364,12 @@ local function setupPaths()
     pcall(function()
         local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
         if not PlayerGui then return end
-        
+
         local topNotif = PlayerGui:FindFirstChild("TopNotification")
         if topNotif then
             Announcements = topNotif:FindFirstChild("TopNotification")
         end
-        
+
         local codes = PlayerGui:FindFirstChild("Codes")
         if codes then
             local codesInner = codes:FindFirstChild("Codes")
@@ -385,7 +385,7 @@ local function setupPaths()
             end
         end
     end)
-    
+
     pcall(function()
         local rfFolder = ReplicatedStorage:FindFirstChild("RF")
         if rfFolder then
@@ -400,38 +400,6 @@ local function setupPaths()
             end
         end
     end)
-end
-
--- UI HELPER
-local function isGuiVisible(obj)
-    if not obj or not obj.Visible then return false end
-    local current = obj.Parent
-    while current do
-        if current:IsA("GuiObject") and not current.Visible then
-            return false
-        elseif current:IsA("ScreenGui") and not current.Enabled then
-            return false
-        end
-        current = current.Parent
-    end
-    return true
-end
-
-local function findCodeTextBox()
-    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
-    if not playerGui then return nil end
-    for _, obj in ipairs(playerGui:GetDescendants()) do
-        if obj:IsA("TextBox") then
-            if ScreenGui and obj:IsDescendantOf(ScreenGui) then return nil end
-            local hint = ((obj.PlaceholderText or "") .. " " .. obj.Name):lower()
-            if hint:find("code") or hint:find("redeem") or hint:find("here") or hint:find("type") then
-                if isGuiVisible(obj) then
-                    return obj
-                end
-            end
-        end
-    end
-    return nil
 end
 
 -- SUBMIT
@@ -451,14 +419,14 @@ end
 
 local function triggerSubmit()
     setupPaths()
-    
+
     if RedemptionRF and CodeTextBox then
         local ok, result = pcall(function()
             return RedemptionRF:InvokeServer(CodeTextBox.Text)
         end)
         if ok then return true end
     end
-    
+
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
             fireSignal(ConfirmButton.MouseButton1Click)
@@ -468,7 +436,7 @@ local function triggerSubmit()
         end)
         return true
     end
-    
+
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -484,21 +452,17 @@ local function triggerSubmit()
             end
         end
     end
-    
+
     return false
 end
 
--- CODE HINZUFÜGEN
+-- CODE HINZUFÜGEN (DEINE LOGIK)
 local function addCode(Code)
     if not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
     if Code == "" then return end
     if not CodeTextBox then setupPaths() end
-    if not CodeTextBox then 
-        -- Fallback: TextBox suchen
-        CodeTextBox = findCodeTextBox()
-        if not CodeTextBox then return end
-    end
+    if not CodeTextBox then return end
 
     if not collectedSeen[Code] then
         collectedSeen[Code] = true
@@ -542,12 +506,12 @@ local function addCode(Code)
     end
 end
 
--- ANNOUNCEMENT WATCHER
+-- ANNOUNCEMENT WATCHER (DEINE LOGIK)
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
     if text == "" then return
-    
+
     if _G.RiddleSolverEnabled then
         local answer = answerQuestion(text)
         if answer then
@@ -555,7 +519,7 @@ local function watchLabel(Label)
             return
         end
     end
-    
+
     addCode(text)
 end
 
@@ -751,10 +715,10 @@ local function buildGUI()
             Position = UDim2.new(0, math.random(0, frameWidth), 0, math.random(-100, frameHeight + 100)),
             Parent = SakuraContainer,
         })
-        
+
         local size = petal.TextSize
         petal.Size = UDim2.new(0, size, 0, size)
-        
+
         table.insert(sakuraPetals, {
             object = petal,
             x = petal.Position.X.Offset,
@@ -782,7 +746,7 @@ local function buildGUI()
                         petal.wobble = petal.wobble + petal.wobbleSpeed
                         petal.x = petal.x + math.sin(petal.wobble) * petal.drift * 0.5
                         petal.rotation = petal.rotation + petal.rotSpeed
-                        
+
                         if petal.y > petal.frameHeight + 50 then
                             petal.y = -20
                             petal.x = math.random(0, petal.frameWidth)
@@ -796,10 +760,10 @@ local function buildGUI()
                             petal.object.Text = petalChars[math.random(1, #petalChars)]
                             petal.rotation = math.random(0, 360)
                         end
-                        
+
                         if petal.x > petal.frameWidth + 50 then petal.x = -50 end
                         if petal.x < -50 then petal.x = petal.frameWidth + 50 end
-                        
+
                         petal.object.Position = UDim2.new(0, petal.x, 0, petal.y)
                         petal.object.Rotation = petal.rotation
                     end
@@ -1177,11 +1141,11 @@ local function buildGUI()
         local delta = input.Position - dragStart
         local newX = startPos.X.Offset + delta.X
         local newY = startPos.Y.Offset + delta.Y
-        
+
         config.panelX = newX
         config.panelY = newY
         saveConfig()
-        
+
         MainFrame.Position = UDim2.new(
             startPos.X.Scale, newX,
             startPos.Y.Scale, newY
