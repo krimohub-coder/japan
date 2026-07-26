@@ -352,7 +352,7 @@ local function answerQuestion(text)
 end
 
 -- ============================================================
--- AUTO-TYPE LOGIK (AUS KRIMO HUB - DEINE LOGIK)
+-- KRIMO HUB AUTO-TYPE LOGIK (HIER EINGEFÜGT)
 -- ============================================================
 
 local Announcements = nil
@@ -402,7 +402,6 @@ local function setupPaths()
     end)
 end
 
--- SUBMIT
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -456,7 +455,6 @@ local function triggerSubmit()
     return false
 end
 
--- CODE HINZUFÜGEN (DEINE LOGIK)
 local function addCode(Code)
     if not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -506,7 +504,6 @@ local function addCode(Code)
     end
 end
 
--- ANNOUNCEMENT WATCHER (DEINE LOGIK)
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -533,7 +530,7 @@ local function startAnnouncementWatcher()
 end
 
 -- ============================================================
--- ULTRA-FAST HANDLER (SpyderSammy Erkennung)
+-- HANDLER (VERBINDET SEINE ERKENNUNG MIT DEINER LOGIK)
 -- ============================================================
 local function handleIncomingText(textObj)
     if not _G.ScriptEnabled or writeBusy then return end
@@ -1031,7 +1028,7 @@ local function buildGUI()
             rsToggle.BackgroundColor3 = Color3.fromRGB(200, 150, 160)
             rsToggle.Text = "OFF"
         end
-    })
+    end)
 
     -- Status
     local statusLabel = create("TextLabel", {
