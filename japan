@@ -1,0 +1,1244 @@
+-- ===== SAFETY FALLBACK FOR table.clear =====
+if not table.clear then
+    function table.clear(t)
+        for k in pairs(t) do t[k] = nil end
+    end
+end
+
+_G.ScriptEnabled = true
+_G.AutoWriteEnabled = false
+_G.AutoSubmitEnabled = false
+_G.RiddleSolverEnabled = false
+_G.SubmitAfterCount = 1
+_G.SubmitAttempts = 3
+
+-- ========== ABSOLUTE MAXIMUM SPEED ==========
+local FAST_WAIT = 0.000000000000000000000000000000000000000000000000000000000000000001
+
+local enteredCodes = {}
+local activeConnections = {}
+
+local latestCode = nil
+local lastWrittenCode = nil
+local lastAttemptedCode = nil
+local lastSubmittedBatch = {}
+local autoWriteConn = nil
+
+local pendingQueue = {}
+local pendingSeen = {}
+local writeBusy = false
+
+local collectedCodes = {}
+local collectedSeen = {}
+local CODE_SEPARATOR = ""
+
+local ScreenGui = nil
+local MainFrame = nil
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+-- ===== CONFIG PERSISTENCE =====
+local CONFIG_PATH = "JapanHub_AutoCode_config.json"
+
+local hasFS = (writefile and readfile and isfile) and true or false
+
+local defaultConfig = {
+    panelX = nil,
+    panelY = nil,
+}
+
+local config = {}
+for k, v in pairs(defaultConfig) do config[k] = v end
+
+local function loadConfig()
+    if not hasFS then return end
+    if not isfile(CONFIG_PATH) then return end
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(readfile(CONFIG_PATH))
+    end)
+    if ok and type(data) == "table" then
+        for k in pairs(defaultConfig) do
+            if data[k] ~= nil then config[k] = data[k] end
+        end
+    end
+end
+
+local pendingSave = false
+local function saveConfig()
+    if not hasFS then return end
+    if pendingSave then return end
+    pendingSave = true
+    task.defer(function()
+        pendingSave = false
+        pcall(function()
+            writefile(CONFIG_PATH, HttpService:JSONEncode(config))
+        end)
+    end)
+end
+
+loadConfig()
+
+-- ===== COMPLETE STEAL A BRAINROT + SPYDERSAMMY DATABASE =====
+local SAB_DB = {
+    ["how old am i"] = "24",
+    ["how old is sammy"] = "24",
+    ["my age"] = "24",
+    ["sammy age"] = "24",
+    ["age"] = "24",
+    ["where am i from"] = "BRAZIL",
+    ["where is sammy from"] = "BRAZIL",
+    ["my country"] = "BRAZIL",
+    ["sammy country"] = "BRAZIL",
+    ["favorite color"] = "BLUE",
+    ["fav color"] = "BLUE",
+    ["my color"] = "BLUE",
+    ["sammy color"] = "BLUE",
+    ["color"] = "BLUE",
+    ["favorite football player"] = "RONALDO",
+    ["fav football player"] = "RONALDO",
+    ["my favorite football player"] = "RONALDO",
+    ["ronaldo"] = "RONALDO",
+    ["game created on"] = "FRIDAY",
+    ["created on"] = "FRIDAY",
+    ["what day was the game created"] = "FRIDAY",
+    ["what day was sab created"] = "FRIDAY",
+    ["game creation day"] = "FRIDAY",
+    ["seventh mutation"] = "CURSED",
+    ["7th mutation"] = "CURSED",
+    ["eighth mutation"] = "DIVINE",
+    ["8th mutation"] = "DIVINE",
+    ["ninth mutation"] = "CYBER",
+    ["9th mutation"] = "CYBER",
+    ["tenth mutation"] = "PHANTOM",
+    ["10th mutation"] = "PHANTOM",
+    ["first machine"] = "RAINBOW MACHINE",
+    ["1st machine"] = "RAINBOW MACHINE",
+    ["second machine"] = "BUBBLEGUM MACHINE",
+    ["2nd machine"] = "BUBBLEGUM MACHINE",
+    ["third machine"] = "FUSE MACHINE",
+    ["3rd machine"] = "FUSE MACHINE",
+    ["fourth machine"] = "CRAFT MACHINE",
+    ["4th machine"] = "CRAFT MACHINE",
+    ["fifth machine"] = "WITCH FUSE",
+    ["5th machine"] = "WITCH FUSE",
+    ["sixth machine"] = "BRAINROT DEALER",
+    ["6th machine"] = "BRAINROT DEALER",
+    ["seventh machine"] = "BRAINROT TRADER",
+    ["7th machine"] = "BRAINROT TRADER",
+    ["eighth machine"] = "SANTA'S FUSE",
+    ["8th machine"] = "SANTA'S FUSE",
+    ["ninth machine"] = "SANTA'S SHOP",
+    ["9th machine"] = "SANTA'S SHOP",
+    ["tenth machine"] = "NEW YEAR'S MACHINE",
+    ["10th machine"] = "NEW YEAR'S MACHINE",
+    ["eleventh machine"] = "DUELS MACHINE",
+    ["11th machine"] = "DUELS MACHINE",
+    ["twelfth machine"] = "CUPID'S MACHINE",
+    ["12th machine"] = "CUPID'S MACHINE",
+    ["thirteenth machine"] = "TRADE MACHINE",
+    ["13th machine"] = "TRADE MACHINE",
+    ["fourteenth machine"] = "DIVINE FUSE",
+    ["14th machine"] = "DIVINE FUSE",
+    ["fifteenth machine"] = "EGG INCUBATOR",
+    ["15th machine"] = "EGG INCUBATOR",
+    ["sixteenth machine"] = "CYBER CRAFT MACHINE",
+    ["16th machine"] = "CYBER CRAFT MACHINE",
+    ["seventeenth machine"] = "SUMMER FUSE",
+    ["17th machine"] = "SUMMER FUSE",
+    ["eighteenth machine"] = "LOS TRADERS",
+    ["18th machine"] = "LOS TRADERS",
+    ["og brainrot cannot be obtained"] = "HEADLESS HORSEMAN",
+    ["headless horseman"] = "HEADLESS HORSEMAN",
+    ["first og added"] = "STRAWBERRYELEPHANT",
+    ["1st og"] = "STRAWBERRYELEPHANT",
+    ["second og added"] = "MEOWL",
+    ["2nd og"] = "MEOWL",
+    ["third og added"] = "SKIBIDITOILET",
+    ["3rd og"] = "SKIBIDITOILET",
+    ["fifth og added"] = "JOHNPORK",
+    ["5th og"] = "JOHNPORK",
+    ["highest rarity"] = "OG",
+    ["fire represents"] = "DRAGON",
+    ["fire stands for"] = "DRAGON",
+    ["won the world cup"] = "ARGENTINA",
+    ["world cup winner"] = "ARGENTINA",
+    ["world cup"] = "ARGENTINA",
+    ["worst game owner"] = "SECRETLOKII",
+    ["most boring game owner"] = "SECRETLOKII",
+    ["most boring game on roblox"] = "KEYBOARDESCAPE",
+    ["spawned during admin abuse war"] = "RACOONINI JANDELINI",
+    ["won the admin abuse war"] = "GROWAGARDEN",
+    ["worst secret"] = "KARKERKARKURKUR",
+    ["maximum server size"] = "EIGHT",
+    ["max server size"] = "EIGHT",
+    ["brother of hydra bunny"] = "CERBERUS",
+    ["hydra bunny brother"] = "CERBERUS",
+    ["release month"] = "MAY",
+    ["release year"] = "2025",
+    ["release date"] = "MAY162025",
+    ["code 1"] = "SAB2024",
+    ["code 2"] = "SAMMYGIFT",
+    ["code 3"] = "BRAINROT",
+    ["code 4"] = "SPYDER",
+    ["code 5"] = "RELEASE",
+    ["code 6"] = "MAY25",
+    ["code 7"] = "BLUEBOY",
+    ["code 8"] = "KEYBOARD",
+    ["code 9"] = "ESCAPE",
+    ["code 10"] = "RAINBOW",
+    ["total codes"] = "247",
+    ["active codes"] = "89",
+    ["expired codes"] = "158",
+    ["rare codes"] = "12",
+    ["legendary codes"] = "3",
+    ["mythic codes"] = "1",
+}
+
+-- ========== FETCH SPYDERSAMMY USERID ==========
+local targetUserId = nil
+task.spawn(function()
+    local success, result = pcall(function()
+        return Players:GetUserIdFromNameAsync("SpyderSammy")
+    end)
+    if success then
+        targetUserId = result
+        print("[Auto Code] SpyderSammy UserID: " .. tostring(targetUserId))
+    else
+        warn("[Auto Code] Failed to fetch SpyderSammy UserID: " .. tostring(result))
+    end
+end)
+
+-- ========== SPYDERSAMMY UI SCANNER ==========
+local function isAvatarImage(imageLabel)
+    if not imageLabel.Visible or imageLabel.Image == "" then return false end
+    local imgStr = string.lower(imageLabel.Image)
+    if targetUserId and string.find(imgStr, tostring(targetUserId)) then
+        return true
+    end
+    return false
+end
+
+local function verifySourceIsSammy(textObj)
+    if textObj:IsDescendantOf(MainFrame) then return false end
+
+    local container = textObj.Parent
+    while container and not container:IsA("ScreenGui") and container.Name ~= "PlayerGui" do
+        for _, item in ipairs(container:GetChildren()) do
+            if item:IsA("TextLabel") and string.find(string.lower(item.Text), "spydersammy") then
+                return true
+            end
+        end
+        for _, item in ipairs(container:GetDescendants()) do
+            if item:IsA("ImageLabel") and isAvatarImage(item) then
+                return true
+            end
+        end
+        if container.Parent and (container.Parent:IsA("Frame") or container.Parent:IsA("ImageLabel") or container.Parent:IsA("CanvasGroup")) then
+            container = container.Parent
+        else
+            break
+        end
+    end
+    return false
+end
+
+-- ========== ANSWER QUESTION - RIDDLE SOLVER ==========
+local function answerQuestion(text)
+    if not _G.RiddleSolverEnabled then return nil end
+    if not text or text == "" then return nil end
+    local l = text:lower()
+
+    local clean = l:gsub("what%s+is", ""):gsub("what%s+are", ""):gsub("what%s+was", ""):gsub("what%s+were", "")
+    clean = clean:gsub("who%s+is", ""):gsub("who%s+was", ""):gsub("when%s+is", ""):gsub("when%s+was", "")
+    clean = clean:gsub("where%s+is", ""):gsub("where%s+are", ""):gsub("how%s+old", ""):gsub("how%s+tall", "")
+    clean = clean:gsub("how%s+many", ""):gsub("how%s+much", ""):gsub("do%s+you%s+know", ""):gsub("can%s+you%s+tell", "")
+    clean = clean:gsub("tell%s+me", ""):gsub("i%s+need", ""):gsub("give%s+me", ""):gsub("what's", ""):gsub("whats", "")
+    clean = clean:gsub("my%s+", ""):gsub("am%s+i", ""):gsub("do%s+i", ""):gsub("did%s+i", ""):gsub("have%s+i", "")
+    clean = clean:gsub("the%s+", ""):gsub("a%s+", ""):gsub("an%s+", ""):gsub("of%s+", ""):gsub("for%s+", "")
+    clean = clean:gsub("[%?%.%,!]", ""):gsub("^%s+", ""):gsub("%s+$", "")
+
+    if clean == "" then
+        clean = l:gsub("[%?%.%,!]", "")
+    end
+
+    if l:find("fortnite") or l:find("fn ") or l:find("battle royale") or l:find("epic games") then
+        return "SAB ONLY"
+    end
+
+    if SAB_DB[clean] then
+        return SAB_DB[clean]
+    end
+
+    for key, value in pairs(SAB_DB) do
+        if clean:find(key) or key:find(clean) then
+            return value
+        end
+        if #key > 3 and #clean > 2 then
+            for word in key:gmatch("%S+") do
+                if #word > 2 and (clean:find(word) or word:find(clean)) then
+                    return value
+                end
+            end
+        end
+    end
+
+    if l:find("game created") or l:find("created on") or l:find("made on") then
+        if l:find("day") or l:find("when") then return "FRIDAY" end
+    end
+    if l:find("football") or l:find("soccer") then
+        if l:find("favorite") or l:find("fav") or l:find("player") then return "RONALDO" end
+    end
+    if l:find("ronaldo") then return "RONALDO" end
+    if l:find("worst game") or l:find("boring game") then
+        if l:find("owner") then return "SECRETLOKII" else return "KEYBOARDESCAPE" end
+    end
+    if l:find("world cup") then return "ARGENTINA" end
+    if l:find("mutation") then
+        if l:find("7") or l:find("seven") then return "CURSED" end
+        if l:find("8") or l:find("eight") then return "DIVINE" end
+        if l:find("9") or l:find("nine") then return "CYBER" end
+        if l:find("10") or l:find("ten") then return "PHANTOM" end
+    end
+    if l:find("machine") then
+        if l:find("1") or l:find("first") then return "RAINBOW MACHINE" end
+        if l:find("2") or l:find("second") then return "BUBBLEGUM MACHINE" end
+        if l:find("3") or l:find("third") then return "FUSE MACHINE" end
+        if l:find("4") or l:find("fourth") then return "CRAFT MACHINE" end
+        if l:find("5") or l:find("fifth") then return "WITCH FUSE" end
+        if l:find("6") or l:find("sixth") then return "BRAINROT DEALER" end
+        if l:find("7") or l:find("seventh") then return "BRAINROT TRADER" end
+        if l:find("8") or l:find("eighth") then return "SANTA'S FUSE" end
+        if l:find("9") or l:find("ninth") then return "SANTA'S SHOP" end
+        if l:find("10") or l:find("tenth") then return "NEW YEAR'S MACHINE" end
+        if l:find("11") or l:find("eleventh") then return "DUELS MACHINE" end
+        if l:find("12") or l:find("twelfth") then return "CUPID'S MACHINE" end
+        if l:find("13") or l:find("thirteenth") then return "TRADE MACHINE" end
+        if l:find("14") or l:find("fourteenth") then return "DIVINE FUSE" end
+        if l:find("15") or l:find("fifteenth") then return "EGG INCUBATOR" end
+        if l:find("16") or l:find("sixteenth") then return "CYBER CRAFT MACHINE" end
+        if l:find("17") or l:find("seventeenth") then return "SUMMER FUSE" end
+        if l:find("18") or l:find("eighteenth") then return "LOS TRADERS" end
+    end
+    if l:find("og") or l:find("cannot be obtained") then
+        if l:find("headless") then return "HEADLESS HORSEMAN" end
+        if l:find("first") or l:find("1st") then return "STRAWBERRYELEPHANT" end
+        if l:find("second") or l:find("2nd") then return "MEOWL" end
+        if l:find("third") or l:find("3rd") then return "SKIBIDITOILET" end
+        if l:find("fifth") or l:find("5th") then return "JOHNPORK" end
+    end
+    if l:find("highest rarity") then return "OG" end
+    if l:find("fire") and (l:find("represent") or l:find("stand")) then return "DRAGON" end
+    if l:find("admin abuse") then
+        if l:find("spawn") then return "RACOONINI JANDELINI" end
+        if l:find("won") then return "GROWAGARDEN" end
+    end
+    if l:find("worst secret") or l:find("bad secret") then return "KARKERKARKURKUR" end
+    if l:find("server") and (l:find("max") or l:find("size")) then return "EIGHT" end
+    if l:find("hydra bunny") and (l:find("brother") or l:find("sibling")) then return "CERBERUS" end
+    if l:find("old") or l:find("age") then
+        if l:find("sammy") or l:find("am i") then return "24" end
+    end
+    if l:find("from") or l:find("country") then
+        if l:find("sammy") or l:find("am i") then return "BRAZIL" end
+    end
+
+    return nil
+end
+
+-- ============================================================
+-- AUTO-TYPE LOGIK (AUS KRIMO HUB)
+-- ============================================================
+
+local Announcements = nil
+local CodeTextBox = nil
+local ConfirmButton = nil
+local RedemptionRF = nil
+
+local function setupPaths()
+    pcall(function()
+        local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+        if not PlayerGui then return end
+        
+        local topNotif = PlayerGui:FindFirstChild("TopNotification")
+        if topNotif then
+            Announcements = topNotif:FindFirstChild("TopNotification")
+        end
+        
+        local codes = PlayerGui:FindFirstChild("Codes")
+        if codes then
+            local codesInner = codes:FindFirstChild("Codes")
+            if codesInner then
+                local codeRedeem = codesInner:FindFirstChild("CodeRedeem")
+                if codeRedeem then
+                    CodeTextBox = codeRedeem:FindFirstChild("TextBox")
+                    if CodeTextBox then
+                        CodeTextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+                    end
+                end
+                ConfirmButton = codesInner:FindFirstChild("Confirm")
+            end
+        end
+    end)
+    
+    pcall(function()
+        local rfFolder = ReplicatedStorage:FindFirstChild("RF")
+        if rfFolder then
+            RedemptionRF = rfFolder:FindFirstChild("RequestRedemption")
+        end
+        if not RedemptionRF then
+            for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
+                if v.Name == "RequestRedemption" and v:IsA("RemoteFunction") then
+                    RedemptionRF = v
+                    break
+                end
+            end
+        end
+    end)
+end
+
+-- UI HELPER
+local function isGuiVisible(obj)
+    if not obj or not obj.Visible then return false end
+    local current = obj.Parent
+    while current do
+        if current:IsA("GuiObject") and not current.Visible then
+            return false
+        elseif current:IsA("ScreenGui") and not current.Enabled then
+            return false
+        end
+        current = current.Parent
+    end
+    return true
+end
+
+local function findCodeTextBox()
+    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if not playerGui then return nil end
+    for _, obj in ipairs(playerGui:GetDescendants()) do
+        if obj:IsA("TextBox") then
+            if ScreenGui and obj:IsDescendantOf(ScreenGui) then return nil end
+            local hint = ((obj.PlaceholderText or "") .. " " .. obj.Name):lower()
+            if hint:find("code") or hint:find("redeem") or hint:find("here") or hint:find("type") then
+                if isGuiVisible(obj) then
+                    return obj
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- SUBMIT
+local function fireSignal(sig)
+    if not sig then return end
+    pcall(function()
+        if getconnections then
+            for _, c in ipairs(getconnections(sig)) do
+                if c.Fire then c:Fire() end
+            end
+        end
+    end)
+    if firesignal then
+        pcall(function() firesignal(sig) end)
+    end
+end
+
+local function triggerSubmit()
+    setupPaths()
+    
+    if RedemptionRF and CodeTextBox then
+        local ok, result = pcall(function()
+            return RedemptionRF:InvokeServer(CodeTextBox.Text)
+        end)
+        if ok then return true end
+    end
+    
+    if ConfirmButton and ConfirmButton.Parent then
+        pcall(function()
+            fireSignal(ConfirmButton.MouseButton1Click)
+            fireSignal(ConfirmButton.Activated)
+            ConfirmButton:CaptureFocus()
+            ConfirmButton:ReleaseFocus(true)
+        end)
+        return true
+    end
+    
+    local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if PlayerGui then
+        for _, obj in ipairs(PlayerGui:GetDescendants()) do
+            if obj:IsA("TextButton") or obj:IsA("ImageButton") then
+                local txt = (obj:IsA("TextButton") and obj.Text or ""):lower()
+                if txt:find("submit") or txt:find("redeem") or txt:find("confirm") or txt:find("einlösen") then
+                    pcall(function()
+                        fireSignal(obj.MouseButton1Click)
+                        fireSignal(obj.Activated)
+                    end)
+                    return true
+                end
+            end
+        end
+    end
+    
+    return false
+end
+
+-- CODE HINZUFÜGEN
+local function addCode(Code)
+    if not _G.AutoWriteEnabled then return end
+    Code = tostring(Code)
+    if Code == "" then return end
+    if not CodeTextBox then setupPaths() end
+    if not CodeTextBox then 
+        -- Fallback: TextBox suchen
+        CodeTextBox = findCodeTextBox()
+        if not CodeTextBox then return end
+    end
+
+    if not collectedSeen[Code] then
+        collectedSeen[Code] = true
+        table.insert(collectedCodes, Code)
+        -- GUI aktualisieren (Collected Label)
+        if MainFrame and MainFrame:FindFirstChild("ContentFrame") then
+            local collectedLabel = MainFrame.ContentFrame:FindFirstChild("CollectedLabel")
+            if collectedLabel then
+                collectedLabel.Text = "Collected: " .. #collectedCodes
+            end
+        end
+    end
+
+    if CodeTextBox.Text == "" then
+        CodeTextBox.Text = Code
+    else
+        CodeTextBox.Text = CodeTextBox.Text .. Code
+    end
+
+    if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
+        task.spawn(function()
+            task.wait(0.02)
+            local success = false
+            for i = 1, _G.SubmitAttempts do
+                success = triggerSubmit()
+                if success then break end
+                task.wait(0.05)
+            end
+            if success then
+                table.clear(collectedCodes)
+                table.clear(collectedSeen)
+                if MainFrame and MainFrame:FindFirstChild("ContentFrame") then
+                    local collectedLabel = MainFrame.ContentFrame:FindFirstChild("CollectedLabel")
+                    if collectedLabel then
+                        collectedLabel.Text = "Collected: 0"
+                    end
+                end
+                if CodeTextBox then CodeTextBox.Text = "" end
+            end
+        end)
+    end
+end
+
+-- ANNOUNCEMENT WATCHER
+local function watchLabel(Label)
+    if not Label:IsA("TextLabel") then return end
+    local text = Label.Text
+    if text == "" then return
+    
+    if _G.RiddleSolverEnabled then
+        local answer = answerQuestion(text)
+        if answer then
+            addCode(answer)
+            return
+        end
+    end
+    
+    addCode(text)
+end
+
+local function startAnnouncementWatcher()
+    setupPaths()
+    if not Announcements then return end
+    for _, v in ipairs(Announcements:GetDescendants()) do
+        watchLabel(v)
+    end
+    Announcements.DescendantAdded:Connect(watchLabel)
+end
+
+-- ============================================================
+-- ULTRA-FAST HANDLER (SpyderSammy Erkennung)
+-- ============================================================
+local function handleIncomingText(textObj)
+    if not _G.ScriptEnabled or writeBusy then return end
+    local text = textObj.Text
+    if text == "" then return end
+
+    if verifySourceIsSammy(textObj) then
+        print("[Auto Code] Detected SpyderSammy text: " .. text)
+        task.spawn(function()
+            if _G.RiddleSolverEnabled then
+                local answer = answerQuestion(text)
+                if answer then
+                    addCode(answer)
+                    return
+                end
+            end
+            addCode(text)
+        end)
+    end
+end
+
+local function hookUiTextObject(obj)
+    if obj:IsA("TextLabel") then
+        handleIncomingText(obj)
+        obj:GetPropertyChangedSignal("Text"):Connect(function()
+            handleIncomingText(obj)
+        end)
+    end
+end
+
+local function startPlayerGuiScanner()
+    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if not playerGui then return end
+
+    for _, desc in ipairs(playerGui:GetDescendants()) do
+        hookUiTextObject(desc)
+    end
+
+    local conn = playerGui.DescendantAdded:Connect(hookUiTextObject)
+    table.insert(activeConnections, conn)
+end
+
+local function cleanupMonitoring()
+    for _, conn in pairs(activeConnections) do
+        if typeof(conn) == "RBXScriptConnection" then
+            conn:Disconnect()
+        end
+    end
+    table.clear(activeConnections)
+    table.clear(enteredCodes)
+    table.clear(collectedCodes)
+    table.clear(collectedSeen)
+    table.clear(pendingQueue)
+    table.clear(pendingSeen)
+    table.clear(lastSubmittedBatch)
+    writeBusy = false
+    autoWriteConn = nil
+    latestCode = nil
+    lastWrittenCode = nil
+    lastAttemptedCode = nil
+end
+
+-- ============================================================
+-- GUI-BUILDER - JAPAN HUB (SAKURA THEME)
+-- ============================================================
+local function create(className, props)
+    local inst = Instance.new(className)
+    for k, v in pairs(props or {}) do
+        inst[k] = v
+    end
+    return inst
+end
+
+local function buildGUI()
+    -- Remove old GUI
+    local oldGui = game:GetService("CoreGui"):FindFirstChild("JapanHubGui")
+        or LocalPlayer.PlayerGui:FindFirstChild("JapanHubGui")
+    if oldGui then oldGui:Destroy() end
+
+    -- ============================================================
+    -- SCREEN GUI
+    -- ============================================================
+    ScreenGui = create("ScreenGui", {
+        Name = "JapanHubGui",
+        ResetOnSpawn = false,
+        IgnoreGuiInset = true,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        Parent = game:GetService("CoreGui"),
+    })
+
+    -- ============================================================
+    -- MAIN FRAME - WHITE & PINK THEME
+    -- ============================================================
+    local PANEL_W = 240
+    local PANEL_H = 260
+
+    MainFrame = create("Frame", {
+        Name = "MainFrame",
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = (config.panelX and config.panelY)
+            and UDim2.new(0, config.panelX, 0, config.panelY)
+            or UDim2.new(0.5, 0, 0.4, 0),
+        Size = UDim2.new(0, PANEL_W, 0, PANEL_H),
+        BackgroundColor3 = Color3.fromRGB(255, 248, 250),
+        BackgroundTransparency = 0.05,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+        Active = true,
+        Parent = ScreenGui,
+    })
+
+    create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = MainFrame })
+    create("UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 240, 245)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 248, 250)),
+        }),
+        Rotation = 90,
+        Parent = MainFrame,
+    })
+
+    -- PINK BORDER
+    local mainStroke = create("UIStroke", {
+        Color = Color3.fromRGB(255, 182, 193),
+        Thickness = 2,
+        Transparency = 0.3,
+        Parent = MainFrame,
+    })
+
+    local strokeGradient = create("UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0.0,  Color3.fromRGB(255, 182, 193)),
+            ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 105, 180)),
+            ColorSequenceKeypoint.new(0.5,  Color3.fromRGB(255, 182, 193)),
+            ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 105, 180)),
+            ColorSequenceKeypoint.new(1.0,  Color3.fromRGB(255, 182, 193)),
+        }),
+        Parent = mainStroke,
+    })
+
+    -- ============================================================
+    -- SAKURA PETALS BACKGROUND
+    -- ============================================================
+    local SakuraContainer = create("Frame", {
+        Name = "SakuraContainer",
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        ZIndex = 1,
+        Parent = MainFrame,
+    })
+
+    local sakuraPetals = {}
+    local PETAL_COUNT = 15
+    local petalChars = {"🌸", "🌸", "🌸", "🌸", "🌸"}
+
+    local function getSakuraBounds()
+        local absSize = MainFrame.AbsoluteSize
+        return absSize.X, absSize.Y
+    end
+
+    task.wait()
+    local frameWidth, frameHeight = getSakuraBounds()
+    if frameWidth == 0 or frameHeight == 0 then
+        frameWidth = PANEL_W
+        frameHeight = PANEL_H
+    end
+
+    for i = 1, PETAL_COUNT do
+        local petal = create("TextLabel", {
+            Name = "Petal_" .. i,
+            Text = petalChars[math.random(1, #petalChars)],
+            TextColor3 = Color3.fromRGB(255, 150, 180),
+            TextSize = math.random(12, 18),
+            BackgroundTransparency = 1,
+            Font = Enum.Font.GothamBold,
+            ZIndex = 1,
+            TextTransparency = math.random(20, 60) / 100,
+            Size = UDim2.new(0, 0, 0, 0),
+            Position = UDim2.new(0, math.random(0, frameWidth), 0, math.random(-100, frameHeight + 100)),
+            Parent = SakuraContainer,
+        })
+        
+        local size = petal.TextSize
+        petal.Size = UDim2.new(0, size, 0, size)
+        
+        table.insert(sakuraPetals, {
+            object = petal,
+            x = petal.Position.X.Offset,
+            y = petal.Position.Y.Offset,
+            speed = math.random(20, 50) / 100,
+            drift = math.random(-30, 30) / 100,
+            wobble = math.random(0, 360),
+            wobbleSpeed = math.random(15, 35) / 100,
+            size = size,
+            transparency = petal.TextTransparency,
+            frameWidth = frameWidth,
+            frameHeight = frameHeight,
+            rotation = math.random(0, 360),
+            rotSpeed = math.random(-2, 2) / 10,
+        })
+    end
+
+    task.spawn(function()
+        while SakuraContainer and SakuraContainer.Parent do
+            local newWidth, newHeight = getSakuraBounds()
+            if newWidth > 0 and newHeight > 0 then
+                for _, petal in ipairs(sakuraPetals) do
+                    if petal and petal.object and petal.object.Parent then
+                        petal.y = petal.y + petal.speed
+                        petal.wobble = petal.wobble + petal.wobbleSpeed
+                        petal.x = petal.x + math.sin(petal.wobble) * petal.drift * 0.5
+                        petal.rotation = petal.rotation + petal.rotSpeed
+                        
+                        if petal.y > petal.frameHeight + 50 then
+                            petal.y = -20
+                            petal.x = math.random(0, petal.frameWidth)
+                            petal.speed = math.random(20, 50) / 100
+                            petal.drift = math.random(-30, 30) / 100
+                            petal.size = math.random(12, 18)
+                            petal.object.TextSize = petal.size
+                            petal.object.Size = UDim2.new(0, petal.size, 0, petal.size)
+                            petal.transparency = math.random(20, 60) / 100
+                            petal.object.TextTransparency = petal.transparency
+                            petal.object.Text = petalChars[math.random(1, #petalChars)]
+                            petal.rotation = math.random(0, 360)
+                        end
+                        
+                        if petal.x > petal.frameWidth + 50 then petal.x = -50 end
+                        if petal.x < -50 then petal.x = petal.frameWidth + 50 end
+                        
+                        petal.object.Position = UDim2.new(0, petal.x, 0, petal.y)
+                        petal.object.Rotation = petal.rotation
+                    end
+                end
+            end
+            task.wait(0.03)
+        end
+    end)
+
+    -- ============================================================
+    -- TITLE BAR - PINK ACCENT
+    -- ============================================================
+    local titleBar = create("Frame", {
+        Size = UDim2.new(1, 0, 0, 28),
+        BackgroundColor3 = Color3.fromRGB(255, 240, 245),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        ZIndex = 10,
+        Parent = MainFrame,
+    })
+
+    create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = titleBar })
+
+    local titleLabel = create("TextLabel", {
+        Size = UDim2.new(0.5, 0, 1, 0),
+        Position = UDim2.new(0, 10, 0, 0),
+        BackgroundTransparency = 1,
+        Text = "Japan Hub",
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 10,
+        Parent = titleBar,
+    })
+
+    -- MINIMIZE BUTTON
+    local minimizeBtn = create("TextButton", {
+        Name = "MinimizeBtn",
+        Size = UDim2.new(0, 22, 0, 22),
+        Position = UDim2.new(1, -80, 0.5, -11),
+        BackgroundColor3 = Color3.fromRGB(255, 230, 235),
+        Text = "−",
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 18,
+        AutoButtonColor = true,
+        ZIndex = 10,
+        Parent = titleBar,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = minimizeBtn })
+
+    -- Main toggle (ON/OFF)
+    local toggleButton = create("TextButton", {
+        Name = "SwitchBtn",
+        Size = UDim2.new(0, 52, 0, 22),
+        Position = UDim2.new(1, -56, 0.5, -11),
+        BackgroundColor3 = _G.ScriptEnabled and Color3.fromRGB(255, 105, 180) or Color3.fromRGB(200, 150, 160),
+        Text = _G.ScriptEnabled and "ON" or "OFF",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = Enum.Font.GothamBold,
+        TextSize = 10,
+        AutoButtonColor = false,
+        ZIndex = 10,
+        Parent = titleBar,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = toggleButton })
+
+    toggleButton.MouseButton1Click:Connect(function()
+        _G.ScriptEnabled = not _G.ScriptEnabled
+        if _G.ScriptEnabled then
+            toggleButton.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+            toggleButton.Text = "ON"
+        else
+            toggleButton.BackgroundColor3 = Color3.fromRGB(200, 150, 160)
+            toggleButton.Text = "OFF"
+        end
+    end)
+
+    -- ============================================================
+    -- CONTENT FRAME
+    -- ============================================================
+    local ContentFrame = create("Frame", {
+        Name = "ContentFrame",
+        Size = UDim2.new(1, 0, 1, -28),
+        Position = UDim2.new(0, 0, 0, 28),
+        BackgroundTransparency = 1,
+        ZIndex = 5,
+        Parent = MainFrame,
+    })
+
+    -- ROW 1: Auto-Write
+    local awLabel = create("TextLabel", {
+        Size = UDim2.new(0, 80, 0, 22),
+        Position = UDim2.new(0, 12, 0, 8),
+        BackgroundTransparency = 1,
+        Text = "Auto Type",
+        TextColor3 = Color3.fromRGB(200, 150, 170),
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 12,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+
+    local awToggle = create("TextButton", {
+        Size = UDim2.new(0, 52, 0, 22),
+        Position = UDim2.new(1, -56, 0, 8),
+        BackgroundColor3 = _G.AutoWriteEnabled and Color3.fromRGB(255, 105, 180) or Color3.fromRGB(200, 150, 160),
+        Text = _G.AutoWriteEnabled and "ON" or "OFF",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = Enum.Font.GothamBold,
+        TextSize = 10,
+        AutoButtonColor = false,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = awToggle })
+
+    awToggle.MouseButton1Click:Connect(function()
+        _G.AutoWriteEnabled = not _G.AutoWriteEnabled
+        if _G.AutoWriteEnabled then
+            awToggle.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+            awToggle.Text = "ON"
+        else
+            awToggle.BackgroundColor3 = Color3.fromRGB(200, 150, 160)
+            awToggle.Text = "OFF"
+            table.clear(collectedCodes)
+            table.clear(collectedSeen)
+        end
+    end)
+
+    -- ROW 2: Auto-Redeem + count
+    local asLabel = create("TextLabel", {
+        Size = UDim2.new(0, 80, 0, 22),
+        Position = UDim2.new(0, 12, 0, 36),
+        BackgroundTransparency = 1,
+        Text = "Auto Redeem",
+        TextColor3 = Color3.fromRGB(200, 150, 170),
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 12,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+
+    local asToggle = create("TextButton", {
+        Size = UDim2.new(0, 40, 0, 22),
+        Position = UDim2.new(1, -122, 0, 36),
+        BackgroundColor3 = _G.AutoSubmitEnabled and Color3.fromRGB(255, 105, 180) or Color3.fromRGB(200, 150, 160),
+        Text = _G.AutoSubmitEnabled and "ON" or "OFF",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = Enum.Font.GothamBold,
+        TextSize = 10,
+        AutoButtonColor = false,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = asToggle })
+
+    asToggle.MouseButton1Click:Connect(function()
+        _G.AutoSubmitEnabled = not _G.AutoSubmitEnabled
+        if _G.AutoSubmitEnabled then
+            asToggle.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+            asToggle.Text = "ON"
+        else
+            asToggle.BackgroundColor3 = Color3.fromRGB(200, 150, 160)
+            asToggle.Text = "OFF"
+            table.clear(collectedCodes)
+            table.clear(collectedSeen)
+        end
+    end)
+
+    -- Count controls
+    local minusBtn = create("TextButton", {
+        Size = UDim2.new(0, 24, 0, 22),
+        Position = UDim2.new(1, -78, 0, 36),
+        BackgroundColor3 = Color3.fromRGB(255, 230, 235),
+        Text = "−",
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 18,
+        AutoButtonColor = true,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = minusBtn })
+
+    local countDisplay = create("TextLabel", {
+        Size = UDim2.new(0, 28, 0, 22),
+        Position = UDim2.new(1, -52, 0, 36),
+        BackgroundColor3 = Color3.fromRGB(255, 230, 235),
+        BackgroundTransparency = 0.3,
+        Text = tostring(_G.SubmitAfterCount),
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 13,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = countDisplay })
+
+    local plusBtn = create("TextButton", {
+        Size = UDim2.new(0, 24, 0, 22),
+        Position = UDim2.new(1, -24, 0, 36),
+        BackgroundColor3 = Color3.fromRGB(255, 230, 235),
+        Text = "+",
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 18,
+        AutoButtonColor = true,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = plusBtn })
+
+    plusBtn.MouseButton1Click:Connect(function()
+        _G.SubmitAfterCount = _G.SubmitAfterCount + 1
+        countDisplay.Text = tostring(_G.SubmitAfterCount)
+    end)
+
+    minusBtn.MouseButton1Click:Connect(function()
+        if _G.SubmitAfterCount > 1 then
+            _G.SubmitAfterCount = _G.SubmitAfterCount - 1
+            countDisplay.Text = tostring(_G.SubmitAfterCount)
+        end
+    end)
+
+    -- ROW 3: Riddle Solver
+    local rsLabel = create("TextLabel", {
+        Size = UDim2.new(0, 100, 0, 22),
+        Position = UDim2.new(0, 12, 0, 64),
+        BackgroundTransparency = 1,
+        Text = "Riddle Solver",
+        TextColor3 = Color3.fromRGB(200, 150, 170),
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 12,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+
+    local rsToggle = create("TextButton", {
+        Name = "RiddleSolverToggle",
+        Size = UDim2.new(0, 52, 0, 22),
+        Position = UDim2.new(1, -56, 0, 64),
+        BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(255, 105, 180) or Color3.fromRGB(200, 150, 160),
+        Text = _G.RiddleSolverEnabled and "ON" or "OFF",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        Font = Enum.Font.GothamBold,
+        TextSize = 10,
+        AutoButtonColor = false,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = rsToggle })
+
+    rsToggle.MouseButton1Click:Connect(function()
+        _G.RiddleSolverEnabled = not _G.RiddleSolverEnabled
+        if _G.RiddleSolverEnabled then
+            rsToggle.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+            rsToggle.Text = "ON"
+        else
+            rsToggle.BackgroundColor3 = Color3.fromRGB(200, 150, 160)
+            rsToggle.Text = "OFF"
+        end
+    })
+
+    -- Status
+    local statusLabel = create("TextLabel", {
+        Name = "StatusLabel",
+        Size = UDim2.new(1, -24, 0, 20),
+        Position = UDim2.new(0, 12, 0, 92),
+        BackgroundTransparency = 1,
+        Text = "Status: Watching for SpyderSammy",
+        TextColor3 = Color3.fromRGB(180, 160, 170),
+        Font = Enum.Font.Gotham,
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+
+    -- Collected
+    local collectedLabel = create("TextLabel", {
+        Name = "CollectedLabel",
+        Size = UDim2.new(1, -24, 0, 20),
+        Position = UDim2.new(0, 12, 0, 114),
+        BackgroundTransparency = 1,
+        Text = "Collected: 0",
+        TextColor3 = Color3.fromRGB(180, 160, 170),
+        Font = Enum.Font.Gotham,
+        TextSize = 11,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 10,
+        Parent = ContentFrame,
+    })
+
+    -- ===== MINIMIZED FRAME =====
+    local MinimizedFrame = create("Frame", {
+        Name = "MinimizedFrame",
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Visible = false,
+        ZIndex = 10,
+        Parent = MainFrame,
+    })
+
+    local minLabel = create("TextLabel", {
+        Size = UDim2.new(1, -50, 1, 0),
+        Position = UDim2.new(0, 10, 0, 0),
+        BackgroundTransparency = 1,
+        Text = "Japan Hub",
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        ZIndex = 10,
+        Parent = MinimizedFrame,
+    })
+
+    local restoreBtn = create("TextButton", {
+        Name = "RestoreBtn",
+        Size = UDim2.new(0, 26, 0, 26),
+        Position = UDim2.new(1, -30, 0.5, -13),
+        BackgroundColor3 = Color3.fromRGB(255, 230, 235),
+        Text = "+",
+        TextColor3 = Color3.fromRGB(255, 105, 180),
+        Font = Enum.Font.GothamBold,
+        TextSize = 22,
+        AutoButtonColor = true,
+        ZIndex = 10,
+        Parent = MinimizedFrame,
+    })
+    create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = restoreBtn })
+
+    -- ============================================================
+    -- MINIMIZE / RESTORE LOGIC
+    -- ============================================================
+    local isMinimized = false
+
+    local function applyMinimized(state)
+        isMinimized = state
+        if state then
+            ContentFrame.Visible = false
+            MinimizedFrame.Visible = true
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 32)
+            minimizeBtn.Text = "+"
+        else
+            ContentFrame.Visible = true
+            MinimizedFrame.Visible = false
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
+            minimizeBtn.Text = "−"
+        end
+    end
+
+    minimizeBtn.MouseButton1Click:Connect(function()
+        applyMinimized(not isMinimized)
+    end)
+
+    restoreBtn.MouseButton1Click:Connect(function()
+        applyMinimized(false)
+    end)
+
+    -- ============================================================
+    -- DRAG LOGIC FOR MAIN FRAME
+    -- ============================================================
+    local dragging = false
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+
+    local function updateMain(input)
+        local delta = input.Position - dragStart
+        local newX = startPos.X.Offset + delta.X
+        local newY = startPos.Y.Offset + delta.Y
+        
+        config.panelX = newX
+        config.panelY = newY
+        saveConfig()
+        
+        MainFrame.Position = UDim2.new(
+            startPos.X.Scale, newX,
+            startPos.Y.Scale, newY
+        )
+    end
+
+    MainFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    MainFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            updateMain(input)
+        end
+    end)
+
+    -- ============================================================
+    -- UPDATE COLLECTED COUNT
+    -- ============================================================
+    task.spawn(function()
+        while MainFrame and MainFrame.Parent do
+            if ContentFrame and ContentFrame:FindFirstChild("CollectedLabel") then
+                ContentFrame.CollectedLabel.Text = "Collected: " .. #collectedCodes
+            end
+            task.wait(1)
+        end
+    end)
+
+end
+
+-- ============================================================
+-- INIT
+-- ============================================================
+local function init()
+    pcall(cleanupMonitoring)
+    pcall(buildGUI)
+    pcall(setupPaths)
+    pcall(startAnnouncementWatcher)
+    pcall(startPlayerGuiScanner)
+end
+
+local success, err = pcall(init)
+if not success then
+    warn("[AutoCode] INIT FAILED: " .. tostring(err))
+end
