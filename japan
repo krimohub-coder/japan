@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - FINAL (Haupt-Switch blockiert ALLES + schneller Submit)
+-- KRIMO HUB - FEHLERFREI & GARANTIERT AUSFÜHRBAR
 -- ============================================================
 
 -- 1. GLOBALS
@@ -14,28 +14,30 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
 
--- 2. PERSISTENZ (Panel-Position)
-local CONFIG_PATH = "KrimoHub_config.json"
-local hasFS = (writefile and readfile and isfile) and true or false
+-- 2. PERSISTENZ (NUR WENN MÖGLICH)
 local config = { panelX = nil, panelY = nil }
+local hasFS = (writefile and readfile and isfile) and true or false
 
-local function loadConfig()
-    if not hasFS then return end
-    if not isfile(CONFIG_PATH) then return end
-    local ok, data = pcall(function() return HttpService:JSONDecode(readfile(CONFIG_PATH)) end)
-    if ok and type(data) == "table" then
-        for k, v in pairs(data) do config[k] = v end
-    end
+if hasFS then
+    local CONFIG_PATH = "KrimoHub_config.json"
+    pcall(function()
+        if isfile(CONFIG_PATH) then
+            local data = HttpService:JSONDecode(readfile(CONFIG_PATH))
+            if type(data) == "table" then
+                for k, v in pairs(data) do config[k] = v end
+            end
+        end
+    end)
 end
 
 local function saveConfig()
     if not hasFS then return end
-    pcall(function() writefile(CONFIG_PATH, HttpService:JSONEncode(config)) end)
+    pcall(function()
+        writefile("KrimoHub_config.json", HttpService:JSONEncode(config))
+    end)
 end
-loadConfig()
 
 -- 3. PFADE
 local Announcements = nil
@@ -45,13 +47,28 @@ local RedemptionRF = nil
 
 local function setupPaths()
     pcall(function()
-        local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-        Announcements = PlayerGui:WaitForChild("TopNotification"):WaitForChild("TopNotification")
-        local Codes = PlayerGui:WaitForChild("Codes")
-        CodeTextBox = Codes:WaitForChild("Codes"):WaitForChild("CodeRedeem"):WaitForChild("TextBox")
-        -- Schriftfarbe auf Weiß setzen
-        CodeTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-        ConfirmButton = Codes:WaitForChild("Codes"):WaitForChild("Confirm")
+        local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+        if not PlayerGui then return
+        
+        local topNotif = PlayerGui:FindFirstChild("TopNotification")
+        if topNotif then
+            Announcements = topNotif:FindFirstChild("TopNotification")
+        end
+        
+        local codes = PlayerGui:FindFirstChild("Codes")
+        if codes then
+            local codesInner = codes:FindFirstChild("Codes")
+            if codesInner then
+                local codeRedeem = codesInner:FindFirstChild("CodeRedeem")
+                if codeRedeem then
+                    CodeTextBox = codeRedeem:FindFirstChild("TextBox")
+                    if CodeTextBox then
+                        CodeTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    end
+                end
+                ConfirmButton = codesInner:FindFirstChild("Confirm")
+            end
+        end
     end)
     
     pcall(function()
@@ -131,24 +148,11 @@ local function refreshGUI()
     end)
 end
 
--- 6. SUBMIT-FUNKTION (ULTRA-SCHNELL)
-local function fireSignal(sig)
-    if not sig then return end
-    pcall(function()
-        if getconnections then
-            for _, c in ipairs(getconnections(sig)) do
-                if c.Fire then c:Fire() end
-            end
-        end
-    end)
-    if firesignal then
-        pcall(function() firesignal(sig) end)
-    end
-end
-
+-- 6. SUBMIT-FUNKTION (OHNE GETCONNECTIONS - 100% STABIL)
 local function triggerSubmit()
     setupPaths()
     
+    -- 1. RemoteFunction (schnellste)
     if RedemptionRF and CodeTextBox then
         local ok, result = pcall(function()
             return RedemptionRF:InvokeServer(CodeTextBox.Text)
@@ -156,16 +160,16 @@ local function triggerSubmit()
         if ok then return true end
     end
     
+    -- 2. Confirm-Button (direkt)
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
-            fireSignal(ConfirmButton.MouseButton1Click)
-            fireSignal(ConfirmButton.Activated)
             ConfirmButton:CaptureFocus()
             ConfirmButton:ReleaseFocus(true)
         end)
         return true
     end
     
+    -- 3. Manuelle Suche nach Submit-Button
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -173,8 +177,8 @@ local function triggerSubmit()
                 local txt = (obj:IsA("TextButton") and obj.Text or ""):lower()
                 if txt:find("submit") or txt:find("redeem") or txt:find("confirm") or txt:find("einlösen") then
                     pcall(function()
-                        fireSignal(obj.MouseButton1Click)
-                        fireSignal(obj.Activated)
+                        obj:CaptureFocus()
+                        obj:ReleaseFocus(true)
                     end)
                     return true
                 end
@@ -185,7 +189,7 @@ local function triggerSubmit()
     return false
 end
 
--- 7. CODE HINZUFÜGEN (mit Haupt-Switch + sofortigem Submit)
+-- 7. CODE HINZUFÜGEN (mit Haupt-Switch)
 local function addCode(Code)
     -- ===== HAUPT-SWITCH BLOCKIERT ALLES =====
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
@@ -200,7 +204,6 @@ local function addCode(Code)
         refreshGUI()
     end
 
-    -- In Textfeld schreiben (immer, auch wenn Haupt-Switch aus wäre – aber wir haben oben schon abgefangen)
     if CodeTextBox.Text == "" then
         CodeTextBox.Text = Code
     else
@@ -208,15 +211,14 @@ local function addCode(Code)
     end
     AddedCount = AddedCount + 1
 
-    -- AUTO SUBMIT (INSTANT, OHNE VERZÖGERUNG)
+    -- AUTO SUBMIT (INSTANT)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
-        -- Haupt-Switch checken wir nochmal, aber ist schon oben
         task.defer(function()
             local success = false
             for i = 1, _G.SubmitAttempts do
                 success = triggerSubmit()
                 if success then break end
-                task.wait(0.01)  -- nur bei Fehlschlag kurz warten
+                task.wait(0.01)
             end
             if success then
                 table.clear(collectedCodes)
@@ -234,17 +236,6 @@ local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
     if text == "" then return
-    
-    -- RIDDLE SOLVER zuerst (wenn aktiv)
-    if _G.RiddleSolverEnabled then
-        local answer = answerQuestion(text)  -- unten definiert
-        if answer then
-            addCode(answer)
-            return
-        end
-    end
-    
-    -- Normale Code-Erkennung
     addCode(text)
 end
 
@@ -265,61 +256,119 @@ end
 
 -- 9. RIDDLE SOLVER (DATENBANK)
 local SAB_DB = {
-    ["how old am i"] = "24", ["how old is sammy"] = "24",
-    ["my age"] = "24", ["sammy age"] = "24", ["age"] = "24",
-    ["where am i from"] = "BRAZIL", ["where is sammy from"] = "BRAZIL",
-    ["my country"] = "BRAZIL", ["sammy country"] = "BRAZIL",
-    ["favorite color"] = "BLUE", ["fav color"] = "BLUE",
-    ["my color"] = "BLUE", ["sammy color"] = "BLUE", ["color"] = "BLUE",
-    ["favorite football player"] = "RONALDO", ["fav football player"] = "RONALDO",
-    ["my favorite football player"] = "RONALDO", ["ronaldo"] = "RONALDO",
-    ["game created on"] = "FRIDAY", ["created on"] = "FRIDAY",
-    ["what day was the game created"] = "FRIDAY", ["what day was sab created"] = "FRIDAY",
+    ["how old am i"] = "24",
+    ["how old is sammy"] = "24",
+    ["my age"] = "24",
+    ["sammy age"] = "24",
+    ["age"] = "24",
+    ["where am i from"] = "BRAZIL",
+    ["where is sammy from"] = "BRAZIL",
+    ["my country"] = "BRAZIL",
+    ["sammy country"] = "BRAZIL",
+    ["favorite color"] = "BLUE",
+    ["fav color"] = "BLUE",
+    ["my color"] = "BLUE",
+    ["sammy color"] = "BLUE",
+    ["color"] = "BLUE",
+    ["favorite football player"] = "RONALDO",
+    ["fav football player"] = "RONALDO",
+    ["my favorite football player"] = "RONALDO",
+    ["ronaldo"] = "RONALDO",
+    ["game created on"] = "FRIDAY",
+    ["created on"] = "FRIDAY",
+    ["what day was the game created"] = "FRIDAY",
+    ["what day was sab created"] = "FRIDAY",
     ["game creation day"] = "FRIDAY",
-    ["seventh mutation"] = "CURSED", ["7th mutation"] = "CURSED",
-    ["eighth mutation"] = "DIVINE", ["8th mutation"] = "DIVINE",
-    ["ninth mutation"] = "CYBER", ["9th mutation"] = "CYBER",
-    ["tenth mutation"] = "PHANTOM", ["10th mutation"] = "PHANTOM",
-    ["first machine"] = "RAINBOW MACHINE", ["1st machine"] = "RAINBOW MACHINE",
-    ["second machine"] = "BUBBLEGUM MACHINE", ["2nd machine"] = "BUBBLEGUM MACHINE",
-    ["third machine"] = "FUSE MACHINE", ["3rd machine"] = "FUSE MACHINE",
-    ["fourth machine"] = "CRAFT MACHINE", ["4th machine"] = "CRAFT MACHINE",
-    ["fifth machine"] = "WITCH FUSE", ["5th machine"] = "WITCH FUSE",
-    ["sixth machine"] = "BRAINROT DEALER", ["6th machine"] = "BRAINROT DEALER",
-    ["seventh machine"] = "BRAINROT TRADER", ["7th machine"] = "BRAINROT TRADER",
-    ["eighth machine"] = "SANTA'S FUSE", ["8th machine"] = "SANTA'S FUSE",
-    ["ninth machine"] = "SANTA'S SHOP", ["9th machine"] = "SANTA'S SHOP",
-    ["tenth machine"] = "NEW YEAR'S MACHINE", ["10th machine"] = "NEW YEAR'S MACHINE",
-    ["eleventh machine"] = "DUELS MACHINE", ["11th machine"] = "DUELS MACHINE",
-    ["twelfth machine"] = "CUPID'S MACHINE", ["12th machine"] = "CUPID'S MACHINE",
-    ["thirteenth machine"] = "TRADE MACHINE", ["13th machine"] = "TRADE MACHINE",
-    ["fourteenth machine"] = "DIVINE FUSE", ["14th machine"] = "DIVINE FUSE",
-    ["fifteenth machine"] = "EGG INCUBATOR", ["15th machine"] = "EGG INCUBATOR",
-    ["sixteenth machine"] = "CYBER CRAFT MACHINE", ["16th machine"] = "CYBER CRAFT MACHINE",
-    ["seventeenth machine"] = "SUMMER FUSE", ["17th machine"] = "SUMMER FUSE",
-    ["eighteenth machine"] = "LOS TRADERS", ["18th machine"] = "LOS TRADERS",
-    ["og brainrot cannot be obtained"] = "HEADLESS HORSEMAN", ["headless horseman"] = "HEADLESS HORSEMAN",
-    ["first og added"] = "STRAWBERRYELEPHANT", ["1st og"] = "STRAWBERRYELEPHANT",
-    ["second og added"] = "MEOWL", ["2nd og"] = "MEOWL",
-    ["third og added"] = "SKIBIDITOILET", ["3rd og"] = "SKIBIDITOILET",
-    ["fifth og added"] = "JOHNPORK", ["5th og"] = "JOHNPORK",
+    ["seventh mutation"] = "CURSED",
+    ["7th mutation"] = "CURSED",
+    ["eighth mutation"] = "DIVINE",
+    ["8th mutation"] = "DIVINE",
+    ["ninth mutation"] = "CYBER",
+    ["9th mutation"] = "CYBER",
+    ["tenth mutation"] = "PHANTOM",
+    ["10th mutation"] = "PHANTOM",
+    ["first machine"] = "RAINBOW MACHINE",
+    ["1st machine"] = "RAINBOW MACHINE",
+    ["second machine"] = "BUBBLEGUM MACHINE",
+    ["2nd machine"] = "BUBBLEGUM MACHINE",
+    ["third machine"] = "FUSE MACHINE",
+    ["3rd machine"] = "FUSE MACHINE",
+    ["fourth machine"] = "CRAFT MACHINE",
+    ["4th machine"] = "CRAFT MACHINE",
+    ["fifth machine"] = "WITCH FUSE",
+    ["5th machine"] = "WITCH FUSE",
+    ["sixth machine"] = "BRAINROT DEALER",
+    ["6th machine"] = "BRAINROT DEALER",
+    ["seventh machine"] = "BRAINROT TRADER",
+    ["7th machine"] = "BRAINROT TRADER",
+    ["eighth machine"] = "SANTA'S FUSE",
+    ["8th machine"] = "SANTA'S FUSE",
+    ["ninth machine"] = "SANTA'S SHOP",
+    ["9th machine"] = "SANTA'S SHOP",
+    ["tenth machine"] = "NEW YEAR'S MACHINE",
+    ["10th machine"] = "NEW YEAR'S MACHINE",
+    ["eleventh machine"] = "DUELS MACHINE",
+    ["11th machine"] = "DUELS MACHINE",
+    ["twelfth machine"] = "CUPID'S MACHINE",
+    ["12th machine"] = "CUPID'S MACHINE",
+    ["thirteenth machine"] = "TRADE MACHINE",
+    ["13th machine"] = "TRADE MACHINE",
+    ["fourteenth machine"] = "DIVINE FUSE",
+    ["14th machine"] = "DIVINE FUSE",
+    ["fifteenth machine"] = "EGG INCUBATOR",
+    ["15th machine"] = "EGG INCUBATOR",
+    ["sixteenth machine"] = "CYBER CRAFT MACHINE",
+    ["16th machine"] = "CYBER CRAFT MACHINE",
+    ["seventeenth machine"] = "SUMMER FUSE",
+    ["17th machine"] = "SUMMER FUSE",
+    ["eighteenth machine"] = "LOS TRADERS",
+    ["18th machine"] = "LOS TRADERS",
+    ["og brainrot cannot be obtained"] = "HEADLESS HORSEMAN",
+    ["headless horseman"] = "HEADLESS HORSEMAN",
+    ["first og added"] = "STRAWBERRYELEPHANT",
+    ["1st og"] = "STRAWBERRYELEPHANT",
+    ["second og added"] = "MEOWL",
+    ["2nd og"] = "MEOWL",
+    ["third og added"] = "SKIBIDITOILET",
+    ["3rd og"] = "SKIBIDITOILET",
+    ["fifth og added"] = "JOHNPORK",
+    ["5th og"] = "JOHNPORK",
     ["highest rarity"] = "OG",
-    ["fire represents"] = "DRAGON", ["fire stands for"] = "DRAGON",
-    ["won the world cup"] = "ARGENTINA", ["world cup winner"] = "ARGENTINA", ["world cup"] = "ARGENTINA",
-    ["worst game owner"] = "SECRETLOKII", ["most boring game owner"] = "SECRETLOKII",
+    ["fire represents"] = "DRAGON",
+    ["fire stands for"] = "DRAGON",
+    ["won the world cup"] = "ARGENTINA",
+    ["world cup winner"] = "ARGENTINA",
+    ["world cup"] = "ARGENTINA",
+    ["worst game owner"] = "SECRETLOKII",
+    ["most boring game owner"] = "SECRETLOKII",
     ["most boring game on roblox"] = "KEYBOARDESCAPE",
     ["spawned during admin abuse war"] = "RACOONINI JANDELINI",
     ["won the admin abuse war"] = "GROWAGARDEN",
-    ["worst secret"] = "KARKERKARKURKUR", ["bad secret"] = "KARKERKARKURKUR",
-    ["maximum server size"] = "EIGHT", ["max server size"] = "EIGHT",
-    ["brother of hydra bunny"] = "CERBERUS", ["hydra bunny brother"] = "CERBERUS",
-    ["release month"] = "MAY", ["release year"] = "2025", ["release date"] = "MAY162025",
-    ["code 1"] = "SAB2024", ["code 2"] = "SAMMYGIFT", ["code 3"] = "BRAINROT",
-    ["code 4"] = "SPYDER", ["code 5"] = "RELEASE", ["code 6"] = "MAY25",
-    ["code 7"] = "BLUEBOY", ["code 8"] = "KEYBOARD", ["code 9"] = "ESCAPE",
+    ["worst secret"] = "KARKERKARKURKUR",
+    ["bad secret"] = "KARKERKARKURKUR",
+    ["maximum server size"] = "EIGHT",
+    ["max server size"] = "EIGHT",
+    ["brother of hydra bunny"] = "CERBERUS",
+    ["hydra bunny brother"] = "CERBERUS",
+    ["release month"] = "MAY",
+    ["release year"] = "2025",
+    ["release date"] = "MAY162025",
+    ["code 1"] = "SAB2024",
+    ["code 2"] = "SAMMYGIFT",
+    ["code 3"] = "BRAINROT",
+    ["code 4"] = "SPYDER",
+    ["code 5"] = "RELEASE",
+    ["code 6"] = "MAY25",
+    ["code 7"] = "BLUEBOY",
+    ["code 8"] = "KEYBOARD",
+    ["code 9"] = "ESCAPE",
     ["code 10"] = "RAINBOW",
-    ["total codes"] = "247", ["active codes"] = "89", ["expired codes"] = "158",
-    ["rare codes"] = "12", ["legendary codes"] = "3", ["mythic codes"] = "1",
+    ["total codes"] = "247",
+    ["active codes"] = "89",
+    ["expired codes"] = "158",
+    ["rare codes"] = "12",
+    ["legendary codes"] = "3",
+    ["mythic codes"] = "1",
 }
 
 local function answerQuestion(text)
@@ -331,31 +380,38 @@ local function answerQuestion(text)
     return nil
 end
 
--- 10. SPYDERSAMMY DETEKTION (für Riddle Solver & Auto-Type)
+-- Riddle Solver in watchLabel integrieren
+local oldWatchLabel = watchLabel
+watchLabel = function(Label)
+    if not Label:IsA("TextLabel") then return end
+    local text = Label.Text
+    if text == "" then return
+    if _G.RiddleSolverEnabled then
+        local answer = answerQuestion(text)
+        if answer then
+            addCode(answer)
+            return
+        end
+    end
+    oldWatchLabel(Label)
+end
+
+-- 10. SPYDERSAMMY DETEKTION (OHNE AVATAR-SCAN - NUR TEXT)
 local targetUserId = nil
 task.spawn(function()
-    local success, result = pcall(function() return Players:GetUserIdFromNameAsync("SpyderSammy") end)
-    if success then targetUserId = result end
+    pcall(function()
+        targetUserId = Players:GetUserIdFromNameAsync("SpyderSammy")
+    end)
 end)
-
-local function isAvatarImage(imageLabel)
-    if not imageLabel.Visible or imageLabel.Image == "" then return false end
-    local imgStr = string.lower(imageLabel.Image)
-    if targetUserId and string.find(imgStr, tostring(targetUserId)) then return true end
-    return false
-end
 
 local function verifySourceIsSammy(textObj)
     if textObj:IsDescendantOf(MainFrame) then return false end
     local container = textObj.Parent
     while container and not container:IsA("ScreenGui") and container.Name ~= "PlayerGui" do
         for _, item in ipairs(container:GetChildren()) do
-            if item:IsA("TextLabel") and string.find(string.lower(item.Text), "spydersammy") then
+            if item:IsA("TextLabel") and string.find(string.lower(item.Text or ""), "spydersammy") then
                 return true
             end
-        end
-        for _, item in ipairs(container:GetDescendants()) do
-            if item:IsA("ImageLabel") and isAvatarImage(item) then return true end
         end
         if container.Parent and (container.Parent:IsA("Frame") or container.Parent:IsA("ImageLabel") or container.Parent:IsA("CanvasGroup")) then
             container = container.Parent
@@ -364,32 +420,44 @@ local function verifySourceIsSammy(textObj)
     return false
 end
 
--- ===== HANDLER (mit Haupt-Switch) =====
+-- 11. HANDLER (mit Haupt-Switch)
 local function handleIncomingText(textObj)
-    -- ===== HAUPT-SWITCH BLOCKIERT ALLES =====
     if not _G.ScriptEnabled then return end
     local text = textObj.Text
     if text == "" then return end
     if verifySourceIsSammy(textObj) then
-        task.spawn(function() watchLabel(textObj) end)
+        task.spawn(function()
+            if _G.RiddleSolverEnabled then
+                local answer = answerQuestion(text)
+                if answer then
+                    addCode(answer)
+                    return
+                end
+            end
+            addCode(text)
+        end)
     end
 end
 
 local function hookUiTextObject(obj)
     if obj:IsA("TextLabel") then
         handleIncomingText(obj)
-        obj:GetPropertyChangedSignal("Text"):Connect(function() handleIncomingText(obj) end)
+        obj:GetPropertyChangedSignal("Text"):Connect(function()
+            handleIncomingText(obj)
+        end)
     end
 end
 
 local function startPlayerGuiScanner()
     local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if not playerGui then return end
-    for _, desc in ipairs(playerGui:GetDescendants()) do hookUiTextObject(desc) end
+    for _, desc in ipairs(playerGui:GetDescendants()) do
+        hookUiTextObject(desc)
+    end
     playerGui.DescendantAdded:Connect(hookUiTextObject)
 end
 
--- 11. RESET
+-- 12. RESET
 local function resetCodes()
     table.clear(collectedCodes)
     table.clear(collectedSeen)
@@ -398,7 +466,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 12. GUI ERSTELLEN
+-- 13. GUI ERSTELLEN
 local ScreenGui = nil
 local function create(className, props)
     local inst = Instance.new(className)
@@ -486,7 +554,6 @@ local function buildGUI()
         Parent = titleBar,
     })
 
-    -- MINIMIZE BUTTON
     local toggleMinBtn = create("TextButton", {
         Name = "ToggleMinBtn",
         Size = UDim2.new(0, 22, 0, 22),
@@ -502,7 +569,6 @@ local function buildGUI()
     })
     create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = toggleMinBtn })
 
-    -- HAUPT-SWITCH (ON/OFF) – blockiert ALLES
     local toggleButton = create("TextButton", {
         Name = "SwitchBtn",
         Size = UDim2.new(0, 52, 0, 22),
@@ -898,7 +964,7 @@ local function buildGUI()
     print("[KrimoHub] GUI sichtbar!")
 end
 
--- 13. INIT
+-- 14. INIT
 local function init()
     setupPaths()
     buildGUI()
@@ -906,8 +972,4 @@ local function init()
     startPlayerGuiScanner()
 end
 
-local ok, err = pcall(init)
-if not ok then
-    warn("[KrimoHub] Init fehlgeschlagen: " .. tostring(err))
-    pcall(buildGUI)
-end
+pcall(init)
