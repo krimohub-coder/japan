@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (MINIMIEREN OBEN RECHTS + SUBMIT EXTRA SCHNELL)
+-- KRIMO HUB - momo.1711 (SUBMIT FIX - NICHT ZU SCHNELL)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -216,11 +216,10 @@ local function refreshGUI()
     end
 end
 
--- 7. SUBMIT (EXTRA SCHNELL - OHNE FIRESIGNAL)
+-- 7. SUBMIT (SCHNELL, ABER MIT KURZER VERZÖGERUNG VOR DEM LEEREN)
 local function triggerSubmit()
     setupPaths()
     
-    -- Direkt den ConfirmButton klicken (ohne firesignal)
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
             ConfirmButton:CaptureFocus()
@@ -229,7 +228,6 @@ local function triggerSubmit()
         return true
     end
     
-    -- Fallback: Manuelle Suche
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -249,7 +247,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (INSTANT SUBMIT)
+-- 8. CODE HINZUFÜGEN (mit KURZER VERZÖGERUNG VOR DEM LEEREN)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -267,10 +265,11 @@ local function addCode(Code)
     end
     AddedCount = AddedCount + 1
 
-    -- SUBMIT INSTANT (kein task.spawn, kein pcall-Overhead)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         local success = triggerSubmit()
         if success then
+            -- ===== KURZE VERZÖGERUNG, DAMIT DER SERVER DEN CODE REGISTRIERT =====
+            task.wait(0.01)
             table.clear(collectedCodes)
             AddedCount = 0
             refreshGUI()
@@ -319,7 +318,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN (mit MINIMIEREN → OBEN RECHTS)
+-- 11. GUI BAUEN
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -771,7 +770,7 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- ===== MINIMIEREN: OBEN RECHTS (NEU) =====
+    -- ===== MINIMIEREN: OBEN RECHTS =====
     local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
     
     local function applyMinimized(state)
@@ -795,7 +794,7 @@ local function buildGUI()
         applyMinimized(not isMinimized)
     end)
     
-    -- Drag (nur wenn nicht minimiert)
+    -- Drag
     local dragging = false
     local dragInput = nil
     local dragStart = nil
