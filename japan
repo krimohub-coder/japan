@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (SUBMIT FIX - ZUVERLÄSSIG)
+-- KRIMO HUB - MOMO.1711 (SUBMIT EXTREM SCHNELL + SICHER)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -234,7 +234,6 @@ end
 local function triggerSubmit()
     setupPaths()
     
-    -- 1. Versuch: ConfirmButton mit fireSignal
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
             fireSignal(ConfirmButton.MouseButton1Click)
@@ -245,7 +244,6 @@ local function triggerSubmit()
         return true
     end
     
-    -- 2. Versuch: Manuell nach Submit-Button suchen
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -267,7 +265,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (LEERT NUR BEI ERFOLG UND NACH 0.05s)
+-- 8. CODE HINZUFÜGEN (NUR 0.03s VERZÖGERUNG - EXTREM SCHNELL)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -286,11 +284,10 @@ local function addCode(Code)
     AddedCount = AddedCount + 1
 
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
-        -- Submit ausführen
         local success = triggerSubmit()
         if success then
-            -- KURZE PAUSE (0.05s), damit der Server den Code registrieren kann
-            task.wait(0.05)
+            -- NUR 0.03s (30ms) - ABSOLUT MINIMUM
+            task.wait(0.03)
             table.clear(collectedCodes)
             AddedCount = 0
             refreshGUI()
