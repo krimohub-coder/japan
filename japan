@@ -75,7 +75,7 @@ end
 -- 4. COLLECTED CODES & HISTORY
 local collectedCodes = {}
 local AddedCount = 0
-local history = {}  -- Speichert alle jemals erkannten Wörter { word, time }
+local history = {}
 
 -- 5. RIDDLE SOLVER DATABASE
 local SAB_DB = {
@@ -220,7 +220,7 @@ local function refreshGUI()
     end
 end
 
--- 7. HISTORY GUI (KLEINER, LINKS)
+-- 7. HISTORY GUI (LINKS, KLEINER)
 local function buildHistoryGUI()
     if HistoryGui then
         HistoryGui:Destroy()
@@ -239,8 +239,8 @@ local function buildHistoryGUI()
     local frame = Instance.new("Frame")
     frame.Name = "HistoryFrame"
     frame.AnchorPoint = Vector2.new(0, 0.5)
-    frame.Position = UDim2.new(0, 10, 0.5, 0)  -- LINKS
-    frame.Size = UDim2.new(0, 300, 0, 280)  -- KLEINER
+    frame.Position = UDim2.new(0, 10, 0.5, 0)
+    frame.Size = UDim2.new(0, 300, 0, 280)
     frame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
     frame.BackgroundTransparency = 0.05
     frame.BorderSizePixel = 0
@@ -339,7 +339,7 @@ local function buildHistoryGUI()
         label.TextYAlignment = Enum.TextYAlignment.Center
         label.Parent = row
         
-        -- Zeit (kleiner)
+        -- Zeit
         local timeLabel = Instance.new("TextLabel")
         timeLabel.Size = UDim2.new(0, 50, 1, 0)
         timeLabel.Position = UDim2.new(0, 178, 0, 0)
@@ -352,7 +352,7 @@ local function buildHistoryGUI()
         timeLabel.TextYAlignment = Enum.TextYAlignment.Center
         timeLabel.Parent = row
         
-        -- Write Button (kleiner)
+        -- Write Button
         local writeBtn = Instance.new("TextButton")
         writeBtn.Size = UDim2.new(0, 40, 0, 20)
         writeBtn.Position = UDim2.new(1, -46, 0.5, -10)
@@ -471,7 +471,7 @@ local function triggerSubmit()
     return false
 end
 
--- 9. CODE HINZUFÜGEN (MIT HISTORY - IMMER SPEICHERN)
+-- 9. CODE HINZUFÜGEN (IMMER IN HISTORY SPEICHERN)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -479,11 +479,10 @@ local function addCode(Code)
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
 
-    -- IMMER in History speichern (auch wenn History OFF ist)
+    -- IMMER in History speichern
     local time = os.date("%H:%M:%S")
     table.insert(history, { word = Code, time = time })
     
-    -- History-GUI aktualisieren falls offen
     if historyOpen then
         buildHistoryGUI()
     end
@@ -816,7 +815,7 @@ local function buildGUI()
         end
     end)
     
-    -- Riddle Solver + HISTORY (gleiche Größe wie die anderen)
+    -- Riddle Solver + HISTORY (gleiche Größe)
     local rsLabel = Instance.new("TextLabel")
     rsLabel.Size = UDim2.new(0, 100, 0, 22)
     rsLabel.Position = UDim2.new(0, 12, 0, 64)
