@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - MOMO.1711 (SUBMIT EXTREM SCHNELL + SICHER)
+-- KRIMO HUB V3 - momo.1711 (MIT HISTORY)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -9,6 +9,7 @@ _G.AutoSubmitEnabled = false
 _G.RiddleSolverEnabled = false
 _G.SubmitAfterCount = 3
 _G.SubmitAttempts = 3
+_G.HistoryEnabled = false
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -71,9 +72,10 @@ local function setupPaths()
     end)
 end
 
--- 4. COLLECTED CODES
+-- 4. COLLECTED CODES & HISTORY
 local collectedCodes = {}
 local AddedCount = 0
+local history = {}  -- Speichert alle jemals erkannten Wörter { word, time }
 
 -- 5. RIDDLE SOLVER DATABASE
 local SAB_DB = {
@@ -163,9 +165,11 @@ end
 -- 6. GUI AKTUALISIERUNG
 local MainFrame = nil
 local ScreenGui = nil
+local HistoryGui = nil
 local PANEL_W = 260
 local PANEL_H = 320
 local isMinimized = false
+local historyOpen = false
 
 local function refreshGUI()
     if not MainFrame then return end
@@ -216,7 +220,211 @@ local function refreshGUI()
     end
 end
 
--- 7. SUBMIT (SICHER & SCHNELL)
+-- 7. HISTORY GUI
+local function buildHistoryGUI()
+    if HistoryGui then
+        HistoryGui:Destroy()
+        HistoryGui = nil
+        historyOpen = false
+        return
+    end
+    
+    historyOpen = true
+    HistoryGui = Instance.new("ScreenGui")
+    HistoryGui.Name = "KrimoHistoryGui"
+    HistoryGui.ResetOnSpawn = false
+    HistoryGui.IgnoreGuiInset = true
+    HistoryGui.Parent = CoreGui
+    
+    local frame = Instance.new("Frame")
+    frame.Name = "HistoryFrame"
+    frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    frame.Size = UDim2.new(0, 400, 0, 350)
+    frame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
+    frame.BackgroundTransparency = 0.05
+    frame.BorderSizePixel = 0
+    frame.ClipsDescendants = true
+    frame.Active = true
+    frame.Parent = HistoryGui
+    
+    do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 12) co.Parent = frame end
+    do local gr = Instance.new("UIGradient") gr.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 40, 70)), ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 18, 35))}) gr.Rotation = 90 gr.Parent = frame end
+    do local st = Instance.new("UIStroke") st.Color = Color3.fromRGB(80, 180, 255) st.Thickness = 2 st.Transparency = 0.3 st.Parent = frame end
+    
+    -- Title Bar
+    local tb = Instance.new("Frame")
+    tb.Size = UDim2.new(1, 0, 0, 28)
+    tb.BackgroundColor3 = Color3.fromRGB(20, 40, 70)
+    tb.BackgroundTransparency = 0.5
+    tb.BorderSizePixel = 0
+    tb.ZIndex = 10
+    tb.Parent = frame
+    do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 12) co.Parent = tb end
+    
+    local tl = Instance.new("TextLabel")
+    tl.Size = UDim2.new(0.7, 0, 1, 0)
+    tl.Position = UDim2.new(0, 10, 0, 0)
+    tl.BackgroundTransparency = 1
+    tl.Text = "📜 History (" .. #history .. ")"
+    tl.TextColor3 = Color3.fromRGB(150, 220, 255)
+    tl.Font = Enum.Font.GothamBold
+    tl.TextSize = 14
+    tl.TextXAlignment = Enum.TextXAlignment.Left
+    tl.ZIndex = 10
+    tl.Parent = tb
+    
+    local closeBtn = Instance.new("TextButton")
+    closeBtn.Size = UDim2.new(0, 22, 0, 22)
+    closeBtn.Position = UDim2.new(1, -30, 0.5, -11)
+    closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    closeBtn.Text = "✕"
+    closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeBtn.Font = Enum.Font.GothamBold
+    closeBtn.TextSize = 14
+    closeBtn.AutoButtonColor = true
+    closeBtn.ZIndex = 10
+    closeBtn.Parent = tb
+    do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 4) co.Parent = closeBtn end
+    closeBtn.MouseButton1Click:Connect(function()
+        if HistoryGui then HistoryGui:Destroy() end
+        HistoryGui = nil
+        historyOpen = false
+    end)
+    
+    -- Scrollbare Liste
+    local scroll = Instance.new("ScrollingFrame")
+    scroll.Size = UDim2.new(1, -10, 1, -38)
+    scroll.Position = UDim2.new(0, 5, 0, 34)
+    scroll.BackgroundTransparency = 1
+    scroll.BorderSizePixel = 0
+    scroll.ScrollBarThickness = 4
+    scroll.ScrollBarImageColor3 = Color3.fromRGB(80, 180, 255)
+    scroll.ScrollBarImageTransparency = 0.4
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    scroll.ClipsDescendants = true
+    scroll.ZIndex = 11
+    scroll.Parent = frame
+    
+    local layout = Instance.new("UIListLayout")
+    layout.Padding = UDim.new(0, 3)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Parent = scroll
+    
+    -- History-Einträge hinzufüfen
+    for i, entry in ipairs(history) do
+        local row = Instance.new("Frame")
+        row.Size = UDim2.new(1, 0, 0, 28)
+        row.BackgroundColor3 = Color3.fromRGB(15, 30, 50)
+        row.BackgroundTransparency = 0.3
+        row.BorderSizePixel = 0
+        row.ClipsDescendants = true
+        row.Parent = scroll
+        
+        local rowCorner = Instance.new("UICorner")
+        rowCorner.CornerRadius = UDim.new(0, 4)
+        rowCorner.Parent = row
+        
+        -- Nummer + Wort
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(0, 250, 1, 0)
+        label.Position = UDim2.new(0, 8, 0, 0)
+        label.BackgroundTransparency = 1
+        label.Text = string.format("%02d  %s", i, entry.word)
+        label.TextColor3 = Color3.fromRGB(200, 220, 255)
+        label.Font = Enum.Font.Gotham
+        label.TextSize = 12
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.TextYAlignment = Enum.TextYAlignment.Center
+        label.Parent = row
+        
+        -- Zeit
+        local timeLabel = Instance.new("TextLabel")
+        timeLabel.Size = UDim2.new(0, 80, 1, 0)
+        timeLabel.Position = UDim2.new(0, 258, 0, 0)
+        timeLabel.BackgroundTransparency = 1
+        timeLabel.Text = entry.time or ""
+        timeLabel.TextColor3 = Color3.fromRGB(150, 180, 210)
+        timeLabel.Font = Enum.Font.Gotham
+        timeLabel.TextSize = 9
+        timeLabel.TextXAlignment = Enum.TextXAlignment.Left
+        timeLabel.TextYAlignment = Enum.TextYAlignment.Center
+        timeLabel.Parent = row
+        
+        -- Write Button
+        local writeBtn = Instance.new("TextButton")
+        writeBtn.Size = UDim2.new(0, 50, 0, 22)
+        writeBtn.Position = UDim2.new(1, -56, 0.5, -11)
+        writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
+        writeBtn.Text = "✏️ Write"
+        writeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        writeBtn.Font = Enum.Font.GothamBold
+        writeBtn.TextSize = 9
+        writeBtn.AutoButtonColor = true
+        writeBtn.ZIndex = 12
+        writeBtn.Parent = row
+        do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 4) co.Parent = writeBtn end
+        
+        writeBtn.MouseButton1Click:Connect(function()
+            if CodeTextBox then
+                if CodeTextBox.Text == "" then
+                    CodeTextBox.Text = entry.word
+                else
+                    CodeTextBox.Text = CodeTextBox.Text .. entry.word
+                end
+                -- Kurze Rückmeldung
+                writeBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 80)
+                task.wait(0.2)
+                writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
+            end
+        end)
+    end
+    
+    -- Keine Einträge
+    if #history == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.Size = UDim2.new(1, 0, 1, 0)
+        empty.BackgroundTransparency = 1
+        empty.Text = "No history yet"
+        empty.TextColor3 = Color3.fromRGB(100, 140, 180)
+        empty.Font = Enum.Font.Gotham
+        empty.TextSize = 14
+        empty.TextXAlignment = Enum.TextXAlignment.Center
+        empty.TextYAlignment = Enum.TextYAlignment.Center
+        empty.ZIndex = 12
+        empty.Parent = scroll
+    end
+    
+    -- Drag für History
+    local dragging = false
+    local dragStart = nil
+    local startPos = nil
+    
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if dragging then
+                local delta = input.Position - dragStart
+                frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end
+    end)
+end
+
+-- 8. SUBMIT
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -265,13 +473,23 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (NUR 0.03s VERZÖGERUNG - EXTREM SCHNELL)
+-- 9. CODE HINZUFÜGEN (MIT HISTORY)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
     if Code == "" then return end
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
+
+    -- In History speichern (wenn aktiv)
+    if _G.HistoryEnabled then
+        local time = os.date("%H:%M:%S")
+        table.insert(history, { word = Code, time = time })
+        -- History-GUI aktualisieren falls offen
+        if historyOpen then
+            buildHistoryGUI()
+        end
+    end
 
     table.insert(collectedCodes, Code)
     refreshGUI()
@@ -286,7 +504,6 @@ local function addCode(Code)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         local success = triggerSubmit()
         if success then
-            -- NUR 0.03s (30ms) - ABSOLUT MINIMUM
             task.wait(0.03)
             table.clear(collectedCodes)
             AddedCount = 0
@@ -296,7 +513,7 @@ local function addCode(Code)
     end
 end
 
--- 9. ANNOUNCEMENT WATCHER
+-- 10. ANNOUNCEMENT WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -310,7 +527,9 @@ local function watchLabel(Label)
         end
     end
     
-    addCode(text)
+    for word in text:gmatch("%S+") do
+        addCode(word)
+    end
 end
 
 local function startAnnouncementWatcher()
@@ -328,7 +547,7 @@ if CodeTextBox then
     end)
 end
 
--- 10. RESET
+-- 11. RESET
 local function resetCodes()
     table.clear(collectedCodes)
     AddedCount = 0
@@ -336,7 +555,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN
+-- 12. GUI BAUEN
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -600,7 +819,7 @@ local function buildGUI()
         end
     end)
     
-    -- Riddle Solver
+    -- Riddle Solver + History Button
     local rsLabel = Instance.new("TextLabel")
     rsLabel.Size = UDim2.new(0, 100, 0, 22)
     rsLabel.Position = UDim2.new(0, 12, 0, 64)
@@ -615,8 +834,8 @@ local function buildGUI()
     
     local rsToggle = Instance.new("TextButton")
     rsToggle.Name = "RiddleSolverToggle"
-    rsToggle.Size = UDim2.new(0, 52, 0, 22)
-    rsToggle.Position = UDim2.new(1, -56, 0, 64)
+    rsToggle.Size = UDim2.new(0, 40, 0, 22)
+    rsToggle.Position = UDim2.new(1, -108, 0, 64)
     rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     rsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -634,6 +853,35 @@ local function buildGUI()
         _G.RiddleSolverEnabled = not _G.RiddleSolverEnabled
         rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
+    end)
+    
+    -- HISTORY BUTTON (neu)
+    local historyBtn = Instance.new("TextButton")
+    historyBtn.Name = "HistoryBtn"
+    historyBtn.Size = UDim2.new(0, 52, 0, 22)
+    historyBtn.Position = UDim2.new(1, -56, 0, 64)
+    historyBtn.BackgroundColor3 = _G.HistoryEnabled and Color3.fromRGB(200, 150, 50) or Color3.fromRGB(40, 50, 70)
+    historyBtn.Text = _G.HistoryEnabled and "📜 ON" or "📜 OFF"
+    historyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    historyBtn.Font = Enum.Font.GothamBold
+    historyBtn.TextSize = 9
+    historyBtn.AutoButtonColor = false
+    historyBtn.ZIndex = 10
+    historyBtn.Parent = ContentFrame
+    
+    do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 4) co.Parent = historyBtn end
+    
+    historyBtn.MouseButton1Click:Connect(function()
+        _G.HistoryEnabled = not _G.HistoryEnabled
+        historyBtn.BackgroundColor3 = _G.HistoryEnabled and Color3.fromRGB(200, 150, 50) or Color3.fromRGB(40, 50, 70)
+        historyBtn.Text = _G.HistoryEnabled and "📜 ON" or "📜 OFF"
+        if _G.HistoryEnabled then
+            buildHistoryGUI()
+        else
+            if HistoryGui then HistoryGui:Destroy() end
+            HistoryGui = nil
+            historyOpen = false
+        end
     end)
     
     -- Collected + Reset
@@ -788,7 +1036,7 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- ===== MINIMIEREN: OBEN RECHTS =====
+    -- Minimieren: oben rechts
     local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
     
     local function applyMinimized(state)
@@ -858,12 +1106,12 @@ local function buildGUI()
     end)
     
     refreshGUI()
-    print("[KrimoHub] GUI sichtbar!")
+    print("[KrimoHub V3] GUI sichtbar!")
 end
 
--- 12. START
-print("[KrimoHub] Starte...")
+-- 13. START
+print("[KrimoHub V3] Starte...")
 pcall(setupPaths)
 pcall(buildGUI)
 pcall(startAnnouncementWatcher)
-print("[KrimoHub] Fertig!")
+print("[KrimoHub V3] Fertig!")
