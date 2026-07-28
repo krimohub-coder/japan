@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB V3 - momo.1711 (MIT HISTORY - FIXED)
+-- KRIMO HUB V3 - momo.1711 (HISTORY UNTER RIDDLE, GLEICHE ZEILE)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -240,7 +240,7 @@ local function buildHistoryGUI()
     frame.Name = "HistoryFrame"
     frame.AnchorPoint = Vector2.new(0, 0.5)
     frame.Position = UDim2.new(0, 10, 0.5, 0)
-    frame.Size = UDim2.new(0, 300, 0, 280)
+    frame.Size = UDim2.new(0, 280, 0, 260)
     frame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
     frame.BackgroundTransparency = 0.05
     frame.BorderSizePixel = 0
@@ -315,7 +315,7 @@ local function buildHistoryGUI()
     -- History-Einträge
     for i, entry in ipairs(history) do
         local row = Instance.new("Frame")
-        row.Size = UDim2.new(1, 0, 0, 26)
+        row.Size = UDim2.new(1, 0, 0, 24)
         row.BackgroundColor3 = Color3.fromRGB(15, 30, 50)
         row.BackgroundTransparency = 0.3
         row.BorderSizePixel = 0
@@ -328,7 +328,7 @@ local function buildHistoryGUI()
         
         -- Nummer + Wort
         local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(0, 170, 1, 0)
+        label.Size = UDim2.new(0, 160, 1, 0)
         label.Position = UDim2.new(0, 6, 0, 0)
         label.BackgroundTransparency = 1
         label.Text = string.format("%02d  %s", i, entry.word)
@@ -342,7 +342,7 @@ local function buildHistoryGUI()
         -- Zeit
         local timeLabel = Instance.new("TextLabel")
         timeLabel.Size = UDim2.new(0, 50, 1, 0)
-        timeLabel.Position = UDim2.new(0, 178, 0, 0)
+        timeLabel.Position = UDim2.new(0, 168, 0, 0)
         timeLabel.BackgroundTransparency = 1
         timeLabel.Text = entry.time or ""
         timeLabel.TextColor3 = Color3.fromRGB(150, 180, 210)
@@ -354,13 +354,13 @@ local function buildHistoryGUI()
         
         -- Write Button
         local writeBtn = Instance.new("TextButton")
-        writeBtn.Size = UDim2.new(0, 40, 0, 20)
-        writeBtn.Position = UDim2.new(1, -46, 0.5, -10)
+        writeBtn.Size = UDim2.new(0, 38, 0, 18)
+        writeBtn.Position = UDim2.new(1, -44, 0.5, -9)
         writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
         writeBtn.Text = "✏️"
         writeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
         writeBtn.Font = Enum.Font.GothamBold
-        writeBtn.TextSize = 11
+        writeBtn.TextSize = 10
         writeBtn.AutoButtonColor = true
         writeBtn.ZIndex = 12
         writeBtn.Parent = row
@@ -479,7 +479,7 @@ local function addCode(Code)
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
 
-    -- IMMER in History speichern (auch wenn History OFF ist)
+    -- IMMER in History speichern
     local time = os.date("%H:%M:%S")
     table.insert(history, { word = Code, time = time })
     
@@ -551,7 +551,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 12. GUI BAUEN (mit HISTORY als eigener Button)
+-- 12. GUI BAUEN
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -679,7 +679,7 @@ local function buildGUI()
     ContentFrame.ZIndex = 5
     ContentFrame.Parent = MainFrame
     
-    -- Auto Type (Reihe 1)
+    -- Auto Type
     local awLabel = Instance.new("TextLabel")
     awLabel.Size = UDim2.new(0, 80, 0, 22)
     awLabel.Position = UDim2.new(0, 12, 0, 8)
@@ -719,7 +719,7 @@ local function buildGUI()
         end
     end)
     
-    -- Auto Submit (Reihe 2)
+    -- Auto Submit
     local asLabel = Instance.new("TextLabel")
     asLabel.Size = UDim2.new(0, 80, 0, 22)
     asLabel.Position = UDim2.new(0, 12, 0, 36)
@@ -754,7 +754,7 @@ local function buildGUI()
         asToggle.Text = _G.AutoSubmitEnabled and "ON" or "OFF"
     end)
     
-    -- Count (Reihe 2, neben Auto Submit)
+    -- Count
     local minusBtn = Instance.new("TextButton")
     minusBtn.Size = UDim2.new(0, 24, 0, 22)
     minusBtn.Position = UDim2.new(1, -78, 0, 36)
@@ -815,7 +815,7 @@ local function buildGUI()
         end
     end)
     
-    -- ===== RIDDLE SOLVER + HISTORY (GLEICHE ZEILE) =====
+    -- ===== RIDDLE SOLVER + HISTORY (GLEICHE ZEILE, UNTER DEN ANDEREN) =====
     -- Riddle Solver (links)
     local rsLabel = Instance.new("TextLabel")
     rsLabel.Size = UDim2.new(0, 100, 0, 22)
@@ -832,7 +832,7 @@ local function buildGUI()
     local rsToggle = Instance.new("TextButton")
     rsToggle.Name = "RiddleSolverToggle"
     rsToggle.Size = UDim2.new(0, 40, 0, 22)
-    rsToggle.Position = UDim2.new(1, -106, 0, 64)
+    rsToggle.Position = UDim2.new(1, -104, 0, 64)
     rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     rsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -852,10 +852,10 @@ local function buildGUI()
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     end)
     
-    -- HISTORY (rechts daneben, gleiche Größe)
+    -- HISTORY (gleiche Zeile, rechts daneben)
     local historyLabel = Instance.new("TextLabel")
     historyLabel.Size = UDim2.new(0, 70, 0, 22)
-    historyLabel.Position = UDim2.new(0, 142, 0, 64)  -- rechts neben Riddle Solver
+    historyLabel.Position = UDim2.new(0, 142, 0, 64)
     historyLabel.BackgroundTransparency = 1
     historyLabel.Text = "History 📜"
     historyLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
