@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB V3 - momo.1711 (MIT HISTORY - LINKS)
+-- KRIMO HUB V3 - momo.1711 (MIT HISTORY - FIXED)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -479,7 +479,7 @@ local function addCode(Code)
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
 
-    -- IMMER in History speichern
+    -- IMMER in History speichern (auch wenn History OFF ist)
     local time = os.date("%H:%M:%S")
     table.insert(history, { word = Code, time = time })
     
@@ -551,7 +551,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 12. GUI BAUEN
+-- 12. GUI BAUEN (mit HISTORY als eigener Button)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -679,7 +679,7 @@ local function buildGUI()
     ContentFrame.ZIndex = 5
     ContentFrame.Parent = MainFrame
     
-    -- Auto Type
+    -- Auto Type (Reihe 1)
     local awLabel = Instance.new("TextLabel")
     awLabel.Size = UDim2.new(0, 80, 0, 22)
     awLabel.Position = UDim2.new(0, 12, 0, 8)
@@ -719,7 +719,7 @@ local function buildGUI()
         end
     end)
     
-    -- Auto Submit
+    -- Auto Submit (Reihe 2)
     local asLabel = Instance.new("TextLabel")
     asLabel.Size = UDim2.new(0, 80, 0, 22)
     asLabel.Position = UDim2.new(0, 12, 0, 36)
@@ -754,7 +754,7 @@ local function buildGUI()
         asToggle.Text = _G.AutoSubmitEnabled and "ON" or "OFF"
     end)
     
-    -- Count
+    -- Count (Reihe 2, neben Auto Submit)
     local minusBtn = Instance.new("TextButton")
     minusBtn.Size = UDim2.new(0, 24, 0, 22)
     minusBtn.Position = UDim2.new(1, -78, 0, 36)
@@ -815,7 +815,8 @@ local function buildGUI()
         end
     end)
     
-    -- Riddle Solver + HISTORY (gleiche Größe)
+    -- ===== RIDDLE SOLVER + HISTORY (GLEICHE ZEILE) =====
+    -- Riddle Solver (links)
     local rsLabel = Instance.new("TextLabel")
     rsLabel.Size = UDim2.new(0, 100, 0, 22)
     rsLabel.Position = UDim2.new(0, 12, 0, 64)
@@ -831,7 +832,7 @@ local function buildGUI()
     local rsToggle = Instance.new("TextButton")
     rsToggle.Name = "RiddleSolverToggle"
     rsToggle.Size = UDim2.new(0, 40, 0, 22)
-    rsToggle.Position = UDim2.new(1, -108, 0, 64)
+    rsToggle.Position = UDim2.new(1, -106, 0, 64)
     rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     rsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -851,10 +852,10 @@ local function buildGUI()
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     end)
     
-    -- HISTORY (gleiche Größe, Emoji rechts)
+    -- HISTORY (rechts daneben, gleiche Größe)
     local historyLabel = Instance.new("TextLabel")
     historyLabel.Size = UDim2.new(0, 70, 0, 22)
-    historyLabel.Position = UDim2.new(0, 116, 0, 64)
+    historyLabel.Position = UDim2.new(0, 142, 0, 64)  -- rechts neben Riddle Solver
     historyLabel.BackgroundTransparency = 1
     historyLabel.Text = "History 📜"
     historyLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
