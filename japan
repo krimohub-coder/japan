@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (FINAL)
+-- KRIMO HUB - momo.1711 (FINAL - MINIMIEREN FIX)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -75,7 +75,7 @@ end
 local collectedCodes = {}
 local AddedCount = 0
 
--- 5. RIDDLE SOLVER DATABASE (KOMPLETT)
+-- 5. RIDDLE SOLVER DATABASE
 local SAB_DB = {
     ["how old am i"] = "24", ["how old is sammy"] = "24",
     ["my age"] = "24", ["sammy age"] = "24", ["age"] = "24",
@@ -163,7 +163,9 @@ end
 -- 6. GUI AKTUALISIERUNG
 local MainFrame = nil
 local ScreenGui = nil
-local RestoreButton = nil   -- für Minimieren
+local PANEL_W = 260
+local PANEL_H = 320
+local isMinimized = false
 
 local function refreshGUI()
     if not MainFrame then return end
@@ -261,9 +263,8 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (mit Hauptschalter + EXTREM SCHNELLER SUBMIT)
+-- 8. CODE HINZUFÜGEN
 local function addCode(Code)
-    -- HAUPT-SCHALTER BLOCKIERT ALLES
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
     if Code == "" then return end
@@ -280,14 +281,12 @@ local function addCode(Code)
     end
     AddedCount = AddedCount + 1
 
-    -- AUTO SUBMIT (INSTANT)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         task.spawn(function()
             local success = false
             for i = 1, _G.SubmitAttempts do
                 success = triggerSubmit()
                 if success then break end
-                -- keine Wartezeit, sofort wiederholen
             end
             if success then
                 table.clear(collectedCodes)
@@ -299,7 +298,7 @@ local function addCode(Code)
     end
 end
 
--- 9. ANNOUNCEMENT WATCHER MIT RIDDLE SOLVER
+-- 9. ANNOUNCEMENT WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -339,25 +338,23 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN (mit MINIMIEREN: GUI komplett ausblenden)
+-- 11. GUI BAUEN (mit MINIMIEREN - bleibt als Leiste sichtbar)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
     
-    -- Haupt-GUI
     ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "KrimoHubGui"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.Parent = CoreGui
     
-    local PANEL_W = 260
-    local PANEL_H = 320
-    
     MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0)
+    MainFrame.Position = (config.panelX and config.panelY)
+        and UDim2.new(0, config.panelX, 0, config.panelY)
+        or UDim2.new(0.5, 0, 0.4, 0)
     MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
     MainFrame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
     MainFrame.BackgroundTransparency = 0.05
@@ -793,54 +790,45 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- ===== MINIMIEREN: GUI KOMPLETT AUSBLENDEN =====
-    local isMinimized = false
-    toggleMinBtn.MouseButton1Click:Connect(function()
-        isMinimized = not isMinimized
-        if isMinimized then
-            ScreenGui.Enabled = false
-            -- Restore-Button anzeigen
-            if not RestoreButton then
-                RestoreButton = Instance.new("TextButton")
-                RestoreButton.Name = "RestoreBtn"
-                RestoreButton.Size = UDim2.new(0, 40, 0, 40)
-                RestoreButton.Position = UDim2.new(1, -50, 0, 10)
-                RestoreButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-                RestoreButton.Text = "+"
-                RestoreButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                RestoreButton.Font = Enum.Font.GothamBold
-                RestoreButton.TextSize = 24
-                RestoreButton.AutoButtonColor = true
-                RestoreButton.ZIndex = 999
-                RestoreButton.Parent = CoreGui
-                local restCorner = Instance.new("UICorner")
-                restCorner.CornerRadius = UDim.new(0, 12)
-                restCorner.Parent = RestoreButton
-                RestoreButton.MouseButton1Click:Connect(function()
-                    isMinimized = false
-                    ScreenGui.Enabled = true
-                    if RestoreButton then
-                        RestoreButton:Destroy()
-                        RestoreButton = nil
-                    end
-                end)
-            end
+    -- ===== MINIMIEREN: GUI schrumpft, bleibt aber sichtbar =====
+    local originalSize = MainFrame.Size
+    local originalPos = MainFrame.Position
+    local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)  -- rechts oben
+    
+    local function applyMinimized(state)
+        isMinimized = state
+        if state then
+            -- Speichere Position für Wiederherstellung
+            config.panelX = MainFrame.Position.X.Offset
+            config.panelY = MainFrame.Position.Y.Offset
+            saveConfig()
+            
+            ContentFrame.Visible = false
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 28)
+            MainFrame.Position = minimizedPos
+            toggleMinBtn.Text = "+"
         else
-            ScreenGui.Enabled = true
-            if RestoreButton then
-                RestoreButton:Destroy()
-                RestoreButton = nil
-            end
+            ContentFrame.Visible = true
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
+            MainFrame.Position = (config.panelX and config.panelY)
+                and UDim2.new(0, config.panelX, 0, config.panelY)
+                or UDim2.new(0.5, 0, 0.4, 0)
+            toggleMinBtn.Text = "−"
         end
+    end
+    
+    toggleMinBtn.MouseButton1Click:Connect(function()
+        applyMinimized(not isMinimized)
     end)
     
-    -- Drag
+    -- Drag (nur wenn nicht minimiert)
     local dragging = false
     local dragInput = nil
     local dragStart = nil
     local startPos = nil
     
     MainFrame.InputBegan:Connect(function(input)
+        if isMinimized then return end
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
@@ -854,20 +842,22 @@ local function buildGUI()
     end)
     
     MainFrame.InputChanged:Connect(function(input)
+        if isMinimized then return end
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
     
     UserInputService.InputChanged:Connect(function(input)
+        if isMinimized then return end
         if input == dragInput and dragging then
             local delta = input.Position - dragStart
-            MainFrame.Position = UDim2.new(
-                startPos.X.Scale,
-                startPos.X.Offset + delta.X,
-                startPos.Y.Scale,
-                startPos.Y.Offset + delta.Y
-            )
+            local newX = startPos.X.Offset + delta.X
+            local newY = startPos.Y.Offset + delta.Y
+            config.panelX = newX
+            config.panelY = newY
+            saveConfig()
+            MainFrame.Position = UDim2.new(startPos.X.Scale, newX, startPos.Y.Scale, newY)
         end
     end)
     
