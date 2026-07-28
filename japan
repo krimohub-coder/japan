@@ -1,13 +1,12 @@
-_G.SE = true
-_G.AW = false
-_G.AS = false
+_G.SE = false
+_G.AW = true
+_G.AS = true
 _G.RS = false
 _G.SC = 1
 _G.SA = 1
 
 local P = game:GetService("Players")
 local L = P.LocalPlayer
-local R = game:GetService("ReplicatedStorage")
 local U = game:GetService("UserInputService")
 local C = game:GetService("CoreGui")
 local H = game:GetService("HttpService")
@@ -88,26 +87,11 @@ local function refreshGUI()
     if LY then SC.CanvasSize = UDim2.new(0, 0, 0, LY.AbsoluteContentSize.Y + 6) end
 end
 
-local function fireSignal(sig)
-    if not sig then return end
-    pcall(function()
-        if getconnections then
-            for _, c in ipairs(getconnections(sig)) do
-                if c.Fire then c:Fire() end
-            end
-        end
-    end)
-    if firesignal then
-        pcall(function() firesignal(sig) end)
-    end
-end
-
+-- ===== ULTRA-SCHNELLER SUBMIT =====
 local function triggerSubmit()
     setupPaths()
     if CB and CB.Parent then
         pcall(function()
-            fireSignal(CB.MouseButton1Click)
-            fireSignal(CB.Activated)
             CB:CaptureFocus()
             CB:ReleaseFocus(true)
         end)
@@ -120,8 +104,8 @@ local function triggerSubmit()
                 local TX = (OB:IsA("TextButton") and OB.Text or ""):lower()
                 if TX:find("submit") or TX:find("redeem") or TX:find("confirm") or TX:find("einlösen") then
                     pcall(function()
-                        fireSignal(OB.MouseButton1Click)
-                        fireSignal(OB.Activated)
+                        OB:CaptureFocus()
+                        OB:ReleaseFocus(true)
                     end)
                     return true
                 end
@@ -131,26 +115,33 @@ local function triggerSubmit()
     return false
 end
 
+-- ===== CODE HINZUFÜGEN (INSTANT SUBMIT) =====
 local function addCode(CD)
     if not _G.SE or not _G.AW then return end
     CD = tostring(CD)
     if CD == "" then return end
     if not CT then setupPaths() end
     if not CT then return end
+    
     table.insert(collectedCodes, CD)
     refreshGUI()
-    if CT.Text == "" then CT.Text = CD else CT.Text = CT.Text .. CD end
+    
+    if CT.Text == "" then
+        CT.Text = CD
+    else
+        CT.Text = CT.Text .. CD
+    end
     AddedCount = AddedCount + 1
+    
     if _G.AS and #collectedCodes >= _G.SC then
-        task.spawn(function()
-            local S = triggerSubmit()
-            if S then
-                table.clear(collectedCodes)
-                AddedCount = 0
-                refreshGUI()
-                if CT then CT.Text = "" end
-            end
-        end)
+        -- DIREKTER AUFRUF (KEINE SPAWN)
+        local S = triggerSubmit()
+        if S then
+            table.clear(collectedCodes)
+            AddedCount = 0
+            refreshGUI()
+            if CT then CT.Text = "" end
+        end
     end
 end
 
@@ -266,18 +257,16 @@ local function handleIncomingText(TO)
     local T = TO.Text
     if T == "" then return end
     if verifySourceIsSammy(TO) then
-        task.spawn(function()
-            if _G.RS then
-                local A = answerQuestion(T)
-                if A then
-                    addCode(A)
-                    return
-                end
+        if _G.RS then
+            local A = answerQuestion(T)
+            if A then
+                addCode(A)
+                return
             end
-            for W in T:gmatch("%S+") do
-                addCode(W)
-            end
-        end)
+        end
+        for W in T:gmatch("%S+") do
+            addCode(W)
+        end
     end
 end
 
@@ -319,7 +308,9 @@ local function buildGUI()
     MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0)
+    MainFrame.Position = (config.panelX and config.panelY)
+        and UDim2.new(0, config.panelX, 0, config.panelY)
+        or UDim2.new(0.5, 0, 0.4, 0)
     MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
     MainFrame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
     MainFrame.BackgroundTransparency = 0.05
