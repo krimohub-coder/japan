@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB V3 - momo.1711 (HISTORY UNTER RIDDLE, GLEICHE ZEILE)
+-- KRIMO HUB V3 - momo.1711 (HISTORY UNTER RIDDLE SOLVER)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -167,7 +167,7 @@ local MainFrame = nil
 local ScreenGui = nil
 local HistoryGui = nil
 local PANEL_W = 260
-local PANEL_H = 320
+local PANEL_H = 345
 local isMinimized = false
 local historyOpen = false
 
@@ -551,7 +551,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 12. GUI BAUEN
+-- 12. GUI BAUEN (HISTORY UNTER RIDDLE SOLVER)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -679,7 +679,7 @@ local function buildGUI()
     ContentFrame.ZIndex = 5
     ContentFrame.Parent = MainFrame
     
-    -- Auto Type
+    -- ROW 1: Auto Type
     local awLabel = Instance.new("TextLabel")
     awLabel.Size = UDim2.new(0, 80, 0, 22)
     awLabel.Position = UDim2.new(0, 12, 0, 8)
@@ -719,7 +719,7 @@ local function buildGUI()
         end
     end)
     
-    -- Auto Submit
+    -- ROW 2: Auto Submit + Count
     local asLabel = Instance.new("TextLabel")
     asLabel.Size = UDim2.new(0, 80, 0, 22)
     asLabel.Position = UDim2.new(0, 12, 0, 36)
@@ -754,7 +754,7 @@ local function buildGUI()
         asToggle.Text = _G.AutoSubmitEnabled and "ON" or "OFF"
     end)
     
-    -- Count
+    -- Count Controls
     local minusBtn = Instance.new("TextButton")
     minusBtn.Size = UDim2.new(0, 24, 0, 22)
     minusBtn.Position = UDim2.new(1, -78, 0, 36)
@@ -815,8 +815,7 @@ local function buildGUI()
         end
     end)
     
-    -- ===== RIDDLE SOLVER + HISTORY (GLEICHE ZEILE, UNTER DEN ANDEREN) =====
-    -- Riddle Solver (links)
+    -- ROW 3: Riddle Solver
     local rsLabel = Instance.new("TextLabel")
     rsLabel.Size = UDim2.new(0, 100, 0, 22)
     rsLabel.Position = UDim2.new(0, 12, 0, 64)
@@ -831,8 +830,8 @@ local function buildGUI()
     
     local rsToggle = Instance.new("TextButton")
     rsToggle.Name = "RiddleSolverToggle"
-    rsToggle.Size = UDim2.new(0, 40, 0, 22)
-    rsToggle.Position = UDim2.new(1, -104, 0, 64)
+    rsToggle.Size = UDim2.new(0, 52, 0, 22)
+    rsToggle.Position = UDim2.new(1, -56, 0, 64)
     rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     rsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -852,10 +851,10 @@ local function buildGUI()
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     end)
     
-    -- HISTORY (gleiche Zeile, rechts daneben)
+    -- ROW 4: HISTORY (UNTER RIDDLE SOLVER)
     local historyLabel = Instance.new("TextLabel")
-    historyLabel.Size = UDim2.new(0, 70, 0, 22)
-    historyLabel.Position = UDim2.new(0, 142, 0, 64)
+    historyLabel.Size = UDim2.new(0, 80, 0, 22)
+    historyLabel.Position = UDim2.new(0, 12, 0, 92)
     historyLabel.BackgroundTransparency = 1
     historyLabel.Text = "History 📜"
     historyLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
@@ -867,8 +866,8 @@ local function buildGUI()
     
     local historyBtn = Instance.new("TextButton")
     historyBtn.Name = "HistoryBtn"
-    historyBtn.Size = UDim2.new(0, 40, 0, 22)
-    historyBtn.Position = UDim2.new(1, -56, 0, 64)
+    historyBtn.Size = UDim2.new(0, 52, 0, 22)
+    historyBtn.Position = UDim2.new(1, -56, 0, 92)
     historyBtn.BackgroundColor3 = _G.HistoryEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     historyBtn.Text = _G.HistoryEnabled and "ON" or "OFF"
     historyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -893,11 +892,11 @@ local function buildGUI()
         end
     end)
     
-    -- Collected + Reset
+    -- ROW 5: Collected + Reset (jetzt bei y=120)
     local collectedLabel = Instance.new("TextLabel")
     collectedLabel.Name = "CollectedLabel"
     collectedLabel.Size = UDim2.new(0.6, 0, 0, 20)
-    collectedLabel.Position = UDim2.new(0, 12, 0, 92)
+    collectedLabel.Position = UDim2.new(0, 12, 0, 120)
     collectedLabel.BackgroundTransparency = 1
     collectedLabel.Text = "Collected: 0"
     collectedLabel.TextColor3 = Color3.fromRGB(160, 200, 230)
@@ -910,7 +909,7 @@ local function buildGUI()
     local resetBtn = Instance.new("TextButton")
     resetBtn.Name = "ResetBtn"
     resetBtn.Size = UDim2.new(0, 40, 0, 20)
-    resetBtn.Position = UDim2.new(1, -52, 0, 92)
+    resetBtn.Position = UDim2.new(1, -52, 0, 120)
     resetBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
     resetBtn.Text = "↻ Reset"
     resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -928,11 +927,11 @@ local function buildGUI()
         resetCodes()
     end)
     
-    -- Code-Liste
+    -- Code-Liste (jetzt bei y=144)
     local codeListFrame = Instance.new("Frame")
     codeListFrame.Name = "CodeListFrame"
-    codeListFrame.Size = UDim2.new(1, -24, 0, 90)
-    codeListFrame.Position = UDim2.new(0, 12, 0, 116)
+    codeListFrame.Size = UDim2.new(1, -24, 0, 85)
+    codeListFrame.Position = UDim2.new(0, 12, 0, 144)
     codeListFrame.BackgroundColor3 = Color3.fromRGB(12, 22, 42)
     codeListFrame.BackgroundTransparency = 0.2
     codeListFrame.BorderSizePixel = 0
@@ -984,21 +983,21 @@ local function buildGUI()
     placeholder.Parent = scroll
     placeholder.Visible = (#collectedCodes == 0)
     
-    -- Separator
+    -- Separator (jetzt bei y=233)
     local sep = Instance.new("Frame")
     sep.Size = UDim2.new(1, -24, 0, 1)
-    sep.Position = UDim2.new(0, 12, 0, 210)
+    sep.Position = UDim2.new(0, 12, 0, 233)
     sep.BackgroundColor3 = Color3.fromRGB(80, 180, 255)
     sep.BackgroundTransparency = 0.6
     sep.BorderSizePixel = 0
     sep.ZIndex = 10
     sep.Parent = ContentFrame
     
-    -- Credits
+    -- Credits (jetzt bei y=240)
     local creditLabel = Instance.new("TextLabel")
     creditLabel.Name = "CreditLabel"
     creditLabel.Size = UDim2.new(1, -24, 0, 16)
-    creditLabel.Position = UDim2.new(0, 12, 0, 216)
+    creditLabel.Position = UDim2.new(0, 12, 0, 240)
     creditLabel.BackgroundTransparency = 1
     creditLabel.Text = "Credits to momo.1711"
     creditLabel.TextColor3 = Color3.fromRGB(110, 150, 200)
@@ -1009,10 +1008,10 @@ local function buildGUI()
     creditLabel.ZIndex = 10
     creditLabel.Parent = ContentFrame
     
-    -- Discord footer
+    -- Discord footer (jetzt bei y=258)
     local footer = Instance.new("TextLabel")
     footer.Size = UDim2.new(1, -24, 0, 22)
-    footer.Position = UDim2.new(0, 12, 0, 234)
+    footer.Position = UDim2.new(0, 12, 0, 258)
     footer.BackgroundTransparency = 1
     footer.RichText = true
     footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
@@ -1025,7 +1024,7 @@ local function buildGUI()
     
     local footerBtn = Instance.new("TextButton")
     footerBtn.Size = UDim2.new(1, -24, 0, 22)
-    footerBtn.Position = UDim2.new(0, 12, 0, 234)
+    footerBtn.Position = UDim2.new(0, 12, 0, 258)
     footerBtn.BackgroundTransparency = 1
     footerBtn.Text = ""
     footerBtn.AutoButtonColor = false
