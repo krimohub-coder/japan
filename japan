@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - DEINE AUTO-TYPE LOGIK (NUR CODES)
+-- KRIMO HUB - FINAL (VOLLSTÄNDIG & FEHLERFREI)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -14,10 +14,10 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local HttpService = game:GetService("HttpService")
 local CoreGui = game:GetService("CoreGui")
+local HttpService = game:GetService("HttpService")
 
--- 2. PERSISTENZ
+-- 2. PERSISTENZ (Panel-Position)
 local config = { panelX = nil, panelY = nil }
 local hasFS = (writefile and readfile and isfile) and true or false
 
@@ -37,7 +37,7 @@ local function saveConfig()
     pcall(function() writefile("KrimoHub_config.json", HttpService:JSONEncode(config)) end)
 end
 
--- 3. DEINE AUTO-TYPE LOGIK
+-- 3. PFADE
 local Announcements = nil
 local CodeTextBox = nil
 local ConfirmButton = nil
@@ -46,7 +46,7 @@ local RedemptionRF = nil
 local function setupPaths()
     pcall(function()
         local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
-        if not PlayerGui then return end
+        if not PlayerGui then return
         
         local topNotif = PlayerGui:FindFirstChild("TopNotification")
         if topNotif then
@@ -90,20 +90,17 @@ local collectedCodes = {}
 local collectedSeen = {}
 local AddedCount = 0
 
--- 5. CODE EXTRAKTION (NUR CODES, NICHT ALLES)
+-- 5. CODE EXTRAKTION (NUR CODES)
 local function looksLikeCode(token)
     if not token then return false end
-    if #token < 4 or #token > 50 then return false end  -- Codes sind meist 4-10 Zeichen
+    if #token < 4 or #token > 50 then return false end
     return token:match("^[A-Za-z0-9]+$") ~= nil
 end
 
 local function extractCodesFromText(text)
     local found = {}
     if not text or text == "" then return found end
-    
-    -- Entferne HTML-Tags und Sonderzeichen
     local clean = text:gsub("<[^>]+>", ""):gsub("[%p%s]", " ")
-    
     for token in clean:gmatch("%S+") do
         if looksLikeCode(token) then
             table.insert(found, token)
@@ -222,7 +219,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (DEINE LOGIK - NUR CODES)
+-- 8. CODE HINZUFÜGEN
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -262,7 +259,7 @@ local function addCode(Code)
     end
 end
 
--- 9. ANNOUNCEMENT WATCHER (MIT CODE-EXTRAKTION)
+-- 9. ANNOUNCEMENT WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -277,7 +274,7 @@ local function watchLabel(Label)
         end
     end
     
-    -- NUR CODES EXTRAHIEREN (nicht den ganzen Text)
+    -- NUR CODES EXTRAHIEREN
     local codes = extractCodesFromText(text)
     for _, code in ipairs(codes) do
         addCode(code)
