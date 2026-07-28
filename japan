@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (KOMPLETT)
+-- KRIMO HUB - momo.1711 (FINAL)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -162,6 +162,9 @@ end
 
 -- 6. GUI AKTUALISIERUNG
 local MainFrame = nil
+local ScreenGui = nil
+local RestoreButton = nil   -- für Minimieren
+
 local function refreshGUI()
     if not MainFrame then return end
     local ContentFrame = MainFrame:FindFirstChild("ContentFrame")
@@ -258,9 +261,10 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN
+-- 8. CODE HINZUFÜGEN (mit Hauptschalter + EXTREM SCHNELLER SUBMIT)
 local function addCode(Code)
-    if not _G.AutoWriteEnabled then return end
+    -- HAUPT-SCHALTER BLOCKIERT ALLES
+    if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
     if Code == "" then return end
     if not CodeTextBox then setupPaths() end
@@ -276,17 +280,20 @@ local function addCode(Code)
     end
     AddedCount = AddedCount + 1
 
+    -- AUTO SUBMIT (INSTANT)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         task.spawn(function()
+            local success = false
             for i = 1, _G.SubmitAttempts do
-                if triggerSubmit() then
-                    table.clear(collectedCodes)
-                    AddedCount = 0
-                    refreshGUI()
-                    if CodeTextBox then CodeTextBox.Text = "" end
-                    break
-                end
-                task.wait(0.05)
+                success = triggerSubmit()
+                if success then break end
+                -- keine Wartezeit, sofort wiederholen
+            end
+            if success then
+                table.clear(collectedCodes)
+                AddedCount = 0
+                refreshGUI()
+                if CodeTextBox then CodeTextBox.Text = "" end
             end
         end)
     end
@@ -332,12 +339,12 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN
-local ScreenGui = nil
+-- 11. GUI BAUEN (mit MINIMIEREN: GUI komplett ausblenden)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
     
+    -- Haupt-GUI
     ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "KrimoHubGui"
     ScreenGui.ResetOnSpawn = false
@@ -695,7 +702,8 @@ local function buildGUI()
     scroll.Name = "Scrolling"
     scroll.Size = UDim2.new(1, -4, 1, -4)
     scroll.Position = UDim2.new(0, 2, 0, 2)
-    scroll.BackgroundTransparency = 1    scroll.BorderSizePixel = 0
+    scroll.BackgroundTransparency = 1
+    scroll.BorderSizePixel = 0
     scroll.ScrollBarThickness = 3
     scroll.ScrollBarImageColor3 = Color3.fromRGB(80, 180, 255)
     scroll.ScrollBarImageTransparency = 0.4
@@ -785,18 +793,44 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- Minimize
+    -- ===== MINIMIEREN: GUI KOMPLETT AUSBLENDEN =====
     local isMinimized = false
     toggleMinBtn.MouseButton1Click:Connect(function()
         isMinimized = not isMinimized
         if isMinimized then
-            ContentFrame.Visible = false
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 32)
-            toggleMinBtn.Text = "+"
+            ScreenGui.Enabled = false
+            -- Restore-Button anzeigen
+            if not RestoreButton then
+                RestoreButton = Instance.new("TextButton")
+                RestoreButton.Name = "RestoreBtn"
+                RestoreButton.Size = UDim2.new(0, 40, 0, 40)
+                RestoreButton.Position = UDim2.new(1, -50, 0, 10)
+                RestoreButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+                RestoreButton.Text = "+"
+                RestoreButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                RestoreButton.Font = Enum.Font.GothamBold
+                RestoreButton.TextSize = 24
+                RestoreButton.AutoButtonColor = true
+                RestoreButton.ZIndex = 999
+                RestoreButton.Parent = CoreGui
+                local restCorner = Instance.new("UICorner")
+                restCorner.CornerRadius = UDim.new(0, 12)
+                restCorner.Parent = RestoreButton
+                RestoreButton.MouseButton1Click:Connect(function()
+                    isMinimized = false
+                    ScreenGui.Enabled = true
+                    if RestoreButton then
+                        RestoreButton:Destroy()
+                        RestoreButton = nil
+                    end
+                end)
+            end
         else
-            ContentFrame.Visible = true
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
-            toggleMinBtn.Text = "−"
+            ScreenGui.Enabled = true
+            if RestoreButton then
+                RestoreButton:Destroy()
+                RestoreButton = nil
+            end
         end
     end)
     
