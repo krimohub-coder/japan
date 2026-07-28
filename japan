@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (SUBMIT FIX - NICHT ZU SCHNELL)
+-- KRIMO HUB - momo.1711 (SUBMIT FIX - ZUVERLÄSSIG)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -216,18 +216,36 @@ local function refreshGUI()
     end
 end
 
--- 7. SUBMIT (SCHNELL, ABER MIT KURZER VERZÖGERUNG VOR DEM LEEREN)
+-- 7. SUBMIT (SICHER & SCHNELL)
+local function fireSignal(sig)
+    if not sig then return end
+    pcall(function()
+        if getconnections then
+            for _, c in ipairs(getconnections(sig)) do
+                if c.Fire then c:Fire() end
+            end
+        end
+    end)
+    if firesignal then
+        pcall(function() firesignal(sig) end)
+    end
+end
+
 local function triggerSubmit()
     setupPaths()
     
+    -- 1. Versuch: ConfirmButton mit fireSignal
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
+            fireSignal(ConfirmButton.MouseButton1Click)
+            fireSignal(ConfirmButton.Activated)
             ConfirmButton:CaptureFocus()
             ConfirmButton:ReleaseFocus(true)
         end)
         return true
     end
     
+    -- 2. Versuch: Manuell nach Submit-Button suchen
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -235,6 +253,8 @@ local function triggerSubmit()
                 local txt = (obj:IsA("TextButton") and obj.Text or ""):lower()
                 if txt:find("submit") or txt:find("redeem") or txt:find("confirm") or txt:find("einlösen") then
                     pcall(function()
+                        fireSignal(obj.MouseButton1Click)
+                        fireSignal(obj.Activated)
                         obj:CaptureFocus()
                         obj:ReleaseFocus(true)
                     end)
@@ -247,7 +267,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (mit KURZER VERZÖGERUNG VOR DEM LEEREN)
+-- 8. CODE HINZUFÜGEN (LEERT NUR BEI ERFOLG UND NACH 0.05s)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -266,10 +286,11 @@ local function addCode(Code)
     AddedCount = AddedCount + 1
 
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
+        -- Submit ausführen
         local success = triggerSubmit()
         if success then
-            -- ===== KURZE VERZÖGERUNG, DAMIT DER SERVER DEN CODE REGISTRIERT =====
-            task.wait(0.01)
+            -- KURZE PAUSE (0.05s), damit der Server den Code registrieren kann
+            task.wait(0.05)
             table.clear(collectedCodes)
             AddedCount = 0
             refreshGUI()
