@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (FINAL - KEINE DOPPELTEN CODES)
+-- KRIMO HUB - momo.1711 (ULTRA-SCHNELLER SUBMIT)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -7,8 +7,8 @@ _G.ScriptEnabled = true
 _G.AutoWriteEnabled = false
 _G.AutoSubmitEnabled = false
 _G.RiddleSolverEnabled = false
-_G.SubmitAfterCount = 3
-_G.SubmitAttempts = 3
+_G.SubmitAfterCount = 1  -- für 1v1 auf 1 setzen
+_G.SubmitAttempts = 1
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -216,7 +216,7 @@ local function refreshGUI()
     end
 end
 
--- 7. SUBMIT
+-- 7. SUBMIT (ULTRA-SCHNELL - EIN AUFRUF, KEINE VERZÖGERUNG)
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -263,7 +263,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (mit Hauptschalter)
+-- 8. CODE HINZUFÜGEN (KEINE DUPLIKATSPRÜFUNG + INSTANT SUBMIT)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -271,29 +271,22 @@ local function addCode(Code)
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
 
-    -- Prüfen, ob Code bereits in der aktuellen Sammlung ist (verhindert Duplikate)
-    if not table.find(collectedCodes, Code) then
-        table.insert(collectedCodes, Code)
-        refreshGUI()
-    end
+    -- JEDER CODE WIRD HINZUGEFÜGT (auch Duplikate)
+    table.insert(collectedCodes, Code)
+    refreshGUI()
 
+    -- IMMER ins Textfeld schreiben (auch wenn schon da)
     if CodeTextBox.Text == "" then
         CodeTextBox.Text = Code
     else
-        -- Nur anhängen, wenn nicht bereits am Ende vorhanden
-        if not string.sub(CodeTextBox.Text, -#Code) == Code then
-            CodeTextBox.Text = CodeTextBox.Text .. Code
-        end
+        CodeTextBox.Text = CodeTextBox.Text .. Code
     end
     AddedCount = AddedCount + 1
 
+    -- SUBMIT SOFORT (KEINE WAIT, KEINE SCHLEIFE)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         task.spawn(function()
-            local success = false
-            for i = 1, _G.SubmitAttempts do
-                success = triggerSubmit()
-                if success then break end
-            end
+            local success = triggerSubmit()
             if success then
                 table.clear(collectedCodes)
                 AddedCount = 0
@@ -304,7 +297,7 @@ local function addCode(Code)
     end
 end
 
--- 9. SPYDERSAMMY ERKENNUNG (NUR EIN HOOK)
+-- 9. SPYDERSAMMY ERKENNUNG
 local targetUserId = nil
 task.spawn(function()
     pcall(function() targetUserId = Players:GetUserIdFromNameAsync("SpyderSammy") end)
@@ -340,14 +333,13 @@ local function verifySourceIsSammy(textObj)
     return false
 end
 
--- 10. HANDLER (NUR ÜBER PLAYERGUI-SCANNER)
+-- 10. HANDLER
 local function handleIncomingText(textObj)
     if not _G.ScriptEnabled then return end
     local text = textObj.Text
     if text == "" then return end
     if verifySourceIsSammy(textObj) then
         task.spawn(function()
-            -- Riddle Solver prüfen
             if _G.RiddleSolverEnabled then
                 local answer = answerQuestion(text)
                 if answer then
@@ -355,7 +347,7 @@ local function handleIncomingText(textObj)
                     return
                 end
             end
-            -- Code hinzufügen (jedes Wort)
+            -- JEDES WORT als Code hinzufügen (auch Duplikate)
             for word in text:gmatch("%S+") do
                 addCode(word)
             end
@@ -842,8 +834,6 @@ local function buildGUI()
     end)
     
     -- ===== MINIMIEREN =====
-    local originalSize = MainFrame.Size
-    local originalPos = MainFrame.Position
     local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
     
     local function applyMinimized(state)
