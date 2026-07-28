@@ -76,6 +76,7 @@ end
 local collectedCodes = {}
 local AddedCount = 0
 local history = {}  -- { word, time }
+local lastAddedCode = ""  -- Um Duplikate zu vermeiden
 
 -- 5. RIDDLE SOLVER DATABASE (gekürzt)
 local SAB_DB = {
@@ -158,8 +159,8 @@ end
 local MainFrame = nil
 local ScreenGui = nil
 local HistoryGui = nil
-local PANEL_W = 260
-local PANEL_H = 350
+local PANEL_W = 230  -- KLEINER
+local PANEL_H = 310   -- KLEINER
 local isMinimized = false
 local historyOpen = false
 
@@ -232,7 +233,7 @@ local function buildHistoryGUI()
     frame.Name = "HistoryFrame"
     frame.AnchorPoint = Vector2.new(0, 0.5)
     frame.Position = UDim2.new(0, 10, 0.5, 0)
-    frame.Size = UDim2.new(0, 180, 0, 150)  -- NOCH KLEINER
+    frame.Size = UDim2.new(0, 180, 0, 150)
     frame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
     frame.BackgroundTransparency = 0.05
     frame.BorderSizePixel = 0
@@ -310,79 +311,91 @@ local function buildHistoryGUI()
     layout.SortOrder = Enum.SortOrder.LayoutOrder
     layout.Parent = scroll
     
-    -- History-Einträge (kompakter)
+    -- History-Einträge (nur von Sammy)
     for i, entry in ipairs(history) do
-        local row = Instance.new("Frame")
-        row.Size = UDim2.new(1, 0, 0, 18)
-        row.BackgroundColor3 = Color3.fromRGB(15, 30, 50)
-        row.BackgroundTransparency = 0.3
-        row.BorderSizePixel = 0
-        row.ClipsDescendants = true
-        row.Parent = scroll
-        
-        local rowCorner = Instance.new("UICorner")
-        rowCorner.CornerRadius = UDim.new(0, 2)
-        rowCorner.Parent = row
-        
-        -- Nummer + Wort (kompakt)
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(0, 90, 1, 0)
-        label.Position = UDim2.new(0, 3, 0, 0)
-        label.BackgroundTransparency = 1
-        label.Text = string.format("%02d  %s", i, entry.word)
-        label.TextColor3 = Color3.fromRGB(200, 220, 255)
-        label.Font = Enum.Font.Gotham
-        label.TextSize = 8
-        label.TextXAlignment = Enum.TextXAlignment.Left
-        label.TextYAlignment = Enum.TextYAlignment.Center
-        label.Parent = row
-        
-        -- Zeit (sehr klein)
-        local timeLabel = Instance.new("TextLabel")
-        timeLabel.Size = UDim2.new(0, 30, 1, 0)
-        timeLabel.Position = UDim2.new(0, 95, 0, 0)
-        timeLabel.BackgroundTransparency = 1
-        timeLabel.Text = entry.time or ""
-        timeLabel.TextColor3 = Color3.fromRGB(150, 180, 210)
-        timeLabel.Font = Enum.Font.Gotham
-        timeLabel.TextSize = 6
-        timeLabel.TextXAlignment = Enum.TextXAlignment.Left
-        timeLabel.TextYAlignment = Enum.TextYAlignment.Center
-        timeLabel.Parent = row
-        
-        -- Write Button (ganz klein)
-        local writeBtn = Instance.new("TextButton")
-        writeBtn.Size = UDim2.new(0, 26, 0, 14)
-        writeBtn.Position = UDim2.new(1, -30, 0.5, -7)
-        writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
-        writeBtn.Text = "✏️"
-        writeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        writeBtn.Font = Enum.Font.GothamBold
-        writeBtn.TextSize = 7
-        writeBtn.AutoButtonColor = true
-        writeBtn.ZIndex = 12
-        writeBtn.Parent = row
-        do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 2) co.Parent = writeBtn end
-        
-        writeBtn.MouseButton1Click:Connect(function()
-            if CodeTextBox then
-                if CodeTextBox.Text == "" then
-                    CodeTextBox.Text = entry.word
-                else
-                    CodeTextBox.Text = CodeTextBox.Text .. entry.word
+        -- Nur anzeigen wenn von Sammy
+        if entry.fromSammy then
+            local row = Instance.new("Frame")
+            row.Size = UDim2.new(1, 0, 0, 18)
+            row.BackgroundColor3 = Color3.fromRGB(15, 30, 50)
+            row.BackgroundTransparency = 0.3
+            row.BorderSizePixel = 0
+            row.ClipsDescendants = true
+            row.Parent = scroll
+            
+            local rowCorner = Instance.new("UICorner")
+            rowCorner.CornerRadius = UDim.new(0, 2)
+            rowCorner.Parent = row
+            
+            -- Nummer + Wort (kompakt)
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.new(0, 90, 1, 0)
+            label.Position = UDim2.new(0, 3, 0, 0)
+            label.BackgroundTransparency = 1
+            label.Text = string.format("%02d  %s", i, entry.word)
+            label.TextColor3 = Color3.fromRGB(200, 220, 255)
+            label.Font = Enum.Font.Gotham
+            label.TextSize = 8
+            label.TextXAlignment = Enum.TextXAlignment.Left
+            label.TextYAlignment = Enum.TextYAlignment.Center
+            label.Parent = row
+            
+            -- Zeit (sehr klein)
+            local timeLabel = Instance.new("TextLabel")
+            timeLabel.Size = UDim2.new(0, 30, 1, 0)
+            timeLabel.Position = UDim2.new(0, 95, 0, 0)
+            timeLabel.BackgroundTransparency = 1
+            timeLabel.Text = entry.time or ""
+            timeLabel.TextColor3 = Color3.fromRGB(150, 180, 210)
+            timeLabel.Font = Enum.Font.Gotham
+            timeLabel.TextSize = 6
+            timeLabel.TextXAlignment = Enum.TextXAlignment.Left
+            timeLabel.TextYAlignment = Enum.TextYAlignment.Center
+            timeLabel.Parent = row
+            
+            -- Write Button (ganz klein)
+            local writeBtn = Instance.new("TextButton")
+            writeBtn.Size = UDim2.new(0, 26, 0, 14)
+            writeBtn.Position = UDim2.new(1, -30, 0.5, -7)
+            writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
+            writeBtn.Text = "✏️"
+            writeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            writeBtn.Font = Enum.Font.GothamBold
+            writeBtn.TextSize = 7
+            writeBtn.AutoButtonColor = true
+            writeBtn.ZIndex = 12
+            writeBtn.Parent = row
+            do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 2) co.Parent = writeBtn end
+            
+            writeBtn.MouseButton1Click:Connect(function()
+                if CodeTextBox then
+                    if CodeTextBox.Text == "" then
+                        CodeTextBox.Text = entry.word
+                    else
+                        CodeTextBox.Text = CodeTextBox.Text .. entry.word
+                    end
+                    writeBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 80)
+                    task.wait(0.15)
+                    writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
                 end
-                writeBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 80)
-                task.wait(0.15)
-                writeBtn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
-            end
-        end)
+            end)
+        end
     end
     
-    if #history == 0 then
+    -- Prüfen ob es überhaupt Sammy-Einträge gibt
+    local hasSammyEntries = false
+    for _, entry in ipairs(history) do
+        if entry.fromSammy then
+            hasSammyEntries = true
+            break
+        end
+    end
+    
+    if not hasSammyEntries then
         local empty = Instance.new("TextLabel")
         empty.Size = UDim2.new(1, 0, 1, 0)
         empty.BackgroundTransparency = 1
-        empty.Text = "No history yet"
+        empty.Text = "No Sammy codes yet"
         empty.TextColor3 = Color3.fromRGB(100, 140, 180)
         empty.Font = Enum.Font.Gotham
         empty.TextSize = 10
@@ -470,27 +483,41 @@ local function triggerSubmit()
 end
 
 -- ============================================================
--- 9. HISTORY SPEICHERT IMMER (UNABHÄNGIG VON SETTINGS)
+-- 9. HISTORY SPEICHERT IMMER (NUR VON SAMMY)
 -- ============================================================
-local function saveToHistory(Code)
+local function saveToHistory(Code, fromSammy)
     if Code == "" then return end
     local time = os.date("%H:%M:%S")
-    table.insert(history, { word = Code, time = time })
+    table.insert(history, { word = Code, time = time, fromSammy = fromSammy or false })
     -- GUI immer aktualisieren wenn offen (NICHT schließen!)
     if historyOpen and HistoryGui then
-        buildHistoryGUI()  -- Neuaufbau mit aktualisierten Daten
+        -- History GUI neu bauen (bleibt offen)
+        local oldGui = HistoryGui
+        HistoryGui = nil
+        historyOpen = false
+        buildHistoryGUI()
+        HistoryGui.Position = oldGui:FindFirstChild("HistoryFrame").Position
+        oldGui:Destroy()
     end
 end
 
 -- ============================================================
 -- 10. CODE HINZUFÜGEN (mit History - IMMER)
 -- ============================================================
-local function addCode(Code)
+local function addCode(Code, fromSammy)
     Code = tostring(Code)
     if Code == "" then return end
     
-    -- IMMER in History speichern (auch wenn Script aus ist)
-    saveToHistory(Code)
+    -- Prüfen ob das gleiche Wort schonmal hinzugefügt wurde (verhindert Dopplungen)
+    if Code == lastAddedCode then
+        return
+    end
+    lastAddedCode = Code
+    
+    -- IMMER in History speichern (auch wenn Script aus ist) - NUR von Sammy
+    if fromSammy then
+        saveToHistory(Code, true)
+    end
     
     -- Nur weiterverarbeiten, wenn ScriptEnabled und AutoWriteEnabled
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
@@ -529,14 +556,14 @@ local function watchLabel(Label)
     if _G.RiddleSolverEnabled then
         local answer = answerQuestion(text)
         if answer then
-            addCode(answer)
+            addCode(answer, true)  -- von Sammy
             return
         end
     end
     
-    -- Jedes Wort als Code behandeln
+    -- Jedes Wort als Code behandeln (nur von Sammy)
     for word in text:gmatch("%S+") do
-        addCode(word)
+        addCode(word, true)  -- von Sammy
     end
 end
 
@@ -551,7 +578,10 @@ end
 
 if CodeTextBox then
     CodeTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-        if CodeTextBox.Text == "" then AddedCount = 0 end
+        if CodeTextBox.Text == "" then 
+            AddedCount = 0
+            lastAddedCode = ""  -- Zurücksetzen wenn Text geleert wird
+        end
     end)
 end
 
@@ -559,6 +589,7 @@ end
 local function resetCodes()
     table.clear(collectedCodes)
     AddedCount = 0
+    lastAddedCode = ""
     refreshGUI()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
@@ -578,6 +609,7 @@ end
 
 local function verifySourceIsSammy(TO)
     if TO:IsDescendantOf(MainFrame) then return false end
+    if TO:IsDescendantOf(HistoryGui) then return false end
     local C = TO.Parent
     while C and not C:IsA("ScreenGui") and C.Name ~= "PlayerGui" do
         for _, I in ipairs(C:GetChildren()) do
@@ -624,7 +656,7 @@ local function startPlayerGuiScanner()
     PG.DescendantAdded:Connect(hookUiTextObject)
 end
 
--- 15. GUI BAUEN
+-- 15. GUI BAUEN (KLEINER)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -666,16 +698,6 @@ local function buildGUI()
     stroke.Thickness = 2
     stroke.Transparency = 0.3
     stroke.Parent = MainFrame
-    
-    local borderGrad = Instance.new("UIGradient")
-    borderGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0.0, Color3.fromRGB(150, 220, 255)),
-        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(60, 150, 220)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 220, 255)),
-        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(60, 150, 220)),
-        ColorSequenceKeypoint.new(1.0, Color3.fromRGB(150, 220, 255))
-    })
-    borderGrad.Parent = stroke
     
     -- Title Bar
     local titleBar = Instance.new("Frame")
@@ -754,20 +776,20 @@ local function buildGUI()
     
     -- ROW 1: Auto Type
     local awLabel = Instance.new("TextLabel")
-    awLabel.Size = UDim2.new(0, 80, 0, 22)
-    awLabel.Position = UDim2.new(0, 12, 0, 8)
+    awLabel.Size = UDim2.new(0, 80, 0, 20)
+    awLabel.Position = UDim2.new(0, 12, 0, 6)
     awLabel.BackgroundTransparency = 1
     awLabel.Text = "Auto Type"
     awLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
     awLabel.Font = Enum.Font.GothamSemibold
-    awLabel.TextSize = 12
+    awLabel.TextSize = 11
     awLabel.TextXAlignment = Enum.TextXAlignment.Left
     awLabel.ZIndex = 10
     awLabel.Parent = ContentFrame
     
     local awToggle = Instance.new("TextButton")
-    awToggle.Size = UDim2.new(0, 52, 0, 22)
-    awToggle.Position = UDim2.new(1, -56, 0, 8)
+    awToggle.Size = UDim2.new(0, 48, 0, 20)
+    awToggle.Position = UDim2.new(1, -52, 0, 6)
     awToggle.BackgroundColor3 = _G.AutoWriteEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     awToggle.Text = _G.AutoWriteEnabled and "ON" or "OFF"
     awToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -794,20 +816,20 @@ local function buildGUI()
     
     -- ROW 2: Auto Submit + Count
     local asLabel = Instance.new("TextLabel")
-    asLabel.Size = UDim2.new(0, 80, 0, 22)
-    asLabel.Position = UDim2.new(0, 12, 0, 36)
+    asLabel.Size = UDim2.new(0, 80, 0, 20)
+    asLabel.Position = UDim2.new(0, 12, 0, 30)
     asLabel.BackgroundTransparency = 1
     asLabel.Text = "Auto Submit"
     asLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
     asLabel.Font = Enum.Font.GothamSemibold
-    asLabel.TextSize = 12
+    asLabel.TextSize = 11
     asLabel.TextXAlignment = Enum.TextXAlignment.Left
     asLabel.ZIndex = 10
     asLabel.Parent = ContentFrame
     
     local asToggle = Instance.new("TextButton")
-    asToggle.Size = UDim2.new(0, 40, 0, 22)
-    asToggle.Position = UDim2.new(1, -122, 0, 36)
+    asToggle.Size = UDim2.new(0, 36, 0, 20)
+    asToggle.Position = UDim2.new(1, -114, 0, 30)
     asToggle.BackgroundColor3 = _G.AutoSubmitEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     asToggle.Text = _G.AutoSubmitEnabled and "ON" or "OFF"
     asToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -829,13 +851,13 @@ local function buildGUI()
     
     -- Count Controls
     local minusBtn = Instance.new("TextButton")
-    minusBtn.Size = UDim2.new(0, 24, 0, 22)
-    minusBtn.Position = UDim2.new(1, -78, 0, 36)
+    minusBtn.Size = UDim2.new(0, 22, 0, 20)
+    minusBtn.Position = UDim2.new(1, -72, 0, 30)
     minusBtn.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     minusBtn.Text = "−"
     minusBtn.TextColor3 = Color3.fromRGB(200, 230, 255)
     minusBtn.Font = Enum.Font.GothamBold
-    minusBtn.TextSize = 18
+    minusBtn.TextSize = 16
     minusBtn.AutoButtonColor = true
     minusBtn.ZIndex = 10
     minusBtn.Parent = ContentFrame
@@ -845,14 +867,14 @@ local function buildGUI()
     minusCorner.Parent = minusBtn
     
     local countDisplay = Instance.new("TextLabel")
-    countDisplay.Size = UDim2.new(0, 28, 0, 22)
-    countDisplay.Position = UDim2.new(1, -52, 0, 36)
+    countDisplay.Size = UDim2.new(0, 26, 0, 20)
+    countDisplay.Position = UDim2.new(1, -48, 0, 30)
     countDisplay.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     countDisplay.BackgroundTransparency = 0.3
     countDisplay.Text = tostring(_G.SubmitAfterCount)
     countDisplay.TextColor3 = Color3.fromRGB(200, 230, 255)
     countDisplay.Font = Enum.Font.GothamBold
-    countDisplay.TextSize = 13
+    countDisplay.TextSize = 12
     countDisplay.TextXAlignment = Enum.TextXAlignment.Center
     countDisplay.ZIndex = 10
     countDisplay.Parent = ContentFrame
@@ -862,13 +884,13 @@ local function buildGUI()
     countCorner.Parent = countDisplay
     
     local plusBtn = Instance.new("TextButton")
-    plusBtn.Size = UDim2.new(0, 24, 0, 22)
-    plusBtn.Position = UDim2.new(1, -24, 0, 36)
+    plusBtn.Size = UDim2.new(0, 22, 0, 20)
+    plusBtn.Position = UDim2.new(1, -22, 0, 30)
     plusBtn.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     plusBtn.Text = "+"
     plusBtn.TextColor3 = Color3.fromRGB(200, 230, 255)
     plusBtn.Font = Enum.Font.GothamBold
-    plusBtn.TextSize = 18
+    plusBtn.TextSize = 16
     plusBtn.AutoButtonColor = true
     plusBtn.ZIndex = 10
     plusBtn.Parent = ContentFrame
@@ -890,21 +912,21 @@ local function buildGUI()
     
     -- ROW 3: Riddle Solver
     local rsLabel = Instance.new("TextLabel")
-    rsLabel.Size = UDim2.new(0, 100, 0, 22)
-    rsLabel.Position = UDim2.new(0, 12, 0, 64)
+    rsLabel.Size = UDim2.new(0, 100, 0, 20)
+    rsLabel.Position = UDim2.new(0, 12, 0, 54)
     rsLabel.BackgroundTransparency = 1
     rsLabel.Text = "Riddle Solver"
     rsLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
     rsLabel.Font = Enum.Font.GothamSemibold
-    rsLabel.TextSize = 12
+    rsLabel.TextSize = 11
     rsLabel.TextXAlignment = Enum.TextXAlignment.Left
     rsLabel.ZIndex = 10
     rsLabel.Parent = ContentFrame
     
     local rsToggle = Instance.new("TextButton")
     rsToggle.Name = "RiddleSolverToggle"
-    rsToggle.Size = UDim2.new(0, 52, 0, 22)
-    rsToggle.Position = UDim2.new(1, -56, 0, 64)
+    rsToggle.Size = UDim2.new(0, 48, 0, 20)
+    rsToggle.Position = UDim2.new(1, -52, 0, 54)
     rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     rsToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -924,23 +946,23 @@ local function buildGUI()
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     end)
     
-    -- ROW 4: HISTORY (UNTER RIDDLE SOLVER)
+    -- ROW 4: HISTORY
     local historyLabel = Instance.new("TextLabel")
-    historyLabel.Size = UDim2.new(0, 80, 0, 22)
-    historyLabel.Position = UDim2.new(0, 12, 0, 92)
+    historyLabel.Size = UDim2.new(0, 80, 0, 20)
+    historyLabel.Position = UDim2.new(0, 12, 0, 78)
     historyLabel.BackgroundTransparency = 1
     historyLabel.Text = "History 📜"
     historyLabel.TextColor3 = Color3.fromRGB(180, 210, 255)
     historyLabel.Font = Enum.Font.GothamSemibold
-    historyLabel.TextSize = 12
+    historyLabel.TextSize = 11
     historyLabel.TextXAlignment = Enum.TextXAlignment.Left
     historyLabel.ZIndex = 10
     historyLabel.Parent = ContentFrame
     
     local historyBtn = Instance.new("TextButton")
     historyBtn.Name = "HistoryBtn"
-    historyBtn.Size = UDim2.new(0, 52, 0, 22)
-    historyBtn.Position = UDim2.new(1, -56, 0, 92)
+    historyBtn.Size = UDim2.new(0, 48, 0, 20)
+    historyBtn.Position = UDim2.new(1, -52, 0, 78)
     historyBtn.BackgroundColor3 = _G.HistoryEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     historyBtn.Text = _G.HistoryEnabled and "ON" or "OFF"
     historyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -968,26 +990,26 @@ local function buildGUI()
     -- ROW 5: Collected + Reset
     local collectedLabel = Instance.new("TextLabel")
     collectedLabel.Name = "CollectedLabel"
-    collectedLabel.Size = UDim2.new(0.6, 0, 0, 20)
-    collectedLabel.Position = UDim2.new(0, 12, 0, 120)
+    collectedLabel.Size = UDim2.new(0.6, 0, 0, 18)
+    collectedLabel.Position = UDim2.new(0, 12, 0, 102)
     collectedLabel.BackgroundTransparency = 1
     collectedLabel.Text = "Collected: 0"
     collectedLabel.TextColor3 = Color3.fromRGB(160, 200, 230)
     collectedLabel.Font = Enum.Font.Gotham
-    collectedLabel.TextSize = 11
+    collectedLabel.TextSize = 10
     collectedLabel.TextXAlignment = Enum.TextXAlignment.Left
     collectedLabel.ZIndex = 10
     collectedLabel.Parent = ContentFrame
     
     local resetBtn = Instance.new("TextButton")
     resetBtn.Name = "ResetBtn"
-    resetBtn.Size = UDim2.new(0, 40, 0, 20)
-    resetBtn.Position = UDim2.new(1, -52, 0, 120)
+    resetBtn.Size = UDim2.new(0, 36, 0, 18)
+    resetBtn.Position = UDim2.new(1, -48, 0, 102)
     resetBtn.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
     resetBtn.Text = "↻ Reset"
     resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     resetBtn.Font = Enum.Font.GothamBold
-    resetBtn.TextSize = 9
+    resetBtn.TextSize = 8
     resetBtn.AutoButtonColor = false
     resetBtn.ZIndex = 10
     resetBtn.Parent = ContentFrame
@@ -1000,11 +1022,11 @@ local function buildGUI()
         resetCodes()
     end)
     
-    -- Code-Liste
+    -- Code-Liste (kleiner)
     local codeListFrame = Instance.new("Frame")
     codeListFrame.Name = "CodeListFrame"
-    codeListFrame.Size = UDim2.new(1, -24, 0, 90)
-    codeListFrame.Position = UDim2.new(0, 12, 0, 144)
+    codeListFrame.Size = UDim2.new(1, -24, 0, 72)
+    codeListFrame.Position = UDim2.new(0, 12, 0, 124)
     codeListFrame.BackgroundColor3 = Color3.fromRGB(12, 22, 42)
     codeListFrame.BackgroundTransparency = 0.2
     codeListFrame.BorderSizePixel = 0
@@ -1059,7 +1081,7 @@ local function buildGUI()
     -- Separator
     local sep = Instance.new("Frame")
     sep.Size = UDim2.new(1, -24, 0, 1)
-    sep.Position = UDim2.new(0, 12, 0, 238)
+    sep.Position = UDim2.new(0, 12, 0, 200)
     sep.BackgroundColor3 = Color3.fromRGB(80, 180, 255)
     sep.BackgroundTransparency = 0.6
     sep.BorderSizePixel = 0
@@ -1069,13 +1091,13 @@ local function buildGUI()
     -- Credits
     local creditLabel = Instance.new("TextLabel")
     creditLabel.Name = "CreditLabel"
-    creditLabel.Size = UDim2.new(1, -24, 0, 16)
-    creditLabel.Position = UDim2.new(0, 12, 0, 245)
+    creditLabel.Size = UDim2.new(1, -24, 0, 14)
+    creditLabel.Position = UDim2.new(0, 12, 0, 206)
     creditLabel.BackgroundTransparency = 1
     creditLabel.Text = "Credits to momo.1711"
     creditLabel.TextColor3 = Color3.fromRGB(110, 150, 200)
     creditLabel.Font = Enum.Font.Gotham
-    creditLabel.TextSize = 9
+    creditLabel.TextSize = 8
     creditLabel.TextXAlignment = Enum.TextXAlignment.Center
     creditLabel.TextYAlignment = Enum.TextYAlignment.Top
     creditLabel.ZIndex = 10
@@ -1083,21 +1105,21 @@ local function buildGUI()
     
     -- Discord footer
     local footer = Instance.new("TextLabel")
-    footer.Size = UDim2.new(1, -24, 0, 22)
-    footer.Position = UDim2.new(0, 12, 0, 263)
+    footer.Size = UDim2.new(1, -24, 0, 20)
+    footer.Position = UDim2.new(0, 12, 0, 222)
     footer.BackgroundTransparency = 1
     footer.RichText = true
     footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     footer.TextColor3 = Color3.fromRGB(180, 200, 255)
-    footer.TextSize = 12
+    footer.TextSize = 11
     footer.Font = Enum.Font.GothamBold
     footer.TextXAlignment = Enum.TextXAlignment.Center
     footer.ZIndex = 10
     footer.Parent = ContentFrame
     
     local footerBtn = Instance.new("TextButton")
-    footerBtn.Size = UDim2.new(1, -24, 0, 22)
-    footerBtn.Position = UDim2.new(0, 12, 0, 263)
+    footerBtn.Size = UDim2.new(1, -24, 0, 20)
+    footerBtn.Position = UDim2.new(0, 12, 0, 222)
     footerBtn.BackgroundTransparency = 1
     footerBtn.Text = ""
     footerBtn.AutoButtonColor = false
@@ -1117,7 +1139,7 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- Minimieren: oben rechts
+    -- Minimieren
     local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
     
     local function applyMinimized(state)
