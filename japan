@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (FINAL - MINIMIEREN UNTER VC SERVERS)
+-- KRIMO HUB - momo.1711 (FINAL - KEINE DOPPELTEN CODES)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -166,8 +166,6 @@ local ScreenGui = nil
 local PANEL_W = 260
 local PANEL_H = 320
 local isMinimized = false
-local originalSize = nil
-local originalPos = nil
 
 local function refreshGUI()
     if not MainFrame then return end
@@ -265,7 +263,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN
+-- 8. CODE HINZUFÜGEN (mit Hauptschalter)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -273,13 +271,19 @@ local function addCode(Code)
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
 
-    table.insert(collectedCodes, Code)
-    refreshGUI()
+    -- Prüfen, ob Code bereits in der aktuellen Sammlung ist (verhindert Duplikate)
+    if not table.find(collectedCodes, Code) then
+        table.insert(collectedCodes, Code)
+        refreshGUI()
+    end
 
     if CodeTextBox.Text == "" then
         CodeTextBox.Text = Code
     else
-        CodeTextBox.Text = CodeTextBox.Text .. Code
+        -- Nur anhängen, wenn nicht bereits am Ende vorhanden
+        if not string.sub(CodeTextBox.Text, -#Code) == Code then
+            CodeTextBox.Text = CodeTextBox.Text .. Code
+        end
     end
     AddedCount = AddedCount + 1
 
@@ -300,39 +304,84 @@ local function addCode(Code)
     end
 end
 
--- 9. ANNOUNCEMENT WATCHER
-local function watchLabel(Label)
-    if not Label:IsA("TextLabel") then return end
-    local text = Label.Text
-    if text == "" then return end
-    
-    if _G.RiddleSolverEnabled then
-        local answer = answerQuestion(text)
-        if answer then
-            addCode(answer)
-            return
+-- 9. SPYDERSAMMY ERKENNUNG (NUR EIN HOOK)
+local targetUserId = nil
+task.spawn(function()
+    pcall(function() targetUserId = Players:GetUserIdFromNameAsync("SpyderSammy") end)
+end)
+
+local function isAvatarImage(imageLabel)
+    if not imageLabel.Visible or imageLabel.Image == "" then return false end
+    local imgStr = string.lower(imageLabel.Image)
+    if targetUserId and string.find(imgStr, tostring(targetUserId)) then
+        return true
+    end
+    return false
+end
+
+local function verifySourceIsSammy(textObj)
+    if textObj:IsDescendantOf(MainFrame) then return false end
+    local container = textObj.Parent
+    while container and not container:IsA("ScreenGui") and container.Name ~= "PlayerGui" do
+        for _, item in ipairs(container:GetChildren()) do
+            if item:IsA("TextLabel") and string.find(string.lower(item.Text), "spydersammy") then
+                return true
+            end
         end
+        for _, item in ipairs(container:GetDescendants()) do
+            if item:IsA("ImageLabel") and isAvatarImage(item) then
+                return true
+            end
+        end
+        if container.Parent and (container.Parent:IsA("Frame") or container.Parent:IsA("ImageLabel") or container.Parent:IsA("CanvasGroup")) then
+            container = container.Parent
+        else break end
     end
-    
-    addCode(text)
+    return false
 end
 
-local function startAnnouncementWatcher()
-    setupPaths()
-    if not Announcements then return end
-    for _, v in ipairs(Announcements:GetDescendants()) do
-        watchLabel(v)
+-- 10. HANDLER (NUR ÜBER PLAYERGUI-SCANNER)
+local function handleIncomingText(textObj)
+    if not _G.ScriptEnabled then return end
+    local text = textObj.Text
+    if text == "" then return end
+    if verifySourceIsSammy(textObj) then
+        task.spawn(function()
+            -- Riddle Solver prüfen
+            if _G.RiddleSolverEnabled then
+                local answer = answerQuestion(text)
+                if answer then
+                    addCode(answer)
+                    return
+                end
+            end
+            -- Code hinzufügen (jedes Wort)
+            for word in text:gmatch("%S+") do
+                addCode(word)
+            end
+        end)
     end
-    Announcements.DescendantAdded:Connect(watchLabel)
 end
 
-if CodeTextBox then
-    CodeTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-        if CodeTextBox.Text == "" then AddedCount = 0 end
-    end)
+local function hookUiTextObject(obj)
+    if obj:IsA("TextLabel") then
+        handleIncomingText(obj)
+        obj:GetPropertyChangedSignal("Text"):Connect(function()
+            handleIncomingText(obj)
+        end)
+    end
 end
 
--- 10. RESET
+local function startPlayerGuiScanner()
+    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if not playerGui then return end
+    for _, desc in ipairs(playerGui:GetDescendants()) do
+        hookUiTextObject(desc)
+    end
+    playerGui.DescendantAdded:Connect(hookUiTextObject)
+end
+
+-- 11. RESET
 local function resetCodes()
     table.clear(collectedCodes)
     AddedCount = 0
@@ -340,7 +389,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN (mit MINIMIEREN - bleibt sichtbar unter VC Servers)
+-- 12. GUI BAUEN
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -419,7 +468,6 @@ local function buildGUI()
     titleLabel.ZIndex = 10
     titleLabel.Parent = titleBar
     
-    -- Minimize Button (wird in applyMinimized gesteuert)
     local toggleMinBtn = Instance.new("TextButton")
     toggleMinBtn.Name = "ToggleMinBtn"
     toggleMinBtn.Size = UDim2.new(0, 22, 0, 22)
@@ -437,7 +485,6 @@ local function buildGUI()
     minCorner.CornerRadius = UDim.new(0, 4)
     minCorner.Parent = toggleMinBtn
     
-    -- Main Switch (ON/OFF)
     local toggleButton = Instance.new("TextButton")
     toggleButton.Name = "SwitchBtn"
     toggleButton.Size = UDim2.new(0, 52, 0, 22)
@@ -794,23 +841,23 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- ===== MINIMIEREN (bleibt sichtbar unter VC Servers) =====
+    -- ===== MINIMIEREN =====
+    local originalSize = MainFrame.Size
+    local originalPos = MainFrame.Position
+    local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
+    
     local function applyMinimized(state)
         isMinimized = state
         if state then
-            -- Position speichern für Wiederherstellung
             config.panelX = MainFrame.Position.X.Offset
             config.panelY = MainFrame.Position.Y.Offset
             saveConfig()
             
-            -- Auf minimierte Größe schrumpfen + oben rechts platzieren
             ContentFrame.Visible = false
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 32)
-            -- Position: oben rechts, etwas Abstand vom Rand
-            MainFrame.Position = UDim2.new(1, -PANEL_W - 10, 0, 10)
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 28)
+            MainFrame.Position = minimizedPos
             toggleMinBtn.Text = "+"
         else
-            -- Wiederherstellen
             ContentFrame.Visible = true
             MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
             MainFrame.Position = (config.panelX and config.panelY)
@@ -824,7 +871,7 @@ local function buildGUI()
         applyMinimized(not isMinimized)
     end)
     
-    -- Drag (nur wenn nicht minimiert)
+    -- Drag
     local dragging = false
     local dragInput = nil
     local dragStart = nil
@@ -868,9 +915,9 @@ local function buildGUI()
     print("[KrimoHub] GUI sichtbar!")
 end
 
--- 12. START
+-- 13. START
 print("[KrimoHub] Starte...")
 pcall(setupPaths)
 pcall(buildGUI)
-pcall(startAnnouncementWatcher)
+pcall(startPlayerGuiScanner)
 print("[KrimoHub] Fertig!")
