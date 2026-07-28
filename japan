@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (FINAL - MINIMIEREN FIX)
+-- KRIMO HUB - momo.1711 (FINAL - MINIMIEREN UNTER VC SERVERS)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -166,6 +166,8 @@ local ScreenGui = nil
 local PANEL_W = 260
 local PANEL_H = 320
 local isMinimized = false
+local originalSize = nil
+local originalPos = nil
 
 local function refreshGUI()
     if not MainFrame then return end
@@ -338,7 +340,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN (mit MINIMIEREN - bleibt als Leiste sichtbar)
+-- 11. GUI BAUEN (mit MINIMIEREN - bleibt sichtbar unter VC Servers)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -417,6 +419,7 @@ local function buildGUI()
     titleLabel.ZIndex = 10
     titleLabel.Parent = titleBar
     
+    -- Minimize Button (wird in applyMinimized gesteuert)
     local toggleMinBtn = Instance.new("TextButton")
     toggleMinBtn.Name = "ToggleMinBtn"
     toggleMinBtn.Size = UDim2.new(0, 22, 0, 22)
@@ -434,6 +437,7 @@ local function buildGUI()
     minCorner.CornerRadius = UDim.new(0, 4)
     minCorner.Parent = toggleMinBtn
     
+    -- Main Switch (ON/OFF)
     local toggleButton = Instance.new("TextButton")
     toggleButton.Name = "SwitchBtn"
     toggleButton.Size = UDim2.new(0, 52, 0, 22)
@@ -790,24 +794,23 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- ===== MINIMIEREN: GUI schrumpft, bleibt aber sichtbar =====
-    local originalSize = MainFrame.Size
-    local originalPos = MainFrame.Position
-    local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)  -- rechts oben
-    
+    -- ===== MINIMIEREN (bleibt sichtbar unter VC Servers) =====
     local function applyMinimized(state)
         isMinimized = state
         if state then
-            -- Speichere Position für Wiederherstellung
+            -- Position speichern für Wiederherstellung
             config.panelX = MainFrame.Position.X.Offset
             config.panelY = MainFrame.Position.Y.Offset
             saveConfig()
             
+            -- Auf minimierte Größe schrumpfen + oben rechts platzieren
             ContentFrame.Visible = false
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 28)
-            MainFrame.Position = minimizedPos
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 32)
+            -- Position: oben rechts, etwas Abstand vom Rand
+            MainFrame.Position = UDim2.new(1, -PANEL_W - 10, 0, 10)
             toggleMinBtn.Text = "+"
         else
+            -- Wiederherstellen
             ContentFrame.Visible = true
             MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
             MainFrame.Position = (config.panelX and config.panelY)
