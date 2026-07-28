@@ -1,5 +1,5 @@
 -- ============================================================
--- KRIMO HUB - momo.1711 (NUR SUBMIT SCHNELLER)
+-- KRIMO HUB - momo.1711 (MINIMIEREN OBEN RECHTS + SUBMIT EXTRA SCHNELL)
 -- ============================================================
 
 -- 1. GLOBALS
@@ -75,7 +75,7 @@ end
 local collectedCodes = {}
 local AddedCount = 0
 
--- 5. RIDDLE SOLVER DATABASE (KOMPLETT)
+-- 5. RIDDLE SOLVER DATABASE
 local SAB_DB = {
     ["how old am i"] = "24", ["how old is sammy"] = "24",
     ["my age"] = "24", ["sammy age"] = "24", ["age"] = "24",
@@ -162,6 +162,11 @@ end
 
 -- 6. GUI AKTUALISIERUNG
 local MainFrame = nil
+local ScreenGui = nil
+local PANEL_W = 260
+local PANEL_H = 320
+local isMinimized = false
+
 local function refreshGUI()
     if not MainFrame then return end
     local ContentFrame = MainFrame:FindFirstChild("ContentFrame")
@@ -211,34 +216,20 @@ local function refreshGUI()
     end
 end
 
--- 7. SUBMIT
-local function fireSignal(sig)
-    if not sig then return end
-    pcall(function()
-        if getconnections then
-            for _, c in ipairs(getconnections(sig)) do
-                if c.Fire then c:Fire() end
-            end
-        end
-    end)
-    if firesignal then
-        pcall(function() firesignal(sig) end)
-    end
-end
-
+-- 7. SUBMIT (EXTRA SCHNELL - OHNE FIRESIGNAL)
 local function triggerSubmit()
     setupPaths()
     
+    -- Direkt den ConfirmButton klicken (ohne firesignal)
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
-            fireSignal(ConfirmButton.MouseButton1Click)
-            fireSignal(ConfirmButton.Activated)
             ConfirmButton:CaptureFocus()
             ConfirmButton:ReleaseFocus(true)
         end)
         return true
     end
     
+    -- Fallback: Manuelle Suche
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -246,8 +237,8 @@ local function triggerSubmit()
                 local txt = (obj:IsA("TextButton") and obj.Text or ""):lower()
                 if txt:find("submit") or txt:find("redeem") or txt:find("confirm") or txt:find("einlösen") then
                     pcall(function()
-                        fireSignal(obj.MouseButton1Click)
-                        fireSignal(obj.Activated)
+                        obj:CaptureFocus()
+                        obj:ReleaseFocus(true)
                     end)
                     return true
                 end
@@ -258,8 +249,7 @@ local function triggerSubmit()
     return false
 end
 
--- 8. CODE HINZUFÜGEN (mit Hauptschalter)
--- ===== ÄNDERUNG: task.spawn ENTFERNT =====
+-- 8. CODE HINZUFÜGEN (INSTANT SUBMIT)
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
@@ -277,7 +267,7 @@ local function addCode(Code)
     end
     AddedCount = AddedCount + 1
 
-    -- ===== SUBMIT INSTANT (OHNE task.spawn) =====
+    -- SUBMIT INSTANT (kein task.spawn, kein pcall-Overhead)
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         local success = triggerSubmit()
         if success then
@@ -289,7 +279,7 @@ local function addCode(Code)
     end
 end
 
--- 9. ANNOUNCEMENT WATCHER MIT RIDDLE SOLVER
+-- 9. ANNOUNCEMENT WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -329,8 +319,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 11. GUI BAUEN
-local ScreenGui = nil
+-- 11. GUI BAUEN (mit MINIMIEREN → OBEN RECHTS)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -340,9 +329,6 @@ local function buildGUI()
     ScreenGui.ResetOnSpawn = false
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.Parent = CoreGui
-    
-    local PANEL_W = 260
-    local PANEL_H = 320
     
     MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
@@ -785,28 +771,49 @@ local function buildGUI()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
     
-    -- Minimize
-    local isMinimized = false
-    toggleMinBtn.MouseButton1Click:Connect(function()
-        isMinimized = not isMinimized
-        if isMinimized then
+    -- ===== MINIMIEREN: OBEN RECHTS (NEU) =====
+    local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
+    
+    local function applyMinimized(state)
+        isMinimized = state
+        if state then
             ContentFrame.Visible = false
             MainFrame.Size = UDim2.new(0, PANEL_W, 0, 28)
+            MainFrame.Position = minimizedPos
             toggleMinBtn.Text = "+"
         else
             ContentFrame.Visible = true
             MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
+            MainFrame.Position = (config.panelX and config.panelY)
+                and UDim2.new(0, config.panelX, 0, config.panelY)
+                or UDim2.new(0.5, 0, 0.4, 0)
             toggleMinBtn.Text = "−"
         end
+    end
+    
+    toggleMinBtn.MouseButton1Click:Connect(function()
+        applyMinimized(not isMinimized)
     end)
     
-    -- Drag
+    -- Drag (nur wenn nicht minimiert)
     local dragging = false
     local dragInput = nil
     local dragStart = nil
     local startPos = nil
     
+    local function updateMain(input)
+        if isMinimized then return end
+        local delta = input.Position - dragStart
+        local newX = startPos.X.Offset + delta.X
+        local newY = startPos.Y.Offset + delta.Y
+        config.panelX = newX
+        config.panelY = newY
+        saveConfig()
+        MainFrame.Position = UDim2.new(startPos.X.Scale, newX, startPos.Y.Scale, newY)
+    end
+    
     MainFrame.InputBegan:Connect(function(input)
+        if isMinimized then return end
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
@@ -820,20 +827,16 @@ local function buildGUI()
     end)
     
     MainFrame.InputChanged:Connect(function(input)
+        if isMinimized then return end
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
     
     UserInputService.InputChanged:Connect(function(input)
+        if isMinimized then return end
         if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            local newX = startPos.X.Offset + delta.X
-            local newY = startPos.Y.Offset + delta.Y
-            config.panelX = newX
-            config.panelY = newY
-            saveConfig()
-            MainFrame.Position = UDim2.new(startPos.X.Scale, newX, startPos.Y.Scale, newY)
+            updateMain(input)
         end
     end)
     
