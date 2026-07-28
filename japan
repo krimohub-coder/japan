@@ -1,7 +1,3 @@
--- ============================================================
--- KRIMO HUB V2 - momo.1711 (ULTRA-SCHNELL + NEON DESIGN)
--- ============================================================
-
 _G.SE = true
 _G.AW = false
 _G.AS = false
@@ -11,6 +7,7 @@ _G.SA = 1
 
 local P = game:GetService("Players")
 local L = P.LocalPlayer
+local R = game:GetService("ReplicatedStorage")
 local U = game:GetService("UserInputService")
 local C = game:GetService("CoreGui")
 local H = game:GetService("HttpService")
@@ -79,7 +76,7 @@ local function refreshGUI()
             LB.Size = UDim2.new(1, -6, 0, 12)
             LB.BackgroundTransparency = 1
             LB.Text = string.format("%02d  %s", I, CD)
-            LB.TextColor3 = Color3.fromRGB(0, 255, 255)
+            LB.TextColor3 = Color3.fromRGB(255, 255, 255)
             LB.Font = Enum.Font.Gotham
             LB.TextSize = 9
             LB.TextXAlignment = Enum.TextXAlignment.Left
@@ -91,11 +88,26 @@ local function refreshGUI()
     if LY then SC.CanvasSize = UDim2.new(0, 0, 0, LY.AbsoluteContentSize.Y + 6) end
 end
 
--- ULTRA-SCHNELLER SUBMIT (KEINE SPAWN, KEIN PCALL OVERHEAD)
+local function fireSignal(sig)
+    if not sig then return end
+    pcall(function()
+        if getconnections then
+            for _, c in ipairs(getconnections(sig)) do
+                if c.Fire then c:Fire() end
+            end
+        end
+    end)
+    if firesignal then
+        pcall(function() firesignal(sig) end)
+    end
+end
+
 local function triggerSubmit()
     setupPaths()
     if CB and CB.Parent then
         pcall(function()
+            fireSignal(CB.MouseButton1Click)
+            fireSignal(CB.Activated)
             CB:CaptureFocus()
             CB:ReleaseFocus(true)
         end)
@@ -108,8 +120,8 @@ local function triggerSubmit()
                 local TX = (OB:IsA("TextButton") and OB.Text or ""):lower()
                 if TX:find("submit") or TX:find("redeem") or TX:find("confirm") or TX:find("einlösen") then
                     pcall(function()
-                        OB:CaptureFocus()
-                        OB:ReleaseFocus(true)
+                        fireSignal(OB.MouseButton1Click)
+                        fireSignal(OB.Activated)
                     end)
                     return true
                 end
@@ -119,7 +131,6 @@ local function triggerSubmit()
     return false
 end
 
--- CODE HINZUFÜGEN (INSTANT SUBMIT)
 local function addCode(CD)
     if not _G.SE or not _G.AW then return end
     CD = tostring(CD)
@@ -131,13 +142,15 @@ local function addCode(CD)
     if CT.Text == "" then CT.Text = CD else CT.Text = CT.Text .. CD end
     AddedCount = AddedCount + 1
     if _G.AS and #collectedCodes >= _G.SC then
-        local S = triggerSubmit()
-        if S then
-            table.clear(collectedCodes)
-            AddedCount = 0
-            refreshGUI()
-            if CT then CT.Text = "" end
-        end
+        task.spawn(function()
+            local S = triggerSubmit()
+            if S then
+                table.clear(collectedCodes)
+                AddedCount = 0
+                refreshGUI()
+                if CT then CT.Text = "" end
+            end
+        end)
     end
 end
 
@@ -253,16 +266,18 @@ local function handleIncomingText(TO)
     local T = TO.Text
     if T == "" then return end
     if verifySourceIsSammy(TO) then
-        if _G.RS then
-            local A = answerQuestion(T)
-            if A then
-                addCode(A)
-                return
+        task.spawn(function()
+            if _G.RS then
+                local A = answerQuestion(T)
+                if A then
+                    addCode(A)
+                    return
+                end
             end
-        end
-        for W in T:gmatch("%S+") do
-            addCode(W)
-        end
+            for W in T:gmatch("%S+") do
+                addCode(W)
+            end
+        end)
     end
 end
 
@@ -291,9 +306,6 @@ local function resetCodes()
     if CT then CT.Text = "" end
 end
 
--- ============================================================
--- NEON DESIGN (HELLBLAU / CYAN / DUNKEL)
--- ============================================================
 local function buildGUI()
     local O = C:FindFirstChild("KrimoHubGui")
     if O then O:Destroy() end
@@ -307,119 +319,101 @@ local function buildGUI()
     MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MainFrame.Position = (config.panelX and config.panelY)
-        and UDim2.new(0, config.panelX, 0, config.panelY)
-        or UDim2.new(0.5, 0, 0.4, 0)
+    MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0)
     MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(8, 10, 20)
-    MainFrame.BackgroundTransparency = 0.1
+    MainFrame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
+    MainFrame.BackgroundTransparency = 0.05
     MainFrame.BorderSizePixel = 0
     MainFrame.ClipsDescendants = true
     MainFrame.Active = true
     MainFrame.Parent = ScreenGui
 
-    -- Abgerundete Ecken
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 16)
+        CO.CornerRadius = UDim.new(0, 12)
         CO.Parent = MainFrame
     end
 
-    -- NEON GLOW (Cyan)
     do
-        local GL = Instance.new("Frame")
-        GL.Size = UDim2.new(1, 20, 1, 20)
-        GL.Position = UDim2.new(-0.5, 0, -0.5, 0)
-        GL.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
-        GL.BackgroundTransparency = 0.95
-        GL.BorderSizePixel = 0
-        GL.ZIndex = 0
-        GL.Parent = MainFrame
-        do
-            local CO = Instance.new("UICorner")
-            CO.CornerRadius = UDim.new(0, 24)
-            CO.Parent = GL
-        end
+        local GR = Instance.new("UIGradient")
+        GR.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 40, 70)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 18, 35))
+        })
+        GR.Rotation = 90
+        GR.Parent = MainFrame
     end
 
-    -- NEON BORDER (Cyan)
     do
         local ST = Instance.new("UIStroke")
-        ST.Color = Color3.fromRGB(0, 220, 255)
+        ST.Color = Color3.fromRGB(80, 180, 255)
         ST.Thickness = 2
-        ST.Transparency = 0.2
+        ST.Transparency = 0.3
         ST.Parent = MainFrame
         do
             local GR = Instance.new("UIGradient")
             GR.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0.0, Color3.fromRGB(0, 220, 255)),
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 0, 255)),
-                ColorSequenceKeypoint.new(1.0, Color3.fromRGB(0, 220, 255))
+                ColorSequenceKeypoint.new(0.0, Color3.fromRGB(150, 220, 255)),
+                ColorSequenceKeypoint.new(0.25, Color3.fromRGB(60, 150, 220)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 220, 255)),
+                ColorSequenceKeypoint.new(0.75, Color3.fromRGB(60, 150, 220)),
+                ColorSequenceKeypoint.new(1.0, Color3.fromRGB(150, 220, 255))
             })
             GR.Parent = ST
         end
     end
 
-    -- Title Bar
     local TB = Instance.new("Frame")
-    TB.Size = UDim2.new(1, 0, 0, 32)
-    TB.BackgroundColor3 = Color3.fromRGB(12, 16, 30)
-    TB.BackgroundTransparency = 0.3
+    TB.Size = UDim2.new(1, 0, 0, 28)
+    TB.BackgroundColor3 = Color3.fromRGB(20, 40, 70)
+    TB.BackgroundTransparency = 0.5
     TB.BorderSizePixel = 0
     TB.ZIndex = 10
     TB.Parent = MainFrame
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 16)
+        CO.CornerRadius = UDim.new(0, 12)
         CO.Parent = TB
-    end
-
-    do
-        local ST = Instance.new("UIStroke")
-        ST.Color = Color3.fromRGB(0, 200, 255)
-        ST.Thickness = 1
-        ST.Transparency = 0.3
-        ST.Parent = TB
     end
 
     local TL = Instance.new("TextLabel")
     TL.Name = "TitleLabel"
     TL.Size = UDim2.new(0.6, 0, 1, 0)
-    TL.Position = UDim2.new(0, 12, 0, 0)
+    TL.Position = UDim2.new(0, 10, 0, 0)
     TL.BackgroundTransparency = 1
     TL.Text = "krimo hub"
-    TL.TextColor3 = Color3.fromRGB(0, 220, 255)
+    TL.TextColor3 = Color3.fromRGB(150, 220, 255)
     TL.Font = Enum.Font.GothamBold
-    TL.TextSize = 15
+    TL.TextSize = 14
     TL.TextXAlignment = Enum.TextXAlignment.Left
     TL.ZIndex = 10
     TL.Parent = TB
 
     local MN = Instance.new("TextButton")
     MN.Name = "ToggleMinBtn"
-    MN.Size = UDim2.new(0, 24, 0, 24)
-    MN.Position = UDim2.new(1, -32, 0.5, -12)
-    MN.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
+    MN.Size = UDim2.new(0, 22, 0, 22)
+    MN.Position = UDim2.new(1, -30, 0.5, -11)
+    MN.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     MN.Text = "−"
-    MN.TextColor3 = Color3.fromRGB(0, 220, 255)
+    MN.TextColor3 = Color3.fromRGB(200, 230, 255)
     MN.Font = Enum.Font.GothamBold
-    MN.TextSize = 20
+    MN.TextSize = 18
     MN.AutoButtonColor = true
     MN.ZIndex = 10
     MN.Parent = TB
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = MN
     end
 
     local SWT = Instance.new("TextButton")
     SWT.Name = "SwitchBtn"
-    SWT.Size = UDim2.new(0, 52, 0, 24)
-    SWT.Position = UDim2.new(1, -88, 0.5, -12)
-    SWT.BackgroundColor3 = _G.SE and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+    SWT.Size = UDim2.new(0, 52, 0, 22)
+    SWT.Position = UDim2.new(1, -84, 0.5, -11)
+    SWT.BackgroundColor3 = _G.SE and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     SWT.Text = _G.SE and "ON" or "OFF"
     SWT.TextColor3 = Color3.fromRGB(255, 255, 255)
     SWT.Font = Enum.Font.GothamBold
@@ -430,32 +424,30 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = SWT
     end
 
     SWT.MouseButton1Click:Connect(function()
         _G.SE = not _G.SE
-        SWT.BackgroundColor3 = _G.SE and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+        SWT.BackgroundColor3 = _G.SE and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         SWT.Text = _G.SE and "ON" or "OFF"
     end)
 
-    -- Content
     local CF = Instance.new("Frame")
     CF.Name = "ContentFrame"
-    CF.Size = UDim2.new(1, 0, 1, -32)
-    CF.Position = UDim2.new(0, 0, 0, 32)
+    CF.Size = UDim2.new(1, 0, 1, -28)
+    CF.Position = UDim2.new(0, 0, 0, 28)
     CF.BackgroundTransparency = 1
     CF.ZIndex = 5
     CF.Parent = MainFrame
 
-    -- Auto Type
     local AL = Instance.new("TextLabel")
     AL.Size = UDim2.new(0, 80, 0, 22)
     AL.Position = UDim2.new(0, 12, 0, 8)
     AL.BackgroundTransparency = 1
     AL.Text = "Auto Type"
-    AL.TextColor3 = Color3.fromRGB(150, 200, 255)
+    AL.TextColor3 = Color3.fromRGB(180, 210, 255)
     AL.Font = Enum.Font.GothamSemibold
     AL.TextSize = 12
     AL.TextXAlignment = Enum.TextXAlignment.Left
@@ -465,7 +457,7 @@ local function buildGUI()
     local AT = Instance.new("TextButton")
     AT.Size = UDim2.new(0, 52, 0, 22)
     AT.Position = UDim2.new(1, -56, 0, 8)
-    AT.BackgroundColor3 = _G.AW and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+    AT.BackgroundColor3 = _G.AW and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     AT.Text = _G.AW and "ON" or "OFF"
     AT.TextColor3 = Color3.fromRGB(255, 255, 255)
     AT.Font = Enum.Font.GothamBold
@@ -476,13 +468,13 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = AT
     end
 
     AT.MouseButton1Click:Connect(function()
         _G.AW = not _G.AW
-        AT.BackgroundColor3 = _G.AW and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+        AT.BackgroundColor3 = _G.AW and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         AT.Text = _G.AW and "ON" or "OFF"
         if not _G.AW then
             table.clear(collectedCodes)
@@ -491,13 +483,12 @@ local function buildGUI()
         end
     end)
 
-    -- Auto Submit
     local SL = Instance.new("TextLabel")
     SL.Size = UDim2.new(0, 80, 0, 22)
     SL.Position = UDim2.new(0, 12, 0, 36)
     SL.BackgroundTransparency = 1
     SL.Text = "Auto Submit"
-    SL.TextColor3 = Color3.fromRGB(150, 200, 255)
+    SL.TextColor3 = Color3.fromRGB(180, 210, 255)
     SL.Font = Enum.Font.GothamSemibold
     SL.TextSize = 12
     SL.TextXAlignment = Enum.TextXAlignment.Left
@@ -507,7 +498,7 @@ local function buildGUI()
     local STB = Instance.new("TextButton")
     STB.Size = UDim2.new(0, 40, 0, 22)
     STB.Position = UDim2.new(1, -122, 0, 36)
-    STB.BackgroundColor3 = _G.AS and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+    STB.BackgroundColor3 = _G.AS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     STB.Text = _G.AS and "ON" or "OFF"
     STB.TextColor3 = Color3.fromRGB(255, 255, 255)
     STB.Font = Enum.Font.GothamBold
@@ -518,23 +509,22 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = STB
     end
 
     STB.MouseButton1Click:Connect(function()
         _G.AS = not _G.AS
-        STB.BackgroundColor3 = _G.AS and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+        STB.BackgroundColor3 = _G.AS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         STB.Text = _G.AS and "ON" or "OFF"
     end)
 
-    -- Count
     local MB = Instance.new("TextButton")
     MB.Size = UDim2.new(0, 24, 0, 22)
     MB.Position = UDim2.new(1, -78, 0, 36)
-    MB.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
+    MB.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     MB.Text = "−"
-    MB.TextColor3 = Color3.fromRGB(0, 220, 255)
+    MB.TextColor3 = Color3.fromRGB(200, 230, 255)
     MB.Font = Enum.Font.GothamBold
     MB.TextSize = 18
     MB.AutoButtonColor = true
@@ -543,17 +533,17 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = MB
     end
 
     local CD = Instance.new("TextLabel")
     CD.Size = UDim2.new(0, 28, 0, 22)
     CD.Position = UDim2.new(1, -52, 0, 36)
-    CD.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
+    CD.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     CD.BackgroundTransparency = 0.3
     CD.Text = tostring(_G.SC)
-    CD.TextColor3 = Color3.fromRGB(0, 220, 255)
+    CD.TextColor3 = Color3.fromRGB(200, 230, 255)
     CD.Font = Enum.Font.GothamBold
     CD.TextSize = 13
     CD.TextXAlignment = Enum.TextXAlignment.Center
@@ -562,16 +552,16 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = CD
     end
 
     local PB = Instance.new("TextButton")
     PB.Size = UDim2.new(0, 24, 0, 22)
     PB.Position = UDim2.new(1, -24, 0, 36)
-    PB.BackgroundColor3 = Color3.fromRGB(20, 30, 50)
+    PB.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
     PB.Text = "+"
-    PB.TextColor3 = Color3.fromRGB(0, 220, 255)
+    PB.TextColor3 = Color3.fromRGB(200, 230, 255)
     PB.Font = Enum.Font.GothamBold
     PB.TextSize = 18
     PB.AutoButtonColor = true
@@ -580,7 +570,7 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = PB
     end
 
@@ -596,13 +586,12 @@ local function buildGUI()
         end
     end)
 
-    -- Riddle Solver
     local RL = Instance.new("TextLabel")
     RL.Size = UDim2.new(0, 100, 0, 22)
     RL.Position = UDim2.new(0, 12, 0, 64)
     RL.BackgroundTransparency = 1
     RL.Text = "Riddle Solver"
-    RL.TextColor3 = Color3.fromRGB(150, 200, 255)
+    RL.TextColor3 = Color3.fromRGB(180, 210, 255)
     RL.Font = Enum.Font.GothamSemibold
     RL.TextSize = 12
     RL.TextXAlignment = Enum.TextXAlignment.Left
@@ -613,7 +602,7 @@ local function buildGUI()
     RT.Name = "RiddleSolverToggle"
     RT.Size = UDim2.new(0, 52, 0, 22)
     RT.Position = UDim2.new(1, -56, 0, 64)
-    RT.BackgroundColor3 = _G.RS and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+    RT.BackgroundColor3 = _G.RS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
     RT.Text = _G.RS and "ON" or "OFF"
     RT.TextColor3 = Color3.fromRGB(255, 255, 255)
     RT.Font = Enum.Font.GothamBold
@@ -624,24 +613,23 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = RT
     end
 
     RT.MouseButton1Click:Connect(function()
         _G.RS = not _G.RS
-        RT.BackgroundColor3 = _G.RS and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 60)
+        RT.BackgroundColor3 = _G.RS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         RT.Text = _G.RS and "ON" or "OFF"
     end)
 
-    -- Collected + Reset
     local CL = Instance.new("TextLabel")
     CL.Name = "CollectedLabel"
     CL.Size = UDim2.new(0.6, 0, 0, 20)
     CL.Position = UDim2.new(0, 12, 0, 92)
     CL.BackgroundTransparency = 1
     CL.Text = "Collected: 0"
-    CL.TextColor3 = Color3.fromRGB(150, 200, 255)
+    CL.TextColor3 = Color3.fromRGB(160, 200, 230)
     CL.Font = Enum.Font.Gotham
     CL.TextSize = 11
     CL.TextXAlignment = Enum.TextXAlignment.Left
@@ -652,7 +640,7 @@ local function buildGUI()
     RB.Name = "ResetBtn"
     RB.Size = UDim2.new(0, 40, 0, 20)
     RB.Position = UDim2.new(1, -52, 0, 92)
-    RB.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    RB.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
     RB.Text = "↻ Reset"
     RB.TextColor3 = Color3.fromRGB(255, 255, 255)
     RB.Font = Enum.Font.GothamBold
@@ -663,19 +651,20 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 6)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = RB
     end
 
-    RB.MouseButton1Click:Connect(function() resetCodes() end)
+    RB.MouseButton1Click:Connect(function()
+        resetCodes()
+    end)
 
-    -- Code-Liste
     local LF = Instance.new("Frame")
     LF.Name = "CodeListFrame"
     LF.Size = UDim2.new(1, -24, 0, 90)
     LF.Position = UDim2.new(0, 12, 0, 116)
-    LF.BackgroundColor3 = Color3.fromRGB(12, 16, 30)
-    LF.BackgroundTransparency = 0.4
+    LF.BackgroundColor3 = Color3.fromRGB(12, 22, 42)
+    LF.BackgroundTransparency = 0.2
     LF.BorderSizePixel = 0
     LF.ClipsDescendants = true
     LF.ZIndex = 10
@@ -683,13 +672,13 @@ local function buildGUI()
 
     do
         local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 8)
+        CO.CornerRadius = UDim.new(0, 4)
         CO.Parent = LF
     end
 
     do
         local ST = Instance.new("UIStroke")
-        ST.Color = Color3.fromRGB(0, 200, 255)
+        ST.Color = Color3.fromRGB(80, 180, 255)
         ST.Thickness = 1
         ST.Transparency = 0.3
         ST.Parent = LF
@@ -702,7 +691,7 @@ local function buildGUI()
     SC.BackgroundTransparency = 1
     SC.BorderSizePixel = 0
     SC.ScrollBarThickness = 3
-    SC.ScrollBarImageColor3 = Color3.fromRGB(0, 200, 255)
+    SC.ScrollBarImageColor3 = Color3.fromRGB(80, 180, 255)
     SC.ScrollBarImageTransparency = 0.4
     SC.CanvasSize = UDim2.new(0, 0, 0, 0)
     SC.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -731,24 +720,22 @@ local function buildGUI()
     PH.Parent = SC
     PH.Visible = (#collectedCodes == 0)
 
-    -- Separator (Neon)
     local SP = Instance.new("Frame")
     SP.Size = UDim2.new(1, -24, 0, 1)
     SP.Position = UDim2.new(0, 12, 0, 210)
-    SP.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
-    SP.BackgroundTransparency = 0.4
+    SP.BackgroundColor3 = Color3.fromRGB(80, 180, 255)
+    SP.BackgroundTransparency = 0.6
     SP.BorderSizePixel = 0
     SP.ZIndex = 10
     SP.Parent = CF
 
-    -- Credits
     local CR = Instance.new("TextLabel")
     CR.Name = "CreditLabel"
     CR.Size = UDim2.new(1, -24, 0, 16)
     CR.Position = UDim2.new(0, 12, 0, 216)
     CR.BackgroundTransparency = 1
     CR.Text = "Credits to momo.1711"
-    CR.TextColor3 = Color3.fromRGB(100, 150, 200)
+    CR.TextColor3 = Color3.fromRGB(110, 150, 200)
     CR.Font = Enum.Font.Gotham
     CR.TextSize = 9
     CR.TextXAlignment = Enum.TextXAlignment.Center
@@ -756,14 +743,13 @@ local function buildGUI()
     CR.ZIndex = 10
     CR.Parent = CF
 
-    -- Discord footer (Neon)
     local FT = Instance.new("TextLabel")
     FT.Size = UDim2.new(1, -24, 0, 22)
     FT.Position = UDim2.new(0, 12, 0, 234)
     FT.BackgroundTransparency = 1
     FT.RichText = true
-    FT.Text = '<font color="#66ccff">discord.gg/</font><font color="#00ffcc"><b>7Ea7qEsPzP</b></font>'
-    FT.TextColor3 = Color3.fromRGB(100, 200, 255)
+    FT.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
+    FT.TextColor3 = Color3.fromRGB(180, 200, 255)
     FT.TextSize = 12
     FT.Font = Enum.Font.GothamBold
     FT.TextXAlignment = Enum.TextXAlignment.Center
@@ -786,19 +772,18 @@ local function buildGUI()
     end)
 
     FB.MouseEnter:Connect(function()
-        FT.Text = '<font color="#66ccff">Click to copy: </font><font color="#00ffcc"><b>discord.gg/7Ea7qEsPzP</b></font>'
+        FT.Text = '<font color="#88aaff">Click to copy: </font><font color="#66ccff"><b>discord.gg/7Ea7qEsPzP</b></font>'
     end)
 
     FB.MouseLeave:Connect(function()
-        FT.Text = '<font color="#66ccff">discord.gg/</font><font color="#00ffcc"><b>7Ea7qEsPzP</b></font>'
+        FT.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
 
-    -- Minimieren
     local function applyMinimized(S)
         isMinimized = S
         if S then
             CF.Visible = false
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 32)
+            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 28)
             MN.Text = "+"
         else
             CF.Visible = true
@@ -811,7 +796,6 @@ local function buildGUI()
         applyMinimized(not isMinimized)
     end)
 
-    -- Drag
     local dragging = false
     local dragInput = nil
     local dragStart = nil
@@ -857,7 +841,7 @@ local function buildGUI()
     end)
 
     refreshGUI()
-    print("[KrimoHub V2] GUI sichtbar!")
+    print("[KrimoHub] GUI sichtbar!")
 end
 
 local function init()
