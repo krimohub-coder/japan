@@ -1,851 +1,6014 @@
-_G.SE = true
-_G.AW = false
-_G.AS = false
-_G.RS = false
-_G.SC = 3
-_G.SA = 1
+--[[
+  APEX SNIPER - reconstructed source
+  Recovered from AvDBNh.lua.txt (wYnFuscate-protected, 525KB, script_key rcqf2slaek2edwmifky7hlm2)
+  by decrypting the VM container (basE91 -> XOR stream cipher -> LZSS), the
+  per-instruction cipher, and lifting 151 prototypes back to Lua.
 
-local P = game:GetService("Players")
-local L = P.LocalPlayer
-local U = game:GetService("UserInputService")
-local C = game:GetService("CoreGui")
-local H = game:GetService("HttpService")
+  THIS IS A RECONSTRUCTION, NOT THE ORIGINAL FILE. Do not run it.
+  Register names (v0, t1, p1, up0) are synthesized; the original identifiers are
+  not recoverable from bytecode. Structure, constants and call targets are real.
+]]
 
-local config = { panelX = nil, panelY = nil }
-local hasFS = (writefile and readfile and isfile) and true or false
-
-local function saveConfig()
-    if not hasFS then return end
-    pcall(function() writefile("KrimoHub_config.json", H:JSONEncode(config)) end)
-end
-
-local AN, CT, CB = nil, nil, nil
-
-local function setupPaths()
-    pcall(function()
-        local PG = L:FindFirstChild("PlayerGui")
-        if not PG then return end
-        local TN = PG:FindFirstChild("TopNotification")
-        if TN then AN = TN:FindFirstChild("TopNotification") end
-        local CO = PG:FindFirstChild("Codes")
-        if CO then
-            local CI = CO:FindFirstChild("Codes")
-            if CI then
-                local CR = CI:FindFirstChild("CodeRedeem")
-                if CR then
-                    CT = CR:FindFirstChild("TextBox")
-                    if CT then CT.TextColor3 = Color3.fromRGB(255, 255, 255) end
+return function(...) --[[ proto 0 | 1855 instr | 0 up ]]
+    local v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v11, v12, v13, v14, v17, v21, v28, v34, v39, v53, v55, v56, v60, v61, v62, v63, v64, v65, v66, v67, v68, v69, v70, v71, v72, v73, v74, v75, v76, v77, v78, v79, v80, v81, v82, v83, v84, v85, v86, v87, v88, v89, v90, v91, v92, v93, v94, v95, v96, v97, v98, v99, v100, v101, v102, v103, v104, v105, v106, v107, v108, v109, v110, v111  -- NOTE: dataflow for these registers was not
+    -- recovered across branches; they read as nil here.
+    if getgenv then
+        local t1 = getgenv()
+    end
+    if getgenv then
+    end
+    if getgenv then
+    end
+    if getgenv then
+        pcall(getgenv, string.byte)
+        pcall(getgenv, string.char)
+        pcall(getgenv, setmetatable)
+        pcall(getgenv, pcall)
+        pcall(getgenv, rawget)
+        pcall(getgenv, rawset)
+        pcall(getgenv, pairs)
+        pcall(getgenv, type)
+        pcall(getgenv, getfenv)
+        pcall(getgenv, setfenv)
+    end
+    local t2 = function() --[[ proto 1 | 51 instr | 0 up ]]
+    local t1 = {}
+    if not 255 then
+        for i3 = 0, 255, 1 do
+            local t2 = string.char(i3)
+            t1[i3] = t2
+        end
+    end
+    local t3 = {}
+    local t4 = {}
+    t4[1] = 1
+    t4[2] = "\3\\xea\\xa7R\\xf0\\xb3\\xa8\\xd2\\xc1\\xd0a\\xf0Q\\xe4ys\\x91\\xbc\\xaa\\xa1%]\\x84\196\6\\x98\\xf7(\\xcd\15\\x81w{\\xcc7=|\"\\xff[x\\xd02o\\xc2\t\28z\\x8d%\"\\xf2\\x85\\x9a9\\x84\6\\x84\\xaaP\\xb3\\xc1\\xec/?%\\xcfo\\xe7\\xdb-y\\xaa\\xb6\\xe3\1707\\xe4o\\x86j_\\xf4z\\xa9\\xbf\\x97\588d\\xa4\\xe4\\xe8-\\x92Z\\xa2O\\xbb@)r\7\\xa4p"
+    t4[3] = 562059575
+    t4[4] = 1
+    t3[1] = t4
+    local t5 = {}
+    t5[1] = 2
+    t5[2] = "P\\xa5$\315\\xb3v\\x9b\\xd8\\xfb\\x98A9\30)\\x95"
+    t5[3] = 2141105722
+    t5[4] = 1
+    t3[2] = t5
+    local t6 = {}
+    local t7 = {}
+    local t8 = {}
+    local t9 = {}  -- keys: __index
+    t9.__index = function(p1, p2) --[[ proto 3 | 131 instr | 9 up ]]
+    if up0[p2] == nil then
+        if up1[p2] ~= nil then
+            if ((((((((((up2 + (up1[p2][1] * 257)) + (#up1[p2][2] * 131)) + (up1[p2][3] % 65536)) + 21417) % 4294967296) * 1664525) + 1013904223) + (up1[p2][1] * 40503)) + (#up1[p2][2] * 11117)) % 4294967296) == 0 then
+            end
+            if not (#up1[p2][2]) then
+                for i5 = 1, #up1[p2][2], 1 do
+                    local t1 = up3((v11 % 256), (((((v11 - (v11 % 256)) / 256) % 256) + i5) % 256))
+                    up3((((v11 - (v11 % 65536)) / 65536) % 256), ((((((v11 - (v11 % 16777216)) / 16777216) % 256) + up1[p2][1]) + #up1[p2][2]) % 256))
+                    local t2 = up3()
+                    local t3 = up5(up1[p2][2], i5)
+                    local t4 = up3(t3, t2)
                 end
-                CB = CI:FindFirstChild("Confirm")
+            end
+            if not up1[p2][4] then
+                if 0 < up6 then
+                    if up7[up6] then
+                        up0[up7[up8]] = nil
+                    end
+                    up0[p2] = ""
+                    up7[up8] = p2
+                    up8 = ((up8 % up6) + 1)
+                end
+                return ""
+            else
+                return ""
+            end
+        else
+            return nil
+        end
+    else
+        return up0[p2]
+    end
+end
+    local t10 = setmetatable(t8, t9)
+    return t10
+end()
+    local t3 = game:GetService("nil")
+    if not t3 == nil then
+    end
+    if not script_key then
+        local t4 = getgenv()
+    end
+    if not script_key then
+    end
+    if not script_key then
+        local t5 = getfenv()
+    end
+    local t6 = {}
+    if not 200 then
+        for i3 = 1, 200, 1 do
+            local t7 = {}
+            t7[1] = i3
+            t6[i3] = t7
+        end
+    end
+    if script_key then
+        local t8 = <builtin 40>(script_key)
+        if R[A] ~= R[D] then
+            local t9 = {}
+            local t10 = game:GetService("ContentProvider")
+            local t11 = game:GetService("GuiService")
+            local t12 = game:GetService("HttpService")
+            local t13 = game:GetService("Lighting")
+            local t14 = game:GetService("PhysicsService")
+            local t15 = game:GetService("Players")
+            local t16 = game:GetService("ReplicatedFirst")
+            local t17 = game:GetService("ReplicatedStorage")
+            local t18 = game:GetService("RunService")
+            local t19 = game:GetService("SoundService")
+            local t20 = game:GetService("StarterGui")
+            local t21 = game:GetService("CoreGui")
+            local t22 = game:GetService("LocalizationService")
+            local t23 = game:GetService("ContextActionService")
+            local t24 = game:GetService("InsertService")
+            local t25 = game:GetService("LogService")
+            local t26 = game:GetService("MeshContentProvider")
+            local t27 = game:GetService("RbxAnalyticsService")
+            local t28 = game:GetService("Stats")
+            local t29 = identifyexecutor()
+            if R[A] ~= R[D] then
+                local t30 = identifyexecutor()
+                if R[A] ~= R[D] then
+                    local t31 = identifyexecutor()
+                    if R[A] ~= R[D] then
+                        local t32 = identifyexecutor()
+                        if R[A] ~= R[D] then
+                            local t33 = identifyexecutor()
+                            if R[A] ~= R[D] then
+                                local t34 = identifyexecutor()
+                                if R[A] ~= R[D] then
+                                    local t35 = identifyexecutor()
+                                    if R[A] ~= R[D] then
+                                        if SynSignal then
+                                        end
+                                        if SynSignal then
+                                        end
+                                        if SynSignal then
+                                        end
+                                    else
+                                    end
+                                else
+                                end
+                            else
+                            end
+                        else
+                        end
+                    else
+                    end
+                else
+                end
+            else
+            end
+            if not getrawmetatable then
+            end
+            if syn then
+            end
+            if not syn then
+                if http then
+                end
+            end
+            if not syn then
+                if not request then
+                end
+            end
+            if not syn then
+                if not http_request then
+                end
+            end
+            if task then
+            end
+            if not task then
+            end
+            local t36 = os.time()
+            local t37 = getgenv()
+            t37.polsec = true
+            task(function() --[[ proto 16 | 12 instr | 4 up ]]
+    up0 = true
+    while true do
+        up2 = (up2 + 1)
+        up3:Wait(v2)
+    end
+    return
+end)
+            while v53 do
+                t18.Heartbeat:Wait()
+            end
+            local t38 = newproxy(true)
+            local t39 = {}
+            local t40 = type(t39[1])
+            if t40 == "table" then
+            else
+            end
+            if 0 == 6 then
+            else
+            end
+            if t39[1] then
+                if 0 == 8 then
+                else
+                end
+            end
+            if t39[1] then
+                if 0 == 4 then
+                else
+                end
+            end
+            if t39[1] then
+                local t41 = {}  -- keys: Url, Method, Headers
+                local t42 = {}
+                local t43 = {}  -- keys: __tostring, __eq, __index
+                t43.__tostring = function() --[[ proto 21 | 18 instr | 2 up ]]
+    up0 = 103
+    if not 1 then
+        for i3 = 103, 1, -(1) do
+            local t1 = {}
+            t1[1] = true
+            up1[i3] = t1
+        end
+    end
+    task["delay"](function() --[[ proto 22 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    return "big brother is watching you"
+end
+                t43.__eq = function() --[[ proto 23 | 18 instr | 2 up ]]
+    up0 = 103
+    if not 1 then
+        for i3 = 103, 1, -(1) do
+            local t1 = {}
+            t1[1] = true
+            up1[i3] = t1
+        end
+    end
+    task["delay"](function() --[[ proto 24 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    return false
+end
+                t43.__index = function() --[[ proto 25 | 18 instr | 2 up ]]
+    up0 = 103
+    if not 1 then
+        for i3 = 103, 1, -(1) do
+            local t1 = {}
+            t1[1] = true
+            up1[i3] = t1
+        end
+    end
+    task["delay"](function() --[[ proto 26 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    return function() --[[ proto 27 | 2 instr | 0 up ]]
+    return "big brother is watching you"
+end
+end
+                t41.Url = setmetatable(t42, t43)
+                t41["Method"] = "GET"
+                local t44 = {}
+                t44["P1"] = "h"
+                t44["P2"] = "3"
+                local t45 = {}
+                local t46 = {}  -- keys: __tostring
+                t46.__tostring = function() --[[ proto 28 | 18 instr | 2 up ]]
+    up0 = 103
+    if not 1 then
+        for i3 = 103, 1, -(1) do
+            local t1 = {}
+            t1[1] = true
+            up1[i3] = t1
+        end
+    end
+    task["delay"](function() --[[ proto 29 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    return "big brother is watching you"
+end
+                local t47 = setmetatable(t45, t46)
+                t44[t47] = "4"
+                t41.Headers = t44
+                local t48 = pcall()
+            end
+            if isfunctionhooked then
+                local t49 = isfunctionhooked(request)
+                if t49 then
+                    task.delay(function() --[[ proto 30 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                    if not 1 then
+                        for i7 = 103, 1, -(1) do
+                            local t50 = {}
+                            t50[1] = true
+                            t6[i7] = t50
+                        end
+                    end
+                end
+                local t51 = isfunctionhooked(http.request)
+                if not t51 then
+                else
+                    task.delay(function() --[[ proto 31 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                    if not 1 then
+                        for i7 = 103, 1, -(1) do
+                            local t52 = {}
+                            t52[1] = true
+                            t6[i7] = t52
+                        end
+                    end
+                end
+            end
+            if 0 == 1 then
+            else
+            end
+            if isfunctionhooked then
+                if 0 == 2 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                if 0 == 3 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                if 0 == 4 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                if 0 == 5 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                if 0 == 6 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                if 0 == 7 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                if 0 == 8 then
+                else
+                end
+            end
+            if isfunctionhooked then
+                v60 = "GET"
+                local t53 = {}
+                t53["P1"] = "h"
+                t53["P2"] = "3"
+                local t54 = {}
+                local t55 = {}  -- keys: __tostring
+                t55.__tostring = function() --[[ proto 32 | 18 instr | 2 up ]]
+    up0 = 103
+    if not 1 then
+        for i3 = 103, 1, -(1) do
+            local t1 = {}
+            t1[1] = true
+            up1[i3] = t1
+        end
+    end
+    task["delay"](function() --[[ proto 33 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    return "big brother is watching you"
+end
+                local t56 = setmetatable(t54, t55)
+                t53[t56] = "4"
+                { ["Url"] = "https://google.com", ["Method"] = "GET" }.Headers = t53
+                local t57 = pcall()
+            end
+            if not 100 then
+                for i5 = 1, 100, 1 do
+                    local t58 = math.random(1, 999999)
+                    local t59 = math.random(1, 999999)
+                    if (t58 + 0) == (0 + t59) then
+                    end
+                    function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end(t58)
+                    local t60 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
             end
         end
-    end)
-end
-
-local collectedCodes = {}
-local AddedCount = 0
-local MainFrame = nil
-local ScreenGui = nil
-local PANEL_W = 260
-local PANEL_H = 320
-local isMinimized = false
-
-local function refreshGUI()
-    if not MainFrame then return end
-    local CF = MainFrame:FindFirstChild("ContentFrame")
-    if not CF then return end
-    local CL = CF:FindFirstChild("CollectedLabel")
-    if CL then CL.Text = "Collected: " .. #collectedCodes end
-    local LF = CF:FindFirstChild("CodeListFrame")
-    if not LF then return end
-    local SC = LF:FindFirstChild("Scrolling")
-    if not SC then return end
-    for _, CH in ipairs(SC:GetChildren()) do
-        if CH:IsA("TextLabel") and CH.Name ~= "Placeholder" then CH:Destroy() end
     end
-    local PH = SC:FindFirstChild("Placeholder")
-    if PH then PH.Visible = (#collectedCodes == 0) end
-    local MS = 10
-    local SI = math.max(1, #collectedCodes - MS + 1)
-    for I = SI, #collectedCodes do
-        local CD = collectedCodes[I]
-        if CD and CD ~= "" then
-            local LB = Instance.new("TextLabel")
-            LB.Name = "CodeEntry"
-            LB.Size = UDim2.new(1, -6, 0, 12)
-            LB.BackgroundTransparency = 1
-            LB.Text = string.format("%02d  %s", I, CD)
-            LB.TextColor3 = Color3.fromRGB(255, 255, 255)
-            LB.Font = Enum.Font.Gotham
-            LB.TextSize = 9
-            LB.TextXAlignment = Enum.TextXAlignment.Left
-            LB.TextYAlignment = Enum.TextYAlignment.Top
-            LB.Parent = SC
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(1, 999999)
+                    local t61 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
         end
     end
-    local LY = SC:FindFirstChildOfClass("UIListLayout")
-    if LY then SC.CanvasSize = UDim2.new(0, 0, 0, LY.AbsoluteContentSize.Y + 6) end
-end
-
--- ULTRA-SCHNELLER SUBMIT
-local function triggerSubmit()
-    setupPaths()
-    if CB and CB.Parent then
-        pcall(function()
-            CB:CaptureFocus()
-            CB:ReleaseFocus(true)
-        end)
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+                end
+            end
+            if 0 >= 1 then
+            else
+            end
+            if not 1 then
+                if 999999 >= 0 then
+                else
+                end
+            end
+            if not 1 then
+            else
+                if not 1 then
+                    for i6 = 120, 1, -(1) do
+                        local t62 = {}
+                        t62[1] = true
+                        t6[i6] = t62
+                    end
+                end
+                task.delay(function() --[[ proto 34 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+            end
+            local t63 = os.time()
+            if t63 >= t36 then
+            else
+                task.delay(function() --[[ proto 35 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 112, 1, -(1) do
+                        local t64 = {}
+                        t64[1] = true
+                        t6[i6] = t64
+                    end
+                end
+            end
+            if t63 >= 1768687450 then
+            else
+            end
+            if not 1 then
+                if t36 >= 1768687450 then
+                else
+                end
+            end
+            if not 1 then
+            else
+            end
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end(((t63 + t36) % 2147483647))
+            local t65 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(812, 767711)
+            local t66 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+            if t65 >= 812 then
+            else
+            end
+            if not 1 then
+                if 767711 >= t65 then
+                else
+                end
+            end
+            if not 1 then
+            else
+                if not 1 then
+                    for i6 = 121, 1, -(1) do
+                        local t67 = {}
+                        t67[1] = true
+                        t6[i6] = t67
+                    end
+                end
+            end
+            local t68 = os.clock()
+            local t69 = wait()
+            task(812, t66, 54, 4324232, (0 + t65), v61, v62, v63, v64, v65, v66, v67, v68, v69, v70, v71, v72, v73, v74, v75, v76, v77, v78, v79, v80, v81, v82, v83, v84, v85, v86, v87, v88, v89, v90, v91, v92, v93, v94, v95, v96, v97, v98, v99, v100, v101, v102, v103, v104, v105, v106, v107, v108, v109)
+            local t70 = os.clock()
+            if t69 ~= v55 then
+            else
+                task.delay(function() --[[ proto 36 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 114, 1, -(1) do
+                        local t71 = {}
+                        t71[1] = true
+                        t6[i6] = t71
+                    end
+                end
+            end
+            local t72 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
         return true
     end
-    local PG = L:FindFirstChild("PlayerGui")
-    if PG then
-        for _, OB in ipairs(PG:GetDescendants()) do
-            if OB:IsA("TextButton") or OB:IsA("ImageButton") then
-                local TX = (OB:IsA("TextButton") and OB.Text or ""):lower()
-                if TX:find("submit") or TX:find("redeem") or TX:find("confirm") or TX:find("einlösen") then
-                    pcall(function()
-                        OB:CaptureFocus()
-                        OB:ReleaseFocus(true)
-                    end)
-                    return true
+end(t68, t70)
+            if not t72 then
+            else
+                task.delay(function() --[[ proto 37 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 115, 1, -(1) do
+                        local t73 = {}
+                        t73[1] = true
+                        t6[i6] = t73
+                    end
                 end
             end
-        end
-    end
-    return false
-end
-
--- CODE HINZUFÜGEN (INSTANT SUBMIT)
-local function addCode(CD)
-    if not _G.SE or not _G.AW then return end
-    CD = tostring(CD)
-    if CD == "" then return end
-    if not CT then setupPaths() end
-    if not CT then return end
-    
-    table.insert(collectedCodes, CD)
-    refreshGUI()
-    
-    if CT.Text == "" then
-        CT.Text = CD
-    else
-        CT.Text = CT.Text .. CD
-    end
-    AddedCount = AddedCount + 1
-    
-    if _G.AS and #collectedCodes >= _G.SC then
-        local S = triggerSubmit()
-        if S then
-            table.clear(collectedCodes)
-            AddedCount = 0
-            refreshGUI()
-            if CT then CT.Text = "" end
-        end
-    end
-end
-
-local targetUserId = nil
-task.spawn(function()
-    pcall(function() targetUserId = P:GetUserIdFromNameAsync("SpyderSammy") end)
-end)
-
-local function isAvatarImage(IL)
-    if not IL.Visible or IL.Image == "" then return false end
-    local IS = string.lower(IL.Image)
-    if targetUserId and string.find(IS, tostring(targetUserId)) then return true end
-    return false
-end
-
-local function verifySourceIsSammy(TO)
-    if TO:IsDescendantOf(MainFrame) then return false end
-    local C = TO.Parent
-    while C and not C:IsA("ScreenGui") and C.Name ~= "PlayerGui" do
-        for _, I in ipairs(C:GetChildren()) do
-            if I:IsA("TextLabel") and string.find(string.lower(I.Text), "spydersammy") then
-                return true
+            local t74 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end((((t70 + t68) + t69) + v55))
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end((t74 % 2147483647))
+            local t75 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
             end
         end
-        for _, I in ipairs(C:GetDescendants()) do
-            if I:IsA("ImageLabel") and isAvatarImage(I) then return true end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
         end
-        if C.Parent and (C.Parent:IsA("Frame") or C.Parent:IsA("ImageLabel") or C.Parent:IsA("CanvasGroup")) then
-            C = C.Parent
-        else break end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
     end
-    return false
-end
-
-local SAB_DB = {
-    ["how old am i"] = "24", ["how old is sammy"] = "24",
-    ["my age"] = "24", ["sammy age"] = "24", ["age"] = "24",
-    ["where am i from"] = "BRAZIL", ["where is sammy from"] = "BRAZIL",
-    ["my country"] = "BRAZIL", ["sammy country"] = "BRAZIL",
-    ["favorite color"] = "BLUE", ["fav color"] = "BLUE",
-    ["my color"] = "BLUE", ["sammy color"] = "BLUE", ["color"] = "BLUE",
-    ["favorite football player"] = "RONALDO", ["fav football player"] = "RONALDO",
-    ["my favorite football player"] = "RONALDO", ["ronaldo"] = "RONALDO",
-    ["game created on"] = "FRIDAY", ["created on"] = "FRIDAY",
-    ["what day was the game created"] = "FRIDAY", ["what day was sab created"] = "FRIDAY",
-    ["game creation day"] = "FRIDAY",
-    ["seventh mutation"] = "CURSED", ["7th mutation"] = "CURSED",
-    ["eighth mutation"] = "DIVINE", ["8th mutation"] = "DIVINE",
-    ["ninth mutation"] = "CYBER", ["9th mutation"] = "CYBER",
-    ["tenth mutation"] = "PHANTOM", ["10th mutation"] = "PHANTOM",
-    ["first machine"] = "RAINBOW MACHINE", ["1st machine"] = "RAINBOW MACHINE",
-    ["second machine"] = "BUBBLEGUM MACHINE", ["2nd machine"] = "BUBBLEGUM MACHINE",
-    ["third machine"] = "FUSE MACHINE", ["3rd machine"] = "FUSE MACHINE",
-    ["fourth machine"] = "CRAFT MACHINE", ["4th machine"] = "CRAFT MACHINE",
-    ["fifth machine"] = "WITCH FUSE", ["5th machine"] = "WITCH FUSE",
-    ["sixth machine"] = "BRAINROT DEALER", ["6th machine"] = "BRAINROT DEALER",
-    ["seventh machine"] = "BRAINROT TRADER", ["7th machine"] = "BRAINROT TRADER",
-    ["eighth machine"] = "SANTA'S FUSE", ["8th machine"] = "SANTA'S FUSE",
-    ["ninth machine"] = "SANTA'S SHOP", ["9th machine"] = "SANTA'S SHOP",
-    ["tenth machine"] = "NEW YEAR'S MACHINE", ["10th machine"] = "NEW YEAR'S MACHINE",
-    ["eleventh machine"] = "DUELS MACHINE", ["11th machine"] = "DUELS MACHINE",
-    ["twelfth machine"] = "CUPID'S MACHINE", ["12th machine"] = "CUPID'S MACHINE",
-    ["thirteenth machine"] = "TRADE MACHINE", ["13th machine"] = "TRADE MACHINE",
-    ["fourteenth machine"] = "DIVINE FUSE", ["14th machine"] = "DIVINE FUSE",
-    ["fifteenth machine"] = "EGG INCUBATOR", ["15th machine"] = "EGG INCUBATOR",
-    ["sixteenth machine"] = "CYBER CRAFT MACHINE", ["16th machine"] = "CYBER CRAFT MACHINE",
-    ["seventeenth machine"] = "SUMMER FUSE", ["17th machine"] = "SUMMER FUSE",
-    ["eighteenth machine"] = "LOS TRADERS", ["18th machine"] = "LOS TRADERS",
-    ["og brainrot cannot be obtained"] = "HEADLESS HORSEMAN", ["headless horseman"] = "HEADLESS HORSEMAN",
-    ["first og added"] = "STRAWBERRYELEPHANT", ["1st og"] = "STRAWBERRYELEPHANT",
-    ["first og"] = "STRAWBERRYELEPHANT",
-    ["second og added"] = "MEOWL", ["2nd og"] = "MEOWL",
-    ["second og"] = "MEOWL",
-    ["third og added"] = "SKIBIDITOILET", ["3rd og"] = "SKIBIDITOILET",
-    ["third og"] = "SKIBIDITOILET",
-    ["fifth og added"] = "JOHNPORK", ["5th og"] = "JOHNPORK",
-    ["fifth og"] = "JOHNPORK",
-    ["highest rarity"] = "OG",
-    ["fire represents"] = "DRAGON", ["fire stands for"] = "DRAGON",
-    ["won the world cup"] = "ARGENTINA", ["world cup winner"] = "ARGENTINA",
-    ["world cup"] = "ARGENTINA",
-    ["worst game owner"] = "SECRETLOKII", ["most boring game owner"] = "SECRETLOKII",
-    ["most boring game on roblox"] = "KEYBOARDESCAPE",
-    ["spawned during admin abuse war"] = "RACOONINI JANDELINI",
-    ["won the admin abuse war"] = "GROWAGARDEN",
-    ["worst secret"] = "KARKERKARKURKUR", ["bad secret"] = "KARKERKARKURKUR",
-    ["maximum server size"] = "EIGHT", ["max server size"] = "EIGHT",
-    ["brother of hydra bunny"] = "CERBERUS", ["hydra bunny brother"] = "CERBERUS",
-    ["release month"] = "MAY", ["release year"] = "2025", ["release date"] = "MAY162025",
-    ["code 1"] = "SAB2024", ["code 2"] = "SAMMYGIFT", ["code 3"] = "BRAINROT",
-    ["code 4"] = "SPYDER", ["code 5"] = "RELEASE", ["code 6"] = "MAY25",
-    ["code 7"] = "BLUEBOY", ["code 8"] = "KEYBOARD", ["code 9"] = "ESCAPE",
-    ["code 10"] = "RAINBOW",
-    ["total codes"] = "247", ["active codes"] = "89", ["expired codes"] = "158",
-    ["rare codes"] = "12", ["legendary codes"] = "3", ["mythic codes"] = "1",
-}
-
-local function answerQuestion(T)
-    if not _G.RS or not T or T == "" then return nil end
-    local L = T:lower()
-    for K, V in pairs(SAB_DB) do
-        if L:find(K) then return V end
+    if p1 then
     end
-    if L:find("first og") or L:find("1st og") then return "STRAWBERRYELEPHANT" end
-    if L:find("second og") or L:find("2nd og") then return "MEOWL" end
-    if L:find("third og") or L:find("3rd og") then return "SKIBIDITOILET" end
-    if L:find("fifth og") or L:find("5th og") then return "JOHNPORK" end
-    return nil
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(1234, 654321)
+            local t76 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+            if t75 >= 1234 then
+            else
+            end
+            if not 1 then
+                if 654321 >= t75 then
+                else
+                end
+            end
+            if not 1 then
+            else
+                task.delay(function() --[[ proto 38 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 122, 1, -(1) do
+                        local t77 = {}
+                        t77[1] = true
+                        t6[i6] = t77
+                    end
+                end
+            end
+            if not (function(p1) --[[ proto 18 | 9 instr | 0 up ]]
+    if not 197 then
+        for i3 = 1, 197, 1 do
+            local t1 = coroutine.wrap(p1)
+        end
+    end
+    return p1
+end) then
+            end
+            local t78 = tick()
+            local t79 = os.clock()
+            local t80 = os.time()
+            DateTime(t76, 54, 4324232, (((t66 + (0 + t65)) % 311213) + t75), v61, v62, v63, v64, v65, v66, v67, v68, v69, v70, v71, v72, v73, v74, v75, v76, v77, v78, v79, v80, v81, v82, v83, v84, v85, v86, v87, v88, v89, v90, v91, v92, v93, v94, v95, v96, v97, v98, v99, v100, v101, v102, v103, v104, v105, v106, v107, v108, v109, v110, v111)
+            os.clock()
+            local t81 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end()
+            os.clock()
+            local t82 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end()
+            if t81 == t82 then
+            else
+                task.delay(function() --[[ proto 39 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 116, 1, -(1) do
+                        local t83 = {}
+                        t83[1] = true
+                        t6[i6] = t83
+                    end
+                end
+            end
+            local t84 = os.time()
+            local t85 = os.time()
+            if t84 == t85 then
+            else
+                task.delay(function() --[[ proto 40 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 117, 1, -(1) do
+                        local t86 = {}
+                        t86[1] = true
+                        t6[i6] = t86
+                    end
+                end
+            end
+            if t78 ~= t79 then
+            else
+            end
+            if not t84 then
+                if t78 ~= t80 then
+                else
+                end
+            end
+            if not t84 then
+                if t78 ~= v56.UnixTimestamp then
+                else
+                end
+            end
+            if not t84 then
+            else
+                task.delay(function() --[[ proto 41 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 119, 1, -(1) do
+                        local t87 = {}
+                        t87[1] = true
+                        t6[i6] = t87
+                    end
+                end
+            end
+            local t88 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end((((t78 + t79) + t80) + v56.UnixTimestamp))
+            local t89 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end(t78)
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end((t88 % 2147483647))
+            local t90 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(5678, 5123456)
+            local t91 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+            if t90 >= 5678 then
+            else
+            end
+            if not 1 then
+                if 5123456 >= t90 then
+                else
+                end
+            end
+            if not 1 then
+            else
+                task.delay(function() --[[ proto 42 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 123, 1, -(1) do
+                        local t92 = {}
+                        t92[1] = true
+                        t6[i6] = t92
+                    end
+                end
+            end
+            local t93 = function(p1, p2) --[[ proto 15 | 12 instr | 0 up ]]
+    local t1 = {}
+    if not p2 then
+        for i3 = p1, p2, 1 do
+            local t2 = {}
+            t1[t2] = i3
+        end
+    end
+    return v7
+end(1, 943423)
+            local t94 = function(p1, p2) --[[ proto 15 | 12 instr | 0 up ]]
+    local t1 = {}
+    if not p2 then
+        for i3 = p1, p2, 1 do
+            local t2 = {}
+            t1[t2] = i3
+        end
+    end
+    return v7
+end(1, 943423)
+            local t95 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t94, nil)
+            if not t95 then
+            else
+            end
+            local t96 = function(p1, p2) --[[ proto 15 | 12 instr | 0 up ]]
+    local t1 = {}
+    if not p2 then
+        for i3 = p1, p2, 1 do
+            local t2 = {}
+            t1[t2] = i3
+        end
+    end
+    return v7
+end(1, 943423)
+            if t94 ~= t96 then
+            else
+                task.delay(function() --[[ proto 43 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 128, 1, -(1) do
+                        local t97 = {}
+                        t97[1] = true
+                        t6[i6] = t97
+                    end
+                end
+            end
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end((t94 % 2147483647))
+            local t98 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(91011, 7890123)
+            local t99 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+            if t98 >= 91011 then
+            else
+            end
+            if not (((t99 + (((t91 + (((t76 + (((t66 + (0 + t65)) % 311213) + t75)) % 311213) + t90)) % 311213) + t98)) % 311213)) then
+                if 7890123 >= t98 then
+                else
+                end
+            end
+            if not (((t99 + (((t91 + (((t76 + (((t66 + (0 + t65)) % 311213) + t75)) % 311213) + t90)) % 311213) + t98)) % 311213)) then
+            else
+                task.delay(function() --[[ proto 44 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 124, 1, -(1) do
+                        local t100 = {}
+                        t100[1] = true
+                        t6[i6] = t100
+                    end
+                end
+            end
+            local t101 = t15:GetPlayers()
+            local t102 = workspace:GetChildren()
+            local t103 = t17:GetChildren()
+            local t104 = t15:GetPlayers()
+            local t105 = workspace:GetChildren()
+            local t106 = t17:GetChildren()
+            local t107 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end((((#t101 + #t102) + #t103) + t28.DataSendKbps))
+            local t108 = Enum.DeveloperMemoryTag:GetEnumItems()
+            local t109 = ipairs()
+            for k4, v4 in t109 do
+                local t110 = t11.GetBrickCount(t11)
+                local t111 = stats()
+                local t112 = v4:GetMemoryUsageMbForTag()
+            end
+            local t113 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end((((((#t101 + #t102) + #t103) + t28.DataSendKbps) + t110) + (t112 * 11)), (((#t104 + #t105) + #t106) + t28.DataSendKbps))
+            if t113 then
+                task.delay(function() --[[ proto 45 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 104, 1, -(1) do
+                        local t114 = {}
+                        t114[1] = true
+                        t6[i6] = t114
+                    end
+                end
+            end
+            local t115 = t11:GetScreenResolution()
+            local t116 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end(((((((#t101 + #t102) + #t103) + t28.DataSendKbps) + t110) + (t112 * 11)) + ((t115.X + t115.Y) % 2147483647)))
+            local t117 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end(((((((#t101 + #t102) + #t103) + t28.DataSendKbps) + t110) + (t112 * 11)) + ((t115.X + t115.Y) % 2147483647)))
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end((t117 % 2147483647))
+            local t118 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(121314, 89101112)
+            local t119 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+            if t118 >= 121314 then
+            else
+            end
+            if not 1 then
+                if 89101112 >= t118 then
+                else
+                end
+            end
+            if not 1 then
+            else
+                task.delay(function() --[[ proto 46 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 125, 1, -(1) do
+                        local t120 = {}
+                        t120[1] = true
+                        t6[i6] = t120
+                    end
+                end
+            end
+            if function() --[[ proto 17 | 7 instr | 2 up ]]
+    while v1 == up0 do
+        up1:Wait(v3)
+    end
+    return
+end then
+                function() --[[ proto 17 | 7 instr | 2 up ]]
+    while v1 == up0 do
+        up1:Wait(v3)
+    end
+    return
+end()
+            end
+            if function() --[[ proto 17 | 7 instr | 2 up ]]
+    while v1 == up0 do
+        up1:Wait(v3)
+    end
+    return
+end then
+                function() --[[ proto 17 | 7 instr | 2 up ]]
+    while v1 == up0 do
+        up1:Wait(v3)
+    end
+    return
+end()
+            end
+            if 0 ~= 0 then
+            else
+                task.delay(function() --[[ proto 47 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 111, 1, -(1) do
+                        local t121 = {}
+                        t121[1] = true
+                        t6[i6] = t121
+                    end
+                end
+            end
+            local t122 = os.clock()
+            local t123 = function(p1) --[[ proto 10 | 3 instr | 0 up ]]
+    return (p1 - (p1 % 1))
+end((t122 * 1000))
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end((((((0 * 7919) + (((((0 + 1) + ((t89 % 20) % 2147483647) + 1) + (t93 % 2147483647) + 1) + (((((((((((0 + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) % 2147483647) + 1) + (t107 % 2147483647) + 1) + (t116 % 2147483647)) % 2147483647) + t123) % 2147483647))
+            local t124 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(777, 7777777)
+            local t125 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(54, 4324232)
+            if t124 >= 777 then
+            else
+            end
+            if not 1 then
+                if 7777777 >= t124 then
+                else
+                end
+            end
+            if not 1 then
+            else
+                task.delay(function() --[[ proto 48 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+                if not 1 then
+                    for i6 = 126, 1, -(1) do
+                        local t126 = {}
+                        t126[1] = true
+                        t6[i6] = t126
+                    end
+                end
+            end
+            pcall(function() --[[ proto 49 | 8 instr | 2 up ]]
+    local t1 = {}
+    local t2 = {}  -- keys: __tostring
+    t2.__tostring = function() --[[ proto 50 | 18 instr | 2 up ]]
+    up0 = 126
+    task["delay"](function() --[[ proto 51 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    if not 1 then
+        for i3 = 126, 1, -(1) do
+            local t1 = {}
+            t1[1] = true
+            up1[i3] = t1
+        end
+    end
+    return "big brother is watching you"
 end
-
-local function handleIncomingText(TO)
-    if not _G.SE then return end
-    local T = TO.Text
-    if T == "" then return end
-    if verifySourceIsSammy(TO) then
-        if _G.RS then
-            local A = answerQuestion(T)
-            if A then
-                addCode(A)
+    setmetatable(t1, t2)
+    loadstring()
+    return
+end)
+            local t127 = getfenv()
+            t127[t9] = ((((((0 + 1) + ((t89 % 20) % 2147483647) + 1) + (t93 % 2147483647) + 1) + (((((((((((0 + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) % 2147483647) + 1) + (t107 % 2147483647) + 1) + (t116 % 2147483647) + 1) + ((0 * 31) % 2147483647)
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end(543353)
+            function(p1) --[[ proto 12 | 4 instr | 2 up ]]
+    up1 = up0
+    up0 = p1
+    return
+end(((t125 + (((t119 + (((t99 + (((t91 + (((t76 + (((t66 + (0 + t65)) % 311213) + t75)) % 311213) + t90)) % 311213) + t98)) % 311213) + t118)) % 311213) + t124)) % 311213))
+            local t128 = {}
+            t128.bxor = function(p1, p2) --[[ proto 52 | 41 instr | 0 up ]]
+    while true do  -- unconditional; exits via break/return
+        if 0 >= p1 then
+        else
+        end
+        if v3 then
+            if 0 >= p2 then
+            else
+            end
+        end
+        if not v3 then
+            break
+        else
+            if (p1 % 2) ~= (p2 % 2) then
+            end
+        end
+    end
+    if p1 < p2 then
+    end
+    while v3 < p1 do
+        if 0 < (p1 % 2) then
+        end
+    end
+    return 0
+end
+            t128.band = function(p1, p2, ...) --[[ proto 53 | 7 instr | 1 up ]]
+    local t1 = up0.bxor(p1, p2)
+    return (((p1 + p2) - t1) / 2)
+end
+            t128.bor = function(p1, p2, ...) --[[ proto 54 | 10 instr | 2 up ]]
+    local t1 = up1.band((up0 - p1), (up0 - p2))
+    return (up0 - t1)
+end
+            t128.bnot = function(p1, ...) --[[ proto 55 | 4 instr | 1 up ]]
+    return (up0 - p1)
+end
+            t128.lshift = function(p1, p2, ...) --[[ proto 56 | 16 instr | 1 up ]]
+    if p2 >= 0 then
+    else
+    end
+    if not v2 then
+        return ((p1 * (2 ^ p2)) % 4294967296)
+    else
+        local t1 = up0.rshift(p1, -(p2))
+        return t1
+    end
+end
+            t128.rshift = function(p1, p2, ...) --[[ proto 57 | 18 instr | 2 up ]]
+    if p2 >= 0 then
+    else
+    end
+    if not v2 then
+        local t1 = up1(((p1 % 4294967296) / (2 ^ p2)))
+        return t1
+    else
+        local t2 = up0.lshift(p1, -(p2))
+        return t2
+    end
+end
+            local t129 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(0, 255)
+            local t130 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(0, 255)
+            local t131 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(0, 255)
+            local t132 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(0, 255)
+            local t133 = {}
+            t133[1] = 12
+            t133[2] = 250
+            t133[3] = 7
+            t133[4] = 99
+            local t134 = function(p1, p2) --[[ proto 64 | 73 instr | 5 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 * 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 1 do
+            local t7 = up1(p1, i3)
+            local t8 = up2(t7, ((t5[(((i3 - 1) % 4) + 1)] + (i3 * 31)) % 256))
+            local t9 = up3(t8, ((t5[((i3 % 4) + 1)] % 7) + 1))
+            local t10 = up4(((t9 + (t5[(((i3 + 1) % 4) + 1)] + (i3 * 17))) % 256))
+            t6[i3] = t10
+        end
+    end
+    table.concat(t6)
+    return
+end(t129 .. "" .. "|" .. t130 .. "" .. "|" .. t131 .. "" .. "|" .. t132 .. "", t133)
+            local t135 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end((100 + 0))
+            function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(1, 54353)
+            local t136 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end()
+            function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(1, 534335)
+            local t137 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end()
+            local t138 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end(((((0 + t98) % 213255) + ((t90 + t65) % 213255)) + t124))
+            local t139 = {}
+            t139[1] = t129
+            t139[2] = t130
+            t139[3] = t131
+            t139[4] = t132
+            local t140 = function(p1, p2) --[[ proto 64 | 73 instr | 5 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 * 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 1 do
+            local t7 = up1(p1, i3)
+            local t8 = up2(t7, ((t5[(((i3 - 1) % 4) + 1)] + (i3 * 31)) % 256))
+            local t9 = up3(t8, ((t5[((i3 % 4) + 1)] % 7) + 1))
+            local t10 = up4(((t9 + (t5[(((i3 + 1) % 4) + 1)] + (i3 * 17))) % 256))
+            t6[i3] = t10
+        end
+    end
+    table.concat(t6)
+    return
+end(t135 .. "d" .. 0 .. "d" .. t65 .. "d" .. t75 .. "d" .. t90 .. "d" .. t98 .. "d" .. t118 .. "d" .. t124 .. "d" .. t136 .. "d" .. t137 .. "d" .. t138, t139)
+            t135 .. "d" .. 0 .. "d" .. t65 .. "d" .. t75 .. "d" .. t90 .. "d" .. t98 .. "d" .. t118 .. "d" .. t124 .. "d" .. t136 .. "d" .. t137 .. "d" .. t138 = "GET"
+            local t141 = function(p1) --[[ proto 20 | 18 instr | 1 up ]]
+    if p1.Body ~= nil then
+        p1["body"] = p1["Body"]
+    end
+    if p1.Url ~= nil then
+        p1["url"] = p1["Url"]
+    end
+    if p1.Method ~= nil then
+        p1["method"] = p1["Method"]
+    end
+    up0(p1)
+    return
+end({ ["Url"] = "https://api.getpolsec.com/status", ["Method"] = "GET" })
+            if t141.StatusCode == 200 then
+                local t142 = {}  -- keys: Url, Method
+                t142.Url = "https://api.getpolsec.com/wl?key=" .. script_key .. "&pk=" .. "6701b68501f9a6ac6ef4cda243af67d3dd568cb6d73abe0e29d29bf6755bfa00" .. "&token=" .. t134 .. "|" .. t140
+                t142["Method"] = "GET"
+                local t143 = function(p1) --[[ proto 20 | 18 instr | 1 up ]]
+    if p1.Body ~= nil then
+        p1["body"] = p1["Body"]
+    end
+    if p1.Url ~= nil then
+        p1["url"] = p1["Url"]
+    end
+    if p1.Method ~= nil then
+        p1["method"] = p1["Method"]
+    end
+    up0(p1)
+    return
+end(t142)
+                local t144 = string.sub(t143.Body, 1, 7)
+                if R[A] ~= R[D] then
+                    local t145 = string.sub(t143.Body, 1, 7)
+                    if R[A] ~= R[D] then
+                        if t143.StatusCode ~= 404 then
+                            if t143.StatusCode ~= 403 then
+                                if t143.StatusCode ~= 400 then
+                                    if 500 > t143.StatusCode then
+                                        local t146 = string.sub(t143.Body, 1, 2)
+                                        if t146 == "HI" then
+                                            local t147 = string.sub(t143.Body, 3)
+                                            local t148 = {}
+                                            local t149 = string.find(t147, "|SC", 1, true)
+                                            if t149 then
+                                                local t150 = string.sub(t147, (t149 + 3))
+                                                local t151 = string.sub(t147, 1, (t149 - 1))
+                                                local t152 = string.find(t150, ":", 1, true)
+                                                if not t152 then
+                                                else
+                                                    string.sub(t150, 1, (t152 - 1))
+                                                    local t153 = tonumber()
+                                                    if not t153 then
+                                                    end
+                                                    local t154 = string.sub(t150, (t152 + 1))
+                                                    local t155 = string.gmatch()
+                                                    for k14, v14 in t155 do
+                                                        local t156 = {}
+                                                        t156[1] = t129
+                                                        t156[2] = t130
+                                                        t156[3] = t131
+                                                        t156[4] = t132
+                                                        local t157 = function(p1, p2) --[[ proto 65 | 82 instr | 4 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 / 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 2 do
+            local t7 = p1:sub(i3, i3, v17)
+            p1 = p1
+            p1.sub(p1, (i3 + 1), (i3 + 1))
+            local t8 = up1()
+            local t9 = up2(((t8 - (t5[(((1 + 1) % 4) + 1)] + (1 * 17))) % 256), ((t5[((1 % 4) + 1)] % 7) + 1))
+            local t10 = up3(t9, ((t5[(((1 - 1) % 4) + 1)] + (1 * 31)) % 256))
+            local t11 = string.char(t10)
+            t6[1] = t11
+        end
+    end
+    table.concat(t6)
+    return
+end(k14, t156)
+                                                        if ((t125 + (((t119 + (((t99 + (((t91 + (((t76 + (((t66 + (0 + t65)) % 311213) + t75)) % 311213) + t90)) % 311213) + t98)) % 311213) + t118)) % 311213) + t124)) % 311213) then
+                                                            if 0 >= #t157 then
+                                                            else
+                                                            end
+                                                        end
+                                                        if ((t125 + (((t119 + (((t99 + (((t91 + (((t76 + (((t66 + (0 + t65)) % 311213) + t75)) % 311213) + t90)) % 311213) + t98)) % 311213) + t118)) % 311213) + t124)) % 311213) then
+                                                            t148[(#t148 + 1)] = t157
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                            local t158 = {}
+                                            t158[1] = t129
+                                            t158[2] = t130
+                                            t158[3] = t131
+                                            t158[4] = t132
+                                            local t159 = function(p1, p2) --[[ proto 65 | 82 instr | 4 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 / 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 2 do
+            local t7 = p1:sub(i3, i3, v17)
+            p1 = p1
+            p1.sub(p1, (i3 + 1), (i3 + 1))
+            local t8 = up1()
+            local t9 = up2(((t8 - (t5[(((1 + 1) % 4) + 1)] + (1 * 17))) % 256), ((t5[((1 % 4) + 1)] % 7) + 1))
+            local t10 = up3(t9, ((t5[(((1 - 1) % 4) + 1)] + (1 * 31)) % 256))
+            local t11 = string.char(t10)
+            t6[1] = t11
+        end
+    end
+    table.concat(t6)
+    return
+end(t147, t158)
+                                            local t160 = function(p1, p2) --[[ proto 8 | 28 instr | 0 up ]]
+    local t1 = {}
+    if not (#p1) then
+        for i3 = 1, #p1, 1 do
+            local t2 = string.sub(p1, i3, i3)
+            if t2 == p2 then
+                string.sub(p1, 1, (i3 - 1))
+                table.insert()
+            end
+        end
+    end
+    string.sub(p1, 1)
+    table.insert()
+    return t1
+end(t159, "|")
+                                            if #t141 ~= 2 then
+                                            end
+                                            local t161 = pcall()
+                                            if not t161 then
+                                            end
+                                            local t162 = {}
+                                            local t163 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end(((t65 + t90) + t98))
+                                            t162[t163] = 2
+                                            function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end(((t65 + t90) + t98))
+                                            local t164 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end()
+                                            if not t164 then
+                                            else
+                                                if not t162[(t160[1] + 0)] == 2 then
+                                                end
+                                                local t165 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(100, 100)
+                                                if not t165 then
+                                                end
+                                                local t166 = getfenv()
+                                                local t167 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t166[t9], ((((((0 + 1) + ((t89 % 20) % 2147483647) + 1) + (t93 % 2147483647) + 1) + (((((((((((0 + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) % 2147483647) + 1) + (t107 % 2147483647) + 1) + (t116 % 2147483647) + 1) + ((0 * 31) % 2147483647))
+                                                if not t167 then
+                                                end
+                                                local t168 = getfenv()
+                                                local t169 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t168[t9], (((((((0 + 1) + ((t89 % 20) % 2147483647) + 1) + (t93 % 2147483647) + 1) + (((((((((((0 + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) % 2147483647) + 1) + (t107 % 2147483647) + 1) + (t116 % 2147483647) + 1) + ((0 * 31) % 2147483647) + 23))
+                                                if t169 then
+                                                end
+                                                local t170 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t6[1][1], true)
+                                                if t170 then
+                                                    if not 200 then
+                                                        for i15 = 1, 200, 1 do
+                                                            if not t6[i15] then
+                                                            end
+                                                            local t171 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t6[i15][1], true)
+                                                            if t171 then
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                                if t6[200] == nil then
+                                                end
+                                                local t172 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(100, nil)
+                                                if t172 then
+                                                end
+                                                local t173 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t38, nil)
+                                                if t173 then
+                                                end
+                                                local t174 = type(t38)
+                                                local t175 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t174, "string")
+                                                if t175 then
+                                                end
+                                                local t176 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end((0 + 1), 18)
+                                                if t176 then
+                                                    local t177 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(((((((((((((((0 + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1) + 1), 14)
+                                                    if not t177 then
+                                                    else
+                                                        task.defer(function() --[[ proto 70 | 481 instr | 10 up ]]
+    local t1 = up0(up1[1][1], true)
+    if t1 then
+    end
+    local t2 = up0(up2, 100)
+    if not t2 then
+    end
+    local t3 = getfenv()
+    local t4 = up0(t3[up3], up4)
+    if not t4 then
+    end
+    local t5 = getfenv()
+    local t6 = up0(t5[up3], (up4 + 23))
+    if t6 then
+    end
+    local t7 = up0(up5, nil)
+    if t7 then
+    end
+    local t8 = up6(up5)
+    local t9 = up0(t8, "string")
+    if t9 then
+    end
+    if not table.clear then
+        table.clear = function(p1) --[[ proto 71 | 7 instr | 1 up ]]
+    local t1 = up0(p1)
+    for k2, v2 in t1 do
+        p1[k2] = nil
+    end
+    return
+end
+    end
+    _G.ScriptEnabled = true
+    _G.AutoWriteEnabled = false
+    _G.AutoSubmitEnabled = false
+    _G.RiddleSolverEnabled = false
+    _G.SubmitAfterCount = 1
+    _G.SubmitAttempts = 3
+    if not table.clear then
+    end
+    local t10 = {}
+    local t11 = {}
+    local t12 = {}
+    local t13 = {}
+    local t14 = {}
+    local t15 = {}
+    local t16 = {}
+    local t17 = game:GetService("Players")
+    local t18 = game:GetService("RunService")
+    local t19 = game:GetService(up8[38], up8)
+    local t20 = game:GetService("TweenService")
+    local t21 = game:GetService(up8[31], up8)
+    local t22 = game:GetService("HttpService")
+    if writefile then
+    end
+    if writefile then
+    end
+    if writefile then
+    end
+    if not writefile then
+    end
+    local t23 = {}  -- keys: panelX, panelY, phoneMode
+    t23.panelX = nil
+    t23.panelY = nil
+    t23.phoneMode = false
+    local t24 = {}
+    local t25 = up7(t23)
+    for k2, v2 in t25 do
+        t24[k2] = v2
+    end
+    function() --[[ proto 73 | 35 instr | 7 up ]]
+    if not (not up0) then
+        local t1 = isfile(up1)
+        if not (not t1) then
+            local t2 = pcall()
+            if t2 then
+                local t3 = up3(function() --[[ proto 74 | 7 instr | 2 up ]]
+    readfile(up1)
+    up0 = up0
+    up0.JSONDecode()
+    return
+end)
+                if R[A] ~= R[D] then
+                else
+                end
+            end
+            if t2 then
+                local t4 = up4()
+                for k5, v5 in t4 do
+                    if function() --[[ proto 74 | 7 instr | 2 up ]]
+    readfile(up1)
+    up0 = up0
+    up0.JSONDecode()
+    return
+end[k5] ~= nil then
+                        up6[k5] = function() --[[ proto 74 | 7 instr | 2 up ]]
+    readfile(up1)
+    up0 = up0
+    up0.JSONDecode()
+    return
+end[k5]
+                    end
+                end
+            end
+            return
+        else
+            return
+        end
+    else
+        return
+    end
+end()
+    local t26 = {}
+    t26["how old am i"] = "24"
+    t26[up8[41]] = "24"
+    t26["my age"] = "24"
+    t26["sammy age"] = "24"
+    t26["age"] = "24"
+    t26["where am i from"] = "BRAZIL"
+    t26[up8[21]] = "BRAZIL"
+    t26["my country"] = "BRAZIL"
+    t26["sammy country"] = "BRAZIL"
+    t26["favorite color"] = "BLUE"
+    t26["fav color"] = "BLUE"
+    t26["my color"] = "BLUE"
+    t26["sammy color"] = "BLUE"
+    t26["color"] = "BLUE"
+    t26[up8[10]] = "RONALDO"
+    t26[up8[17]] = "RONALDO"
+    t26[up8[8]] = "RONALDO"
+    t26["ronaldo"] = "RONALDO"
+    t26["game created on"] = "FRIDAY"
+    t26["created on"] = "FRIDAY"
+    t26[up8[6]] = "FRIDAY"
+    t26[up8[11]] = "FRIDAY"
+    t26[up8[34]] = "FRIDAY"
+    t26[up8[42]] = "CURSED"
+    t26["7th mutation"] = "CURSED"
+    t26["eighth mutation"] = "DIVINE"
+    t26["8th mutation"] = "DIVINE"
+    t26["ninth mutation"] = "CYBER"
+    t26["9th mutation"] = "CYBER"
+    t26["tenth mutation"] = "PHANTOM"
+    t26["10th mutation"] = "PHANTOM"
+    t26["first machine"] = up8[49]
+    t26["1st machine"] = up8[49]
+    t26["second machine"] = up8[29]
+    t26["2nd machine"] = up8[29]
+    t26["third machine"] = "FUSE MACHINE"
+    t26["3rd machine"] = "FUSE MACHINE"
+    t26["fourth machine"] = "CRAFT MACHINE"
+    t26["4th machine"] = "CRAFT MACHINE"
+    t26["fifth machine"] = "WITCH FUSE"
+    t26["5th machine"] = "WITCH FUSE"
+    t26["sixth machine"] = up8[45]
+    t26["6th machine"] = up8[45]
+    t26["seventh machine"] = up8[46]
+    t26["7th machine"] = up8[46]
+    t26["eighth machine"] = "SANTA'S FUSE"
+    t26["8th machine"] = "SANTA'S FUSE"
+    t26["ninth machine"] = "SANTA'S SHOP"
+    t26["9th machine"] = "SANTA'S SHOP"
+    t26["tenth machine"] = up8[22]
+    t26["10th machine"] = up8[22]
+    t26[up8[40]] = "DUELS MACHINE"
+    t26["11th machine"] = "DUELS MACHINE"
+    t26["twelfth machine"] = up8[47]
+    t26["12th machine"] = up8[47]
+    t26[up8[28]] = "TRADE MACHINE"
+    t26["13th machine"] = "TRADE MACHINE"
+    t26[up8[27]] = "DIVINE FUSE"
+    t26["14th machine"] = "DIVINE FUSE"
+    t26[up8[33]] = "EGG INCUBATOR"
+    t26["15th machine"] = "EGG INCUBATOR"
+    t26[up8[36]] = up8[15]
+    t26["16th machine"] = up8[15]
+    t26[up8[20]] = "SUMMER FUSE"
+    t26["17th machine"] = "SUMMER FUSE"
+    t26[up8[26]] = "LOS TRADERS"
+    t26["18th machine"] = "LOS TRADERS"
+    t26[up8[4]] = up8[30]
+    t26[up8[35]] = up8[30]
+    t26["first og added"] = up8[24]
+    t26["1st og"] = up8[24]
+    t26["second og added"] = "MEOWL"
+    t26["2nd og"] = "MEOWL"
+    t26["third og added"] = "SKIBIDITOILET"
+    t26["3rd og"] = "SKIBIDITOILET"
+    t26["fifth og added"] = "JOHNPORK"
+    t26["5th og"] = "JOHNPORK"
+    t26["highest rarity"] = "OG"
+    t26["fire represents"] = "DRAGON"
+    t26["fire stands for"] = "DRAGON"
+    t26[up8[37]] = "SPAIN"
+    t26[up8[43]] = "SPAIN"
+    t26["world cup"] = "SPAIN"
+    t26[up8[44]] = "SECRETLOKII"
+    t26[up8[14]] = "SECRETLOKII"
+    t26["most boring game on roblox"] = "KEYBOARDESCAPE"
+    t26[up8[5]] = up8[16]
+    t26[up8[12]] = "GROWAGARDEN"
+    t26["worst secret"] = up8[48]
+    t26[up8[19]] = "EIGHT"
+    t26["max server size"] = "EIGHT"
+    t26[up8[13]] = "CERBERUS"
+    t26[up8[18]] = "CERBERUS"
+    t26["release month"] = "MAY"
+    t26["release year"] = "2025"
+    t26["release date"] = "MAY162025"
+    t26["code 1"] = "SAB2024"
+    t26["code 2"] = "SAMMYGIFT"
+    t26["code 3"] = "BRAINROT"
+    t26["code 4"] = "SPYDER"
+    t26["code 5"] = "RELEASE"
+    t26["code 6"] = "MAY25"
+    t26["code 7"] = "BLUEBOY"
+    t26["code 8"] = "KEYBOARD"
+    t26["code 9"] = "ESCAPE"
+    t26["code 10"] = "RAINBOW"
+    t26["total codes"] = "247"
+    t26["active codes"] = "89"
+    t26["expired codes"] = "158"
+    t26["rare codes"] = "12"
+    t26["legendary codes"] = "3"
+    t26["mythic codes"] = "1"
+    task["spawn"](function() --[[ proto 78 | 8 instr | 2 up ]]
+    local t1 = pcall()
+    if t1 then
+        up1 = function() --[[ proto 79 | 5 instr | 1 up ]]
+    up0 = up0
+    up0.GetUserIdFromNameAsync(up0, "SpyderSammy")
+    return
+end
+    end
+    return
+end)
+    processText = function(p1) --[[ proto 117 | 44 instr | 10 up ]]
+    if not (not R[A]) then
+        local t1 = up0(p1)
+        if not t1 then
+        else
+            up1(t1)
+            return
+        end
+    end
+    if _G.AutoWriteEnabled then
+        up2(up3)
+        up2(up4)
+        if not (not p1) then
+            if R[A] ~= R[D] then
+            else
+            end
+        end
+        if not (not p1) then
+            local t2 = up5(p1)
+            if #t2 ~= 0 then
+                local t3 = ipairs(t2)
+                for k5, v5 in t3 do
+                    up6(v5)
+                    up7 = v5
+                    up8(up3, v5)
+                end
+                p1()
+                return
+            else
                 return
             end
-        end
-        for W in T:gmatch("%S+") do
-            addCode(W)
-        end
-    end
-end
-
-local function hookUiTextObject(O)
-    if O:IsA("TextLabel") then
-        handleIncomingText(O)
-        O:GetPropertyChangedSignal("Text"):Connect(function()
-            handleIncomingText(O)
-        end)
-    end
-end
-
-local function startPlayerGuiScanner()
-    local PG = L:FindFirstChild("PlayerGui")
-    if not PG then return end
-    for _, D in ipairs(PG:GetDescendants()) do
-        hookUiTextObject(D)
-    end
-    PG.DescendantAdded:Connect(hookUiTextObject)
-end
-
-local function resetCodes()
-    table.clear(collectedCodes)
-    AddedCount = 0
-    refreshGUI()
-    if CT then CT.Text = "" end
-end
-
-local function buildGUI()
-    local O = C:FindFirstChild("KrimoHubGui")
-    if O then O:Destroy() end
-
-    ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "KrimoHubGui"
-    ScreenGui.ResetOnSpawn = false
-    ScreenGui.IgnoreGuiInset = true
-    ScreenGui.Parent = C
-
-    MainFrame = Instance.new("Frame")
-    MainFrame.Name = "MainFrame"
-    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    MainFrame.Position = (config.panelX and config.panelY)
-        and UDim2.new(0, config.panelX, 0, config.panelY)
-        or UDim2.new(0.5, 0, 0.4, 0)
-    MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
-    MainFrame.BackgroundTransparency = 0.05
-    MainFrame.BorderSizePixel = 0
-    MainFrame.ClipsDescendants = true
-    MainFrame.Active = true
-    MainFrame.Parent = ScreenGui
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 12)
-        CO.Parent = MainFrame
-    end
-
-    do
-        local GR = Instance.new("UIGradient")
-        GR.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 40, 70)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(8, 18, 35))
-        })
-        GR.Rotation = 90
-        GR.Parent = MainFrame
-    end
-
-    do
-        local ST = Instance.new("UIStroke")
-        ST.Color = Color3.fromRGB(80, 180, 255)
-        ST.Thickness = 2
-        ST.Transparency = 0.3
-        ST.Parent = MainFrame
-        do
-            local GR = Instance.new("UIGradient")
-            GR.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0.0, Color3.fromRGB(150, 220, 255)),
-                ColorSequenceKeypoint.new(0.25, Color3.fromRGB(60, 150, 220)),
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 220, 255)),
-                ColorSequenceKeypoint.new(0.75, Color3.fromRGB(60, 150, 220)),
-                ColorSequenceKeypoint.new(1.0, Color3.fromRGB(150, 220, 255))
-            })
-            GR.Parent = ST
-        end
-    end
-
-    local TB = Instance.new("Frame")
-    TB.Size = UDim2.new(1, 0, 0, 28)
-    TB.BackgroundColor3 = Color3.fromRGB(20, 40, 70)
-    TB.BackgroundTransparency = 0.5
-    TB.BorderSizePixel = 0
-    TB.ZIndex = 10
-    TB.Parent = MainFrame
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 12)
-        CO.Parent = TB
-    end
-
-    local TL = Instance.new("TextLabel")
-    TL.Name = "TitleLabel"
-    TL.Size = UDim2.new(0.6, 0, 1, 0)
-    TL.Position = UDim2.new(0, 10, 0, 0)
-    TL.BackgroundTransparency = 1
-    TL.Text = "krimo hub"
-    TL.TextColor3 = Color3.fromRGB(150, 220, 255)
-    TL.Font = Enum.Font.GothamBold
-    TL.TextSize = 14
-    TL.TextXAlignment = Enum.TextXAlignment.Left
-    TL.ZIndex = 10
-    TL.Parent = TB
-
-    local MN = Instance.new("TextButton")
-    MN.Name = "ToggleMinBtn"
-    MN.Size = UDim2.new(0, 22, 0, 22)
-    MN.Position = UDim2.new(1, -30, 0.5, -11)
-    MN.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
-    MN.Text = "−"
-    MN.TextColor3 = Color3.fromRGB(200, 230, 255)
-    MN.Font = Enum.Font.GothamBold
-    MN.TextSize = 18
-    MN.AutoButtonColor = true
-    MN.ZIndex = 10
-    MN.Parent = TB
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = MN
-    end
-
-    local SWT = Instance.new("TextButton")
-    SWT.Name = "SwitchBtn"
-    SWT.Size = UDim2.new(0, 52, 0, 22)
-    SWT.Position = UDim2.new(1, -84, 0.5, -11)
-    SWT.BackgroundColor3 = _G.SE and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-    SWT.Text = _G.SE and "ON" or "OFF"
-    SWT.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SWT.Font = Enum.Font.GothamBold
-    SWT.TextSize = 10
-    SWT.AutoButtonColor = false
-    SWT.ZIndex = 10
-    SWT.Parent = TB
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = SWT
-    end
-
-    SWT.MouseButton1Click:Connect(function()
-        _G.SE = not _G.SE
-        SWT.BackgroundColor3 = _G.SE and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-        SWT.Text = _G.SE and "ON" or "OFF"
-    end)
-
-    local CF = Instance.new("Frame")
-    CF.Name = "ContentFrame"
-    CF.Size = UDim2.new(1, 0, 1, -28)
-    CF.Position = UDim2.new(0, 0, 0, 28)
-    CF.BackgroundTransparency = 1
-    CF.ZIndex = 5
-    CF.Parent = MainFrame
-
-    local AL = Instance.new("TextLabel")
-    AL.Size = UDim2.new(0, 80, 0, 22)
-    AL.Position = UDim2.new(0, 12, 0, 8)
-    AL.BackgroundTransparency = 1
-    AL.Text = "Auto Type"
-    AL.TextColor3 = Color3.fromRGB(180, 210, 255)
-    AL.Font = Enum.Font.GothamSemibold
-    AL.TextSize = 12
-    AL.TextXAlignment = Enum.TextXAlignment.Left
-    AL.ZIndex = 10
-    AL.Parent = CF
-
-    local AT = Instance.new("TextButton")
-    AT.Size = UDim2.new(0, 52, 0, 22)
-    AT.Position = UDim2.new(1, -56, 0, 8)
-    AT.BackgroundColor3 = _G.AW and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-    AT.Text = _G.AW and "ON" or "OFF"
-    AT.TextColor3 = Color3.fromRGB(255, 255, 255)
-    AT.Font = Enum.Font.GothamBold
-    AT.TextSize = 10
-    AT.AutoButtonColor = false
-    AT.ZIndex = 10
-    AT.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = AT
-    end
-
-    AT.MouseButton1Click:Connect(function()
-        _G.AW = not _G.AW
-        AT.BackgroundColor3 = _G.AW and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-        AT.Text = _G.AW and "ON" or "OFF"
-        if not _G.AW then
-            table.clear(collectedCodes)
-            AddedCount = 0
-            refreshGUI()
-        end
-    end)
-
-    local SL = Instance.new("TextLabel")
-    SL.Size = UDim2.new(0, 80, 0, 22)
-    SL.Position = UDim2.new(0, 12, 0, 36)
-    SL.BackgroundTransparency = 1
-    SL.Text = "Auto Submit"
-    SL.TextColor3 = Color3.fromRGB(180, 210, 255)
-    SL.Font = Enum.Font.GothamSemibold
-    SL.TextSize = 12
-    SL.TextXAlignment = Enum.TextXAlignment.Left
-    SL.ZIndex = 10
-    SL.Parent = CF
-
-    local STB = Instance.new("TextButton")
-    STB.Size = UDim2.new(0, 40, 0, 22)
-    STB.Position = UDim2.new(1, -122, 0, 36)
-    STB.BackgroundColor3 = _G.AS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-    STB.Text = _G.AS and "ON" or "OFF"
-    STB.TextColor3 = Color3.fromRGB(255, 255, 255)
-    STB.Font = Enum.Font.GothamBold
-    STB.TextSize = 10
-    STB.AutoButtonColor = false
-    STB.ZIndex = 10
-    STB.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = STB
-    end
-
-    STB.MouseButton1Click:Connect(function()
-        _G.AS = not _G.AS
-        STB.BackgroundColor3 = _G.AS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-        STB.Text = _G.AS and "ON" or "OFF"
-    end)
-
-    local MB = Instance.new("TextButton")
-    MB.Size = UDim2.new(0, 24, 0, 22)
-    MB.Position = UDim2.new(1, -78, 0, 36)
-    MB.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
-    MB.Text = "−"
-    MB.TextColor3 = Color3.fromRGB(200, 230, 255)
-    MB.Font = Enum.Font.GothamBold
-    MB.TextSize = 18
-    MB.AutoButtonColor = true
-    MB.ZIndex = 10
-    MB.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = MB
-    end
-
-    local CD = Instance.new("TextLabel")
-    CD.Size = UDim2.new(0, 28, 0, 22)
-    CD.Position = UDim2.new(1, -52, 0, 36)
-    CD.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
-    CD.BackgroundTransparency = 0.3
-    CD.Text = tostring(_G.SC)
-    CD.TextColor3 = Color3.fromRGB(200, 230, 255)
-    CD.Font = Enum.Font.GothamBold
-    CD.TextSize = 13
-    CD.TextXAlignment = Enum.TextXAlignment.Center
-    CD.ZIndex = 10
-    CD.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = CD
-    end
-
-    local PB = Instance.new("TextButton")
-    PB.Size = UDim2.new(0, 24, 0, 22)
-    PB.Position = UDim2.new(1, -24, 0, 36)
-    PB.BackgroundColor3 = Color3.fromRGB(30, 60, 100)
-    PB.Text = "+"
-    PB.TextColor3 = Color3.fromRGB(200, 230, 255)
-    PB.Font = Enum.Font.GothamBold
-    PB.TextSize = 18
-    PB.AutoButtonColor = true
-    PB.ZIndex = 10
-    PB.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = PB
-    end
-
-    PB.MouseButton1Click:Connect(function()
-        _G.SC = _G.SC + 1
-        CD.Text = tostring(_G.SC)
-    end)
-
-    MB.MouseButton1Click:Connect(function()
-        if _G.SC > 1 then
-            _G.SC = _G.SC - 1
-            CD.Text = tostring(_G.SC)
-        end
-    end)
-
-    local RL = Instance.new("TextLabel")
-    RL.Size = UDim2.new(0, 100, 0, 22)
-    RL.Position = UDim2.new(0, 12, 0, 64)
-    RL.BackgroundTransparency = 1
-    RL.Text = "Riddle Solver"
-    RL.TextColor3 = Color3.fromRGB(180, 210, 255)
-    RL.Font = Enum.Font.GothamSemibold
-    RL.TextSize = 12
-    RL.TextXAlignment = Enum.TextXAlignment.Left
-    RL.ZIndex = 10
-    RL.Parent = CF
-
-    local RT = Instance.new("TextButton")
-    RT.Name = "RiddleSolverToggle"
-    RT.Size = UDim2.new(0, 52, 0, 22)
-    RT.Position = UDim2.new(1, -56, 0, 64)
-    RT.BackgroundColor3 = _G.RS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-    RT.Text = _G.RS and "ON" or "OFF"
-    RT.TextColor3 = Color3.fromRGB(255, 255, 255)
-    RT.Font = Enum.Font.GothamBold
-    RT.TextSize = 10
-    RT.AutoButtonColor = false
-    RT.ZIndex = 10
-    RT.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = RT
-    end
-
-    RT.MouseButton1Click:Connect(function()
-        _G.RS = not _G.RS
-        RT.BackgroundColor3 = _G.RS and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
-        RT.Text = _G.RS and "ON" or "OFF"
-    end)
-
-    local CL = Instance.new("TextLabel")
-    CL.Name = "CollectedLabel"
-    CL.Size = UDim2.new(0.6, 0, 0, 20)
-    CL.Position = UDim2.new(0, 12, 0, 92)
-    CL.BackgroundTransparency = 1
-    CL.Text = "Collected: 0"
-    CL.TextColor3 = Color3.fromRGB(160, 200, 230)
-    CL.Font = Enum.Font.Gotham
-    CL.TextSize = 11
-    CL.TextXAlignment = Enum.TextXAlignment.Left
-    CL.ZIndex = 10
-    CL.Parent = CF
-
-    local RB = Instance.new("TextButton")
-    RB.Name = "ResetBtn"
-    RB.Size = UDim2.new(0, 40, 0, 20)
-    RB.Position = UDim2.new(1, -52, 0, 92)
-    RB.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
-    RB.Text = "↻ Reset"
-    RB.TextColor3 = Color3.fromRGB(255, 255, 255)
-    RB.Font = Enum.Font.GothamBold
-    RB.TextSize = 9
-    RB.AutoButtonColor = false
-    RB.ZIndex = 10
-    RB.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = RB
-    end
-
-    RB.MouseButton1Click:Connect(function()
-        resetCodes()
-    end)
-
-    local LF = Instance.new("Frame")
-    LF.Name = "CodeListFrame"
-    LF.Size = UDim2.new(1, -24, 0, 90)
-    LF.Position = UDim2.new(0, 12, 0, 116)
-    LF.BackgroundColor3 = Color3.fromRGB(12, 22, 42)
-    LF.BackgroundTransparency = 0.2
-    LF.BorderSizePixel = 0
-    LF.ClipsDescendants = true
-    LF.ZIndex = 10
-    LF.Parent = CF
-
-    do
-        local CO = Instance.new("UICorner")
-        CO.CornerRadius = UDim.new(0, 4)
-        CO.Parent = LF
-    end
-
-    do
-        local ST = Instance.new("UIStroke")
-        ST.Color = Color3.fromRGB(80, 180, 255)
-        ST.Thickness = 1
-        ST.Transparency = 0.3
-        ST.Parent = LF
-    end
-
-    local SC = Instance.new("ScrollingFrame")
-    SC.Name = "Scrolling"
-    SC.Size = UDim2.new(1, -4, 1, -4)
-    SC.Position = UDim2.new(0, 2, 0, 2)
-    SC.BackgroundTransparency = 1
-    SC.BorderSizePixel = 0
-    SC.ScrollBarThickness = 3
-    SC.ScrollBarImageColor3 = Color3.fromRGB(80, 180, 255)
-    SC.ScrollBarImageTransparency = 0.4
-    SC.CanvasSize = UDim2.new(0, 0, 0, 0)
-    SC.AutomaticCanvasSize = Enum.AutomaticSize.Y
-    SC.ClipsDescendants = true
-    SC.ZIndex = 11
-    SC.Parent = LF
-
-    do
-        local LY = Instance.new("UIListLayout")
-        LY.Padding = UDim.new(0, 2)
-        LY.SortOrder = Enum.SortOrder.LayoutOrder
-        LY.Parent = SC
-    end
-
-    local PH = Instance.new("TextLabel")
-    PH.Name = "Placeholder"
-    PH.Size = UDim2.new(1, 0, 0, 16)
-    PH.BackgroundTransparency = 1
-    PH.Text = "no codes yet"
-    PH.TextColor3 = Color3.fromRGB(100, 140, 180)
-    PH.Font = Enum.Font.Gotham
-    PH.TextSize = 10
-    PH.TextXAlignment = Enum.TextXAlignment.Center
-    PH.TextYAlignment = Enum.TextYAlignment.Top
-    PH.ZIndex = 12
-    PH.Parent = SC
-    PH.Visible = (#collectedCodes == 0)
-
-    local SP = Instance.new("Frame")
-    SP.Size = UDim2.new(1, -24, 0, 1)
-    SP.Position = UDim2.new(0, 12, 0, 210)
-    SP.BackgroundColor3 = Color3.fromRGB(80, 180, 255)
-    SP.BackgroundTransparency = 0.6
-    SP.BorderSizePixel = 0
-    SP.ZIndex = 10
-    SP.Parent = CF
-
-    local CR = Instance.new("TextLabel")
-    CR.Name = "CreditLabel"
-    CR.Size = UDim2.new(1, -24, 0, 16)
-    CR.Position = UDim2.new(0, 12, 0, 216)
-    CR.BackgroundTransparency = 1
-    CR.Text = "Credits to momo.1711"
-    CR.TextColor3 = Color3.fromRGB(110, 150, 200)
-    CR.Font = Enum.Font.Gotham
-    CR.TextSize = 9
-    CR.TextXAlignment = Enum.TextXAlignment.Center
-    CR.TextYAlignment = Enum.TextYAlignment.Top
-    CR.ZIndex = 10
-    CR.Parent = CF
-
-    local FT = Instance.new("TextLabel")
-    FT.Size = UDim2.new(1, -24, 0, 22)
-    FT.Position = UDim2.new(0, 12, 0, 234)
-    FT.BackgroundTransparency = 1
-    FT.RichText = true
-    FT.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
-    FT.TextColor3 = Color3.fromRGB(180, 200, 255)
-    FT.TextSize = 12
-    FT.Font = Enum.Font.GothamBold
-    FT.TextXAlignment = Enum.TextXAlignment.Center
-    FT.ZIndex = 10
-    FT.Parent = CF
-
-    local FB = Instance.new("TextButton")
-    FB.Size = UDim2.new(1, -24, 0, 22)
-    FB.Position = UDim2.new(0, 12, 0, 234)
-    FB.BackgroundTransparency = 1
-    FB.Text = ""
-    FB.AutoButtonColor = false
-    FB.ZIndex = 10
-    FB.Parent = CF
-
-    FB.MouseButton1Click:Connect(function()
-        local L = "https://discord.gg/7Ea7qEsPzP"
-        if setclipboard then pcall(function() setclipboard(L) end)
-        elseif toclipboard then pcall(function() toclipboard(L) end) end
-    end)
-
-    FB.MouseEnter:Connect(function()
-        FT.Text = '<font color="#88aaff">Click to copy: </font><font color="#66ccff"><b>discord.gg/7Ea7qEsPzP</b></font>'
-    end)
-
-    FB.MouseLeave:Connect(function()
-        FT.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
-    end)
-
-    -- ===== MINIMIEREN: GUI bleibt als kleine Leiste sichtbar =====
-    local minimizedPos = UDim2.new(1, -PANEL_W - 10, 0, 10)
-
-    local function applyMinimized(S)
-        isMinimized = S
-        if S then
-            CF.Visible = false
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, 28)
-            MainFrame.Position = minimizedPos
-            MN.Text = "+"
         else
-            CF.Visible = true
-            MainFrame.Size = UDim2.new(0, PANEL_W, 0, PANEL_H)
-            MainFrame.Position = (config.panelX and config.panelY)
-                and UDim2.new(0, config.panelX, 0, config.panelY)
-                or UDim2.new(0.5, 0, 0.4, 0)
-            MN.Text = "−"
+            return
+        end
+    else
+        return
+    end
+end
+    local t27 = pcall(function() --[[ proto 150 | 7 instr | 4 up ]]
+    pcall(up0)
+    v0()
+    v0()
+    v0()
+    return
+end)
+    if not t27 then
+        local t28 = up9(up8)
+        warn(up8[9] .. t28)
+    end
+    return
+end)
+                                                    end
+                                                end
+                                                while t176 do
+                                                    local t178 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
         end
     end
-
-    MN.MouseButton1Click:Connect(function()
-        applyMinimized(not isMinimized)
-    end)
-
-    -- Drag (nur wenn nicht minimiert)
-    local dragging = false
-    local dragInput = nil
-    local dragStart = nil
-    local startPos = nil
-
-    local function updateMain(I)
-        if isMinimized then return end
-        local D = I.Position - dragStart
-        local NX = startPos.X.Offset + D.X
-        local NY = startPos.Y.Offset + D.Y
-        config.panelX = NX
-        config.panelY = NY
-        saveConfig()
-        MainFrame.Position = UDim2.new(startPos.X.Scale, NX, startPos.Y.Scale, NY)
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
     end
-
-    MainFrame.InputBegan:Connect(function(I)
-        if isMinimized then return end
-        if I.UserInputType == Enum.UserInputType.MouseButton1 or I.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = I.Position
-            startPos = MainFrame.Position
-            I.Changed:Connect(function()
-                if I.UserInputState == Enum.UserInputState.End then
-                    dragging = false
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(456, 9121)
+                                                    local t179 = function(p1, p2) --[[ proto 13 | 63 instr | 9 up ]]
+    if not (#up0) then
+        for i3 = 1, #up0, 1 do
+            if up1 then
+                local t1 = up1.codepoint(up0, i3)
+            else
+                local t2 = up2(up0, i3)
+            end
+        end
+    end
+    up5(((up4 + 0) % 2147483647))
+    if up6 == up4 then
+        up7 = 101
+        if not 1 then
+            for i4 = 101, 1, -(1) do
+                local t3 = {}
+                t3[1] = true
+                up8[i4] = t3
+            end
+        end
+        task.delay(function() --[[ proto 14 | 5 instr | 0 up ]]
+    task.wait(10)
+    return
+end)
+    end
+    if p1 then
+    end
+    if not p1 then
+        return ((up4 + 0) % 2147483647)
+    else
+        return ((((up4 + 0) % 2147483647) % ((p2 - p1) + 1)) + p1)
+    end
+end(122, 1123)
+                                                    local t180 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
                 end
-            end)
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
         end
-    end)
-
-    MainFrame.InputChanged:Connect(function(I)
-        if isMinimized then return end
-        if I.UserInputType == Enum.UserInputType.MouseMovement or I.UserInputType == Enum.UserInputType.Touch then
-            dragInput = I
+    end
+    return p1
+end((100 + t178))
+                                                    local t181 = function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
         end
-    end)
-
-    U.InputChanged:Connect(function(I)
-        if isMinimized then return end
-        if I == dragInput and dragging then
-            updateMain(I)
+    end
+    return p1
+end(((t178 + t179) % 213255))
+                                                    local t182 = {}
+                                                    t182[1] = t129
+                                                    t182[2] = t130
+                                                    t182[3] = t131
+                                                    t182[4] = t132
+                                                    local t183 = function(p1, p2) --[[ proto 64 | 73 instr | 5 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 * 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 1 do
+            local t7 = up1(p1, i3)
+            local t8 = up2(t7, ((t5[(((i3 - 1) % 4) + 1)] + (i3 * 31)) % 256))
+            local t9 = up3(t8, ((t5[((i3 % 4) + 1)] % 7) + 1))
+            local t10 = up4(((t9 + (t5[(((i3 + 1) % 4) + 1)] + (i3 * 17))) % 256))
+            t6[i3] = t10
         end
-    end)
-
-    refreshGUI()
-    print("[KrimoHub] GUI sichtbar!")
+    end
+    table.concat(t6)
+    return
+end(t180 .. "h" .. t178 .. "h" .. t179 .. "h" .. t181, t182)
+                                                    if discordWebs then
+                                                        if not (discordWebs[#discordWebs]) then
+                                                        else
+                                                            local t184 = {}
+                                                            t184[1] = t129
+                                                            t184[2] = t130
+                                                            t184[3] = t131
+                                                            t184[4] = t132
+                                                            local t185 = function(p1, p2) --[[ proto 64 | 73 instr | 5 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 * 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 1 do
+            local t7 = up1(p1, i3)
+            local t8 = up2(t7, ((t5[(((i3 - 1) % 4) + 1)] + (i3 * 31)) % 256))
+            local t9 = up3(t8, ((t5[((i3 % 4) + 1)] % 7) + 1))
+            local t10 = up4(((t9 + (t5[(((i3 + 1) % 4) + 1)] + (i3 * 17))) % 256))
+            t6[i3] = t10
+        end
+    end
+    table.concat(t6)
+    return
+end(discordWebs[#discordWebs][2], t184)
+                                                        end
+                                                    end
+                                                    local t186 = {}  -- keys: Url, Method
+                                                    t186.Url = "https://api.getpolsec.com/heartbeat?session=" .. t160[2] .. "" .. "&token=" .. t183 .. ""
+                                                    t186["Method"] = "GET"
+                                                    local t187 = function(p1) --[[ proto 20 | 18 instr | 1 up ]]
+    if p1.Body ~= nil then
+        p1["body"] = p1["Body"]
+    end
+    if p1.Url ~= nil then
+        p1["url"] = p1["Url"]
+    end
+    if p1.Method ~= nil then
+        p1["method"] = p1["Method"]
+    end
+    up0(p1)
+    return
+end(t186)
+                                                    local t188 = string.sub(t187.Body, 1, 7)
+                                                    local t189 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t188, "BANNED:")
+                                                    if not t189 then
+                                                        local t190 = string.sub(t187.Body, 1, 3)
+                                                        local t191 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end(t190, "OWO")
+                                                        if not t191 then
+                                                        end
+                                                        local t192 = string.sub(t187.Body, 4)
+                                                        local t193 = {}
+                                                        t193[1] = t129
+                                                        t193[2] = t130
+                                                        t193[3] = t131
+                                                        t193[4] = t132
+                                                        local t194 = function(p1, p2) --[[ proto 65 | 82 instr | 4 up ]]
+    local t1 = up0(p2[1])
+    local t2 = up0(p2[2])
+    local t3 = up0(p2[3])
+    local t4 = up0(p2[4])
+    local t5 = {}
+    t5[1] = t1
+    t5[2] = t2
+    t5[3] = t3
+    t5[4] = t4
+    local t6 = table.create((#p1 / 2))
+    if not (#p1) then
+        for i3 = 1, #p1, 2 do
+            local t7 = p1:sub(i3, i3, v17)
+            p1 = p1
+            p1.sub(p1, (i3 + 1), (i3 + 1))
+            local t8 = up1()
+            local t9 = up2(((t8 - (t5[(((1 + 1) % 4) + 1)] + (1 * 17))) % 256), ((t5[((1 % 4) + 1)] % 7) + 1))
+            local t10 = up3(t9, ((t5[(((1 - 1) % 4) + 1)] + (1 * 31)) % 256))
+            local t11 = string.char(t10)
+            t6[1] = t11
+        end
+    end
+    table.concat(t6)
+    return
+end(t192, t193)
+                                                        function(p1) --[[ proto 11 | 55 instr | 1 up ]]
+    if not 2 then
+        for i3 = 1, 2, 1 do
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 2) == 1 then
+            end
+            if not 2 then
+                for i5 = 1, 2, 1 do
+                end
+            end
+            if (((((p1 * 997) + (p1 % 313)) + 121) % 1000003) % 7) == 2 then
+            end
+        end
+    end
+    return p1
+end((t178 + t179))
+                                                        local t195 = function(p1, p2) --[[ proto 9 | 170 instr | 2 up ]]
+    if p1 == nil then
+    else
+    end
+    if v2 then
+        if p2 == nil then
+        else
+        end
+    end
+    if v2 then
+        local t1 = {}
+        t1[p1] = "please dont be a jew"
+    end
+    if v2 then
+        local t2 = {}
+        t2[p2] = "jew"
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        local t3 = up0(v6)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        local t4 = up0(v8)
+        if R[A] ~= R[D] then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        local t5 = up1(p1, p2)
+    end
+    if v2 then
+        local t6 = up1(p1, p2)
+        if t6 == false then
+        else
+        end
+    end
+    if v2 then
+        local t7 = up1(p1, p2)
+        if t7 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t8 = up1(p1, p2)
+        if not not t8 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t9 = up1(p2, p1)
+        if not not t9 ~= true then
+        else
+        end
+    end
+    if v2 then
+        local t10 = up1(p2, p1)
+    end
+    if v2 then
+        if not p1 == p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t11 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        local t12 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+    end
+    if v2 then
+        local t13 = <builtin 62>(p2, p1)
+    end
+    if v2 then
+        if p1 == p2 then
+        else
+        end
+        if v21 ~= false then
+        else
+        end
+    end
+    if v2 then
+        local t14 = <builtin 62>(p1, p2)
+    end
+    if v2 then
+        if p1 ~= p2 then
+        else
+        end
+        if v21 ~= true then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p2 > p1 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if v2 then
+        if p1 > p2 then
+        else
+        end
+    end
+    if not v2 then
+        return false
+    else
+        return true
+    end
+end()
+                                                        if not t195 then
+                                                        end
+                                                        wait(15)
+                                                    else
+                                                        local t196 = string.sub(t187.Body, 8)
+                                                        function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("You have been banned. Reason: " .. t196)
+                                                        return
+                                                    end
+                                                end
+                                            end
+                                            return
+                                        else
+                                            function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Authentication failed. Please try again.")
+                                            return
+                                        end
+                                    else
+                                        function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Server error. Please try again later.")
+                                        return
+                                    end
+                                else
+                                    local t197 = pcall()
+                                    if t197 then
+                                    end
+                                    if t197 then
+                                    end
+                                    if not t197 then
+                                        function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Invalid request.")
+                                        return
+                                    else
+                                        function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end(function() --[[ proto 68 | 5 instr | 2 up ]]
+    up0 = up0
+    up0.JSONDecode(up0, up1.Body)
+    return
+end.error)
+                                        return
+                                    end
+                                end
+                            else
+                                local t198 = pcall()
+                                if t198 then
+                                end
+                                if t198 then
+                                end
+                                if not t198 then
+                                    function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Access denied.")
+                                    return
+                                else
+                                    function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end(function() --[[ proto 67 | 5 instr | 2 up ]]
+    up0 = up0
+    up0.JSONDecode(up0, up1.Body)
+    return
+end.error)
+                                    return
+                                end
+                            end
+                        else
+                            local t199 = pcall()
+                            if t199 then
+                            end
+                            if t199 then
+                            end
+                            if not t199 then
+                                function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Script not found. Please check your public key.")
+                                return
+                            else
+                                function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end(function() --[[ proto 66 | 5 instr | 2 up ]]
+    up0 = up0
+    up0.JSONDecode(up0, up1.Body)
+    return
+end.error)
+                                return
+                            end
+                        end
+                    else
+                        local t200 = string.sub(t143.Body, 8)
+                        function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("You have been banned. Reason: " .. t200)
+                        return
+                    end
+                else
+                    local t201 = string.sub(t143.Body, 8)
+                    function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Script disabled: " .. t201)
+                    return
+                end
+            else
+                function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("Server is currently unavailable. Please try again later.")
+                return
+            end
+        else
+            function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("userKey must be a string")
+            return
+        end
+    else
+        function(p1) --[[ proto 4 | 20 instr | 0 up ]]
+    local t1 = tostring(p1)
+    warn("[ PolSec ] Error: " .. t1)
+    local t2 = game:GetService("Players")
+    p1:Kick()
+    pcall(function() --[[ proto 5 | 55 instr | 1 up ]]
+    local t1 = game:GetService("CoreGui")
+    local t2 = t1:FindFirstChild("RobloxPromptGui")
+    if not t1 then
+        local t3 = t1:WaitForChild("RobloxPromptGui", 5, v5)
+    end
+    if t2 then
+        local t4 = t2:FindFirstChild("promptOverlay")
+        if not t2 then
+            local t5 = t2:WaitForChild("promptOverlay", 5, v6)
+        end
+        if t4 then
+            local t6 = t4:FindFirstChild("ErrorPrompt")
+            if not t4 then
+                local t7 = t4:WaitForChild("ErrorPrompt", 5, v7)
+            end
+            if t6 then
+                if not (not R[A]) then
+                end
+                if t6 and t6["TitleFrame"] then
+                    t6["TitleFrame"]["ErrorTitle"]["Text"] = "PolSec Error"
+                end
+                if not (not R[A]) then
+                end
+                if t6 and t6["MessageArea"] then
+                end
+                if t6 and t6["MessageArea"] then
+                    local t8 = tostring(up0)
+                    t6["MessageArea"]["ErrorFrame"].ErrorMessage.Text = "Error: " .. t8
+                end
+                return
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end)
+    while not v1 do
+        wait(9999)
+    end
+    return
+end("No key was provided.")
+        return
+    end
 end
 
-local function init()
-    setupPaths()
-    buildGUI()
-    startPlayerGuiScanner()
-end
-
-pcall(init)
