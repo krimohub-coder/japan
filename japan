@@ -1,8 +1,3 @@
--- ============================================================
--- KRIMO HUB - FINAL (VOLLSTÄNDIG & FEHLERFREI)
--- ============================================================
-
--- 1. GLOBALS
 _G.ScriptEnabled = true
 _G.AutoWriteEnabled = false
 _G.AutoSubmitEnabled = false
@@ -17,7 +12,6 @@ local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 
--- 2. PERSISTENZ (Panel-Position)
 local config = { panelX = nil, panelY = nil }
 local hasFS = (writefile and readfile and isfile) and true or false
 
@@ -37,7 +31,6 @@ local function saveConfig()
     pcall(function() writefile("KrimoHub_config.json", HttpService:JSONEncode(config)) end)
 end
 
--- 3. PFADE
 local Announcements = nil
 local CodeTextBox = nil
 local ConfirmButton = nil
@@ -47,12 +40,8 @@ local function setupPaths()
     pcall(function()
         local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
         if not PlayerGui then return
-        
         local topNotif = PlayerGui:FindFirstChild("TopNotification")
-        if topNotif then
-            Announcements = topNotif:FindFirstChild("TopNotification")
-        end
-        
+        if topNotif then Announcements = topNotif:FindFirstChild("TopNotification") end
         local codes = PlayerGui:FindFirstChild("Codes")
         if codes then
             local codesInner = codes:FindFirstChild("Codes")
@@ -60,20 +49,15 @@ local function setupPaths()
                 local codeRedeem = codesInner:FindFirstChild("CodeRedeem")
                 if codeRedeem then
                     CodeTextBox = codeRedeem:FindFirstChild("TextBox")
-                    if CodeTextBox then
-                        CodeTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    end
+                    if CodeTextBox then CodeTextBox.TextColor3 = Color3.fromRGB(255, 255, 255) end
                 end
                 ConfirmButton = codesInner:FindFirstChild("Confirm")
             end
         end
     end)
-    
     pcall(function()
         local rfFolder = ReplicatedStorage:FindFirstChild("RF")
-        if rfFolder then
-            RedemptionRF = rfFolder:FindFirstChild("RequestRedemption")
-        end
+        if rfFolder then RedemptionRF = rfFolder:FindFirstChild("RequestRedemption") end
         if not RedemptionRF then
             for _, v in ipairs(ReplicatedStorage:GetDescendants()) do
                 if v.Name == "RequestRedemption" and v:IsA("RemoteFunction") then
@@ -85,12 +69,10 @@ local function setupPaths()
     end)
 end
 
--- 4. COLLECTED CODES
 local collectedCodes = {}
 local collectedSeen = {}
 local AddedCount = 0
 
--- 5. CODE EXTRAKTION (NUR CODES)
 local function looksLikeCode(token)
     if not token then return false end
     if #token < 4 or #token > 50 then return false end
@@ -109,36 +91,26 @@ local function extractCodesFromText(text)
     return found
 end
 
--- 6. GUI AKTUALISIERUNG
 local MainFrame = nil
+
 local function refreshGUI()
     task.spawn(function()
         if not MainFrame then return end
         local ContentFrame = MainFrame:FindFirstChild("ContentFrame")
         if not ContentFrame then return end
-        
         local collectedLabel = ContentFrame:FindFirstChild("CollectedLabel")
-        if collectedLabel then
-            collectedLabel.Text = "Collected: " .. #collectedCodes
-        end
-        
+        if collectedLabel then collectedLabel.Text = "Collected: " .. #collectedCodes end
         local listFrame = ContentFrame:FindFirstChild("CodeListFrame")
         if not listFrame then return end
-        
         local scroll = listFrame:FindFirstChild("Scrolling")
         if not scroll then return end
-        
         for _, child in ipairs(scroll:GetChildren()) do
             if child:IsA("TextLabel") and child.Name ~= "Placeholder" then
                 child:Destroy()
             end
         end
-        
         local placeholder = scroll:FindFirstChild("Placeholder")
-        if placeholder then
-            placeholder.Visible = (#collectedCodes == 0)
-        end
-        
+        if placeholder then placeholder.Visible = (#collectedCodes == 0) end
         local maxShow = 10
         local startIdx = math.max(1, #collectedCodes - maxShow + 1)
         for i = startIdx, #collectedCodes do
@@ -157,7 +129,6 @@ local function refreshGUI()
                 label.Parent = scroll
             end
         end
-        
         local layout = scroll:FindFirstChildOfClass("UIListLayout")
         if layout then
             scroll.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 6)
@@ -165,7 +136,6 @@ local function refreshGUI()
     end)
 end
 
--- 7. SUBMIT-FUNKTION
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -182,14 +152,12 @@ end
 
 local function triggerSubmit()
     setupPaths()
-    
     if RedemptionRF and CodeTextBox then
         local ok, result = pcall(function()
             return RedemptionRF:InvokeServer(CodeTextBox.Text)
         end)
         if ok then return true end
     end
-    
     if ConfirmButton and ConfirmButton.Parent then
         pcall(function()
             fireSignal(ConfirmButton.MouseButton1Click)
@@ -199,7 +167,6 @@ local function triggerSubmit()
         end)
         return true
     end
-    
     local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
     if PlayerGui then
         for _, obj in ipairs(PlayerGui:GetDescendants()) do
@@ -215,31 +182,26 @@ local function triggerSubmit()
             end
         end
     end
-    
     return false
 end
 
--- 8. CODE HINZUFÜGEN
 local function addCode(Code)
     if not _G.ScriptEnabled or not _G.AutoWriteEnabled then return end
     Code = tostring(Code)
     if Code == "" then return end
     if not CodeTextBox then setupPaths() end
     if not CodeTextBox then return end
-
     if not collectedSeen[Code] then
         collectedSeen[Code] = true
         table.insert(collectedCodes, Code)
         refreshGUI()
     end
-
     if CodeTextBox.Text == "" then
         CodeTextBox.Text = Code
     else
         CodeTextBox.Text = CodeTextBox.Text .. Code
     end
     AddedCount = AddedCount + 1
-
     if _G.AutoSubmitEnabled and #collectedCodes >= _G.SubmitAfterCount then
         task.defer(function()
             local success = false
@@ -259,22 +221,10 @@ local function addCode(Code)
     end
 end
 
--- 9. ANNOUNCEMENT WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
-    if text == "" then return
-    
-    -- RIDDLE SOLVER zuerst
-    if _G.RiddleSolverEnabled then
-        local answer = answerQuestion(text)
-        if answer then
-            addCode(answer)
-            return
-        end
-    end
-    
-    -- NUR CODES EXTRAHIEREN
+    if text == "" then return end
     local codes = extractCodesFromText(text)
     for _, code in ipairs(codes) do
         addCode(code)
@@ -296,75 +246,6 @@ if CodeTextBox then
     end)
 end
 
--- 10. RIDDLE SOLVER (DATENBANK)
-local SAB_DB = {
-    ["how old am i"] = "24", ["how old is sammy"] = "24",
-    ["my age"] = "24", ["sammy age"] = "24", ["age"] = "24",
-    ["where am i from"] = "BRAZIL", ["where is sammy from"] = "BRAZIL",
-    ["my country"] = "BRAZIL", ["sammy country"] = "BRAZIL",
-    ["favorite color"] = "BLUE", ["fav color"] = "BLUE",
-    ["my color"] = "BLUE", ["sammy color"] = "BLUE", ["color"] = "BLUE",
-    ["favorite football player"] = "RONALDO", ["fav football player"] = "RONALDO",
-    ["my favorite football player"] = "RONALDO", ["ronaldo"] = "RONALDO",
-    ["game created on"] = "FRIDAY", ["created on"] = "FRIDAY",
-    ["what day was the game created"] = "FRIDAY", ["what day was sab created"] = "FRIDAY",
-    ["game creation day"] = "FRIDAY",
-    ["seventh mutation"] = "CURSED", ["7th mutation"] = "CURSED",
-    ["eighth mutation"] = "DIVINE", ["8th mutation"] = "DIVINE",
-    ["ninth mutation"] = "CYBER", ["9th mutation"] = "CYBER",
-    ["tenth mutation"] = "PHANTOM", ["10th mutation"] = "PHANTOM",
-    ["first machine"] = "RAINBOW MACHINE", ["1st machine"] = "RAINBOW MACHINE",
-    ["second machine"] = "BUBBLEGUM MACHINE", ["2nd machine"] = "BUBBLEGUM MACHINE",
-    ["third machine"] = "FUSE MACHINE", ["3rd machine"] = "FUSE MACHINE",
-    ["fourth machine"] = "CRAFT MACHINE", ["4th machine"] = "CRAFT MACHINE",
-    ["fifth machine"] = "WITCH FUSE", ["5th machine"] = "WITCH FUSE",
-    ["sixth machine"] = "BRAINROT DEALER", ["6th machine"] = "BRAINROT DEALER",
-    ["seventh machine"] = "BRAINROT TRADER", ["7th machine"] = "BRAINROT TRADER",
-    ["eighth machine"] = "SANTA'S FUSE", ["8th machine"] = "SANTA'S FUSE",
-    ["ninth machine"] = "SANTA'S SHOP", ["9th machine"] = "SANTA'S SHOP",
-    ["tenth machine"] = "NEW YEAR'S MACHINE", ["10th machine"] = "NEW YEAR'S MACHINE",
-    ["eleventh machine"] = "DUELS MACHINE", ["11th machine"] = "DUELS MACHINE",
-    ["twelfth machine"] = "CUPID'S MACHINE", ["12th machine"] = "CUPID'S MACHINE",
-    ["thirteenth machine"] = "TRADE MACHINE", ["13th machine"] = "TRADE MACHINE",
-    ["fourteenth machine"] = "DIVINE FUSE", ["14th machine"] = "DIVINE FUSE",
-    ["fifteenth machine"] = "EGG INCUBATOR", ["15th machine"] = "EGG INCUBATOR",
-    ["sixteenth machine"] = "CYBER CRAFT MACHINE", ["16th machine"] = "CYBER CRAFT MACHINE",
-    ["seventeenth machine"] = "SUMMER FUSE", ["17th machine"] = "SUMMER FUSE",
-    ["eighteenth machine"] = "LOS TRADERS", ["18th machine"] = "LOS TRADERS",
-    ["og brainrot cannot be obtained"] = "HEADLESS HORSEMAN", ["headless horseman"] = "HEADLESS HORSEMAN",
-    ["first og added"] = "STRAWBERRYELEPHANT", ["1st og"] = "STRAWBERRYELEPHANT",
-    ["second og added"] = "MEOWL", ["2nd og"] = "MEOWL",
-    ["third og added"] = "SKIBIDITOILET", ["3rd og"] = "SKIBIDITOILET",
-    ["fifth og added"] = "JOHNPORK", ["5th og"] = "JOHNPORK",
-    ["highest rarity"] = "OG",
-    ["fire represents"] = "DRAGON", ["fire stands for"] = "DRAGON",
-    ["won the world cup"] = "ARGENTINA", ["world cup winner"] = "ARGENTINA", ["world cup"] = "ARGENTINA",
-    ["worst game owner"] = "SECRETLOKII", ["most boring game owner"] = "SECRETLOKII",
-    ["most boring game on roblox"] = "KEYBOARDESCAPE",
-    ["spawned during admin abuse war"] = "RACOONINI JANDELINI",
-    ["won the admin abuse war"] = "GROWAGARDEN",
-    ["worst secret"] = "KARKERKARKURKUR", ["bad secret"] = "KARKERKARKURKUR",
-    ["maximum server size"] = "EIGHT", ["max server size"] = "EIGHT",
-    ["brother of hydra bunny"] = "CERBERUS", ["hydra bunny brother"] = "CERBERUS",
-    ["release month"] = "MAY", ["release year"] = "2025", ["release date"] = "MAY162025",
-    ["code 1"] = "SAB2024", ["code 2"] = "SAMMYGIFT", ["code 3"] = "BRAINROT",
-    ["code 4"] = "SPYDER", ["code 5"] = "RELEASE", ["code 6"] = "MAY25",
-    ["code 7"] = "BLUEBOY", ["code 8"] = "KEYBOARD", ["code 9"] = "ESCAPE",
-    ["code 10"] = "RAINBOW",
-    ["total codes"] = "247", ["active codes"] = "89", ["expired codes"] = "158",
-    ["rare codes"] = "12", ["legendary codes"] = "3", ["mythic codes"] = "1",
-}
-
-local function answerQuestion(text)
-    if not _G.RiddleSolverEnabled or not text or text == "" then return nil end
-    local l = text:lower()
-    for key, value in pairs(SAB_DB) do
-        if l:find(key) then return value end
-    end
-    return nil
-end
-
--- 11. SPYDERSAMMY DETEKTION
 local targetUserId = nil
 task.spawn(function()
     pcall(function() targetUserId = Players:GetUserIdFromNameAsync("SpyderSammy") end)
@@ -386,7 +267,6 @@ local function verifySourceIsSammy(textObj)
     return false
 end
 
--- 12. HANDLER
 local function handleIncomingText(textObj)
     if not _G.ScriptEnabled then return end
     local text = textObj.Text
@@ -412,7 +292,6 @@ local function startPlayerGuiScanner()
     playerGui.DescendantAdded:Connect(hookUiTextObject)
 end
 
--- 13. RESET
 local function resetCodes()
     table.clear(collectedCodes)
     table.clear(collectedSeen)
@@ -421,8 +300,8 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 14. GUI ERSTELLEN
 local ScreenGui = nil
+
 local function create(className, props)
     local inst = Instance.new(className)
     for k, v in pairs(props or {}) do inst[k] = v end
@@ -432,17 +311,14 @@ end
 local function buildGUI()
     local oldGui = CoreGui:FindFirstChild("KrimoHubGui") or LocalPlayer.PlayerGui:FindFirstChild("KrimoHubGui")
     if oldGui then oldGui:Destroy() end
-
     ScreenGui = create("ScreenGui", {
         Name = "KrimoHubGui",
         ResetOnSpawn = false,
         IgnoreGuiInset = true,
         Parent = CoreGui,
     })
-
     local PANEL_W = 260
     local PANEL_H = 320
-
     MainFrame = create("Frame", {
         Name = "MainFrame",
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -466,7 +342,6 @@ local function buildGUI()
         Rotation = 90,
         Parent = MainFrame,
     })
-
     local mainStroke = create("UIStroke", {
         Color = Color3.fromRGB(80, 180, 255),
         Thickness = 2,
@@ -483,8 +358,6 @@ local function buildGUI()
         }),
         Parent = mainStroke,
     })
-
-    -- Title Bar
     local titleBar = create("Frame", {
         Size = UDim2.new(1, 0, 0, 28),
         BackgroundColor3 = Color3.fromRGB(20, 40, 70),
@@ -494,7 +367,6 @@ local function buildGUI()
         Parent = MainFrame,
     })
     create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = titleBar })
-
     local titleLabel = create("TextLabel", {
         Name = "TitleLabel",
         Size = UDim2.new(0.6, 0, 1, 0),
@@ -508,7 +380,6 @@ local function buildGUI()
         ZIndex = 10,
         Parent = titleBar,
     })
-
     local toggleMinBtn = create("TextButton", {
         Name = "ToggleMinBtn",
         Size = UDim2.new(0, 22, 0, 22),
@@ -523,7 +394,6 @@ local function buildGUI()
         Parent = titleBar,
     })
     create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = toggleMinBtn })
-
     local toggleButton = create("TextButton", {
         Name = "SwitchBtn",
         Size = UDim2.new(0, 52, 0, 22),
@@ -543,8 +413,6 @@ local function buildGUI()
         toggleButton.BackgroundColor3 = _G.ScriptEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         toggleButton.Text = _G.ScriptEnabled and "ON" or "OFF"
     end)
-
-    -- Content
     local ContentFrame = create("Frame", {
         Name = "ContentFrame",
         Size = UDim2.new(1, 0, 1, -28),
@@ -553,8 +421,6 @@ local function buildGUI()
         ZIndex = 5,
         Parent = MainFrame,
     })
-
-    -- Auto Type
     local awLabel = create("TextLabel", {
         Size = UDim2.new(0, 80, 0, 22),
         Position = UDim2.new(0, 12, 0, 8),
@@ -591,8 +457,6 @@ local function buildGUI()
             refreshGUI()
         end
     end)
-
-    -- Auto Submit
     local asLabel = create("TextLabel", {
         Size = UDim2.new(0, 80, 0, 22),
         Position = UDim2.new(0, 12, 0, 36),
@@ -623,8 +487,6 @@ local function buildGUI()
         asToggle.BackgroundColor3 = _G.AutoSubmitEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         asToggle.Text = _G.AutoSubmitEnabled and "ON" or "OFF"
     end)
-
-    -- Count
     local minusBtn = create("TextButton", {
         Size = UDim2.new(0, 24, 0, 22),
         Position = UDim2.new(1, -78, 0, 36),
@@ -675,8 +537,6 @@ local function buildGUI()
             countDisplay.Text = tostring(_G.SubmitAfterCount)
         end
     end)
-
-    -- Riddle Solver
     local rsLabel = create("TextLabel", {
         Size = UDim2.new(0, 100, 0, 22),
         Position = UDim2.new(0, 12, 0, 64),
@@ -708,8 +568,6 @@ local function buildGUI()
         rsToggle.BackgroundColor3 = _G.RiddleSolverEnabled and Color3.fromRGB(34, 197, 94) or Color3.fromRGB(239, 68, 68)
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     end)
-
-    -- Collected + Reset
     local collectedLabel = create("TextLabel", {
         Name = "CollectedLabel",
         Size = UDim2.new(0.6, 0, 0, 20),
@@ -723,7 +581,6 @@ local function buildGUI()
         ZIndex = 10,
         Parent = ContentFrame,
     })
-
     local resetBtn = create("TextButton", {
         Name = "ResetBtn",
         Size = UDim2.new(0, 40, 0, 20),
@@ -738,11 +595,7 @@ local function buildGUI()
         Parent = ContentFrame,
     })
     create("UICorner", { CornerRadius = UDim.new(0, 4), Parent = resetBtn })
-    resetBtn.MouseButton1Click:Connect(function()
-        resetCodes()
-    end)
-
-    -- Code-Liste
+    resetBtn.MouseButton1Click:Connect(function() resetCodes() end)
     local codeListFrame = create("Frame", {
         Name = "CodeListFrame",
         Size = UDim2.new(1, -24, 0, 90),
@@ -761,7 +614,6 @@ local function buildGUI()
         Transparency = 0.3,
         Parent = codeListFrame,
     })
-
     local scroll = create("ScrollingFrame", {
         Name = "Scrolling",
         Size = UDim2.new(1, -4, 1, -4),
@@ -777,12 +629,11 @@ local function buildGUI()
         ZIndex = 11,
         Parent = codeListFrame,
     })
-    local layout = create("UIListLayout", {
+    create("UIListLayout", {
         Padding = UDim.new(0, 2),
         SortOrder = Enum.SortOrder.LayoutOrder,
         Parent = scroll,
     })
-
     local placeholder = create("TextLabel", {
         Name = "Placeholder",
         Size = UDim2.new(1, 0, 0, 16),
@@ -797,8 +648,6 @@ local function buildGUI()
         Parent = scroll,
     })
     placeholder.Visible = (#collectedCodes == 0)
-
-    -- Separator
     local sep = create("Frame", {
         Size = UDim2.new(1, -24, 0, 1),
         Position = UDim2.new(0, 12, 0, 210),
@@ -808,8 +657,6 @@ local function buildGUI()
         ZIndex = 10,
         Parent = ContentFrame,
     })
-
-    -- Credits
     local creditLabel = create("TextLabel", {
         Name = "CreditLabel",
         Size = UDim2.new(1, -24, 0, 16),
@@ -824,8 +671,6 @@ local function buildGUI()
         ZIndex = 10,
         Parent = ContentFrame,
     })
-
-    -- Discord footer
     local footer = create("TextLabel", {
         Size = UDim2.new(1, -24, 0, 22),
         Position = UDim2.new(0, 12, 0, 234),
@@ -859,8 +704,6 @@ local function buildGUI()
     footerBtn.MouseLeave:Connect(function()
         footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
     end)
-
-    -- Minimize
     local isMinimized = false
     local function applyMinimized(state)
         isMinimized = state
@@ -874,11 +717,7 @@ local function buildGUI()
             toggleMinBtn.Text = "−"
         end
     end
-    toggleMinBtn.MouseButton1Click:Connect(function()
-        applyMinimized(not isMinimized)
-    end)
-
-    -- Drag
+    toggleMinBtn.MouseButton1Click:Connect(function() applyMinimized(not isMinimized) end)
     local dragging = false
     local dragInput = nil
     local dragStart = nil
@@ -914,12 +753,10 @@ local function buildGUI()
             updateMain(input)
         end
     end)
-
     refreshGUI()
     print("[KrimoHub] GUI sichtbar!")
 end
 
--- 15. INIT
 local function init()
     setupPaths()
     buildGUI()
