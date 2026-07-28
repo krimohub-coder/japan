@@ -167,7 +167,7 @@ local MainFrame = nil
 local ScreenGui = nil
 local HistoryGui = nil
 local PANEL_W = 260
-local PANEL_H = 345
+local PANEL_H = 350  -- GRÖSSER
 local isMinimized = false
 local historyOpen = false
 
@@ -551,7 +551,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 12. GUI BAUEN (HISTORY UNTER RIDDLE SOLVER)
+-- 12. GUI BAUEN (GRÖSSER, HISTORY UNTER RIDDLE SOLVER)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -930,7 +930,7 @@ local function buildGUI()
     -- Code-Liste (jetzt bei y=144)
     local codeListFrame = Instance.new("Frame")
     codeListFrame.Name = "CodeListFrame"
-    codeListFrame.Size = UDim2.new(1, -24, 0, 85)
+    codeListFrame.Size = UDim2.new(1, -24, 0, 90)
     codeListFrame.Position = UDim2.new(0, 12, 0, 144)
     codeListFrame.BackgroundColor3 = Color3.fromRGB(12, 22, 42)
     codeListFrame.BackgroundTransparency = 0.2
@@ -983,21 +983,21 @@ local function buildGUI()
     placeholder.Parent = scroll
     placeholder.Visible = (#collectedCodes == 0)
     
-    -- Separator (jetzt bei y=233)
+    -- Separator (jetzt bei y=238)
     local sep = Instance.new("Frame")
     sep.Size = UDim2.new(1, -24, 0, 1)
-    sep.Position = UDim2.new(0, 12, 0, 233)
+    sep.Position = UDim2.new(0, 12, 0, 238)
     sep.BackgroundColor3 = Color3.fromRGB(80, 180, 255)
     sep.BackgroundTransparency = 0.6
     sep.BorderSizePixel = 0
     sep.ZIndex = 10
     sep.Parent = ContentFrame
     
-    -- Credits (jetzt bei y=240)
+    -- Credits (jetzt bei y=245)
     local creditLabel = Instance.new("TextLabel")
     creditLabel.Name = "CreditLabel"
     creditLabel.Size = UDim2.new(1, -24, 0, 16)
-    creditLabel.Position = UDim2.new(0, 12, 0, 240)
+    creditLabel.Position = UDim2.new(0, 12, 0, 245)
     creditLabel.BackgroundTransparency = 1
     creditLabel.Text = "Credits to momo.1711"
     creditLabel.TextColor3 = Color3.fromRGB(110, 150, 200)
@@ -1008,10 +1008,10 @@ local function buildGUI()
     creditLabel.ZIndex = 10
     creditLabel.Parent = ContentFrame
     
-    -- Discord footer (jetzt bei y=258)
+    -- Discord footer (jetzt bei y=263)
     local footer = Instance.new("TextLabel")
     footer.Size = UDim2.new(1, -24, 0, 22)
-    footer.Position = UDim2.new(0, 12, 0, 258)
+    footer.Position = UDim2.new(0, 12, 0, 263)
     footer.BackgroundTransparency = 1
     footer.RichText = true
     footer.Text = '<font color="#88aaff">discord.gg/</font><font color="#66ccff"><b>7Ea7qEsPzP</b></font>'
@@ -1024,7 +1024,7 @@ local function buildGUI()
     
     local footerBtn = Instance.new("TextButton")
     footerBtn.Size = UDim2.new(1, -24, 0, 22)
-    footerBtn.Position = UDim2.new(0, 12, 0, 258)
+    footerBtn.Position = UDim2.new(0, 12, 0, 263)
     footerBtn.BackgroundTransparency = 1
     footerBtn.Text = ""
     footerBtn.AutoButtonColor = false
