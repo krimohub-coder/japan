@@ -75,7 +75,6 @@ local collectedCodes = {}
 local AddedCount = 0
 local history = {}          -- { word, time }
 local lastAddedWord = ""    -- für Duplikatschutz
-local historyCount = 0     -- nur für Zählung
 
 -- 5. RIDDLE DATABASE (korrigiert)
 local SAB_DB = {
@@ -232,15 +231,16 @@ local PANEL_H = 280
 local isMinimized = false
 local historyOpen = false
 
--- 7. REFRESH MAIN GUI
+-- 7. REFRESH MAIN GUI (angepasst: "Pasted X/Y" + grüne Code-Einträge)
 local function refreshMainGUI()
     if not MainFrame then return end
     local ContentFrame = MainFrame:FindFirstChild("ContentFrame")
     if not ContentFrame then return end
     
+    -- Optional: CollectedLabel oben als Zusatzinfo
     local collectedLabel = ContentFrame:FindFirstChild("CollectedLabel")
     if collectedLabel then
-        collectedLabel.Text = "Collected: " .. #collectedCodes
+        collectedLabel.Text = "🌸 Pasted: " .. #collectedCodes .. "/" .. _G.SubmitAfterCount
     end
     
     local listFrame = ContentFrame:FindFirstChild("CodeListFrame")
@@ -248,14 +248,7 @@ local function refreshMainGUI()
     local scroll = listFrame:FindFirstChild("Scrolling")
     if not scroll then return end
     
-    local currentCount = 0
-    for _, child in ipairs(scroll:GetChildren()) do
-        if child:IsA("TextLabel") and child.Name == "CodeEntry" then
-            currentCount = currentCount + 1
-        end
-    end
-    if currentCount == #collectedCodes then return end
-    
+    -- Alte Einträge entfernen (außer Placeholder)
     for _, child in ipairs(scroll:GetChildren()) do
         if child:IsA("TextLabel") and child.Name ~= "Placeholder" then
             child:Destroy()
@@ -267,19 +260,35 @@ local function refreshMainGUI()
         placeholder.Visible = (#collectedCodes == 0)
     end
     
-    for i, code in ipairs(collectedCodes) do
-        if code and code ~= "" then
-            local label = Instance.new("TextLabel")
-            label.Name = "CodeEntry"
-            label.Size = UDim2.new(1, -6, 0, 12)
-            label.BackgroundTransparency = 1
-            label.Text = string.format("%02d  %s", i, code)
-            label.TextColor3 = Color3.fromRGB(200, 230, 255)
-            label.Font = Enum.Font.Gotham
-            label.TextSize = 9
-            label.TextXAlignment = Enum.TextXAlignment.Left
-            label.TextYAlignment = Enum.TextYAlignment.Top
-            label.Parent = scroll
+    if #collectedCodes > 0 then
+        -- Fortschrittsanzeige "Pasted X/Y" (wie im Screenshot)
+        local progressLabel = Instance.new("TextLabel")
+        progressLabel.Name = "ProgressLabel"
+        progressLabel.Size = UDim2.new(1, -6, 0, 16)
+        progressLabel.BackgroundTransparency = 1
+        progressLabel.Text = "🌸 Pasted " .. #collectedCodes .. "/" .. _G.SubmitAfterCount
+        progressLabel.TextColor3 = Color3.fromRGB(200, 230, 255)
+        progressLabel.Font = Enum.Font.GothamBold
+        progressLabel.TextSize = 10
+        progressLabel.TextXAlignment = Enum.TextXAlignment.Left
+        progressLabel.TextYAlignment = Enum.TextYAlignment.Top
+        progressLabel.Parent = scroll
+        
+        -- Code-Einträge mit grüner Farbe (wie "[code] -> EZ")
+        for i, code in ipairs(collectedCodes) do
+            if code and code ~= "" then
+                local label = Instance.new("TextLabel")
+                label.Name = "CodeEntry"
+                label.Size = UDim2.new(1, -6, 0, 14)
+                label.BackgroundTransparency = 1
+                label.Text = "[code] -> " .. code
+                label.TextColor3 = Color3.fromRGB(0, 200, 80)  -- Grün
+                label.Font = Enum.Font.Gotham
+                label.TextSize = 10
+                label.TextXAlignment = Enum.TextXAlignment.Left
+                label.TextYAlignment = Enum.TextYAlignment.Top
+                label.Parent = scroll
+            end
         end
     end
     
@@ -772,7 +781,7 @@ local function startPlayerGuiScanner()
     PG.DescendantAdded:Connect(hookUiTextObject)
 end
 
--- 15. NEUES GUI (SCHWARZ + HELLBLAU FLOWER DESIGN)
+-- 15. NEUES GUI (SCHWARZ + HELLBLAU FLOWER)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -1095,13 +1104,13 @@ local function buildGUI()
         end
     end)
     
-    -- ======== Collected + Reset ========
+    -- ======== Collected Label (oben) – jetzt "Pasted X/Y" ========
     local collectedLabel = Instance.new("TextLabel")
     collectedLabel.Name = "CollectedLabel"
     collectedLabel.Size = UDim2.new(0.6, 0, 0, 18)
     collectedLabel.Position = UDim2.new(0, 12, 0, 136)
     collectedLabel.BackgroundTransparency = 1
-    collectedLabel.Text = "🌸 Collected: 0"
+    collectedLabel.Text = "🌸 Pasted: 0/" .. _G.SubmitAfterCount
     collectedLabel.TextColor3 = Color3.fromRGB(160, 200, 230)
     collectedLabel.Font = Enum.Font.Gotham
     collectedLabel.TextSize = 10
@@ -1127,7 +1136,7 @@ local function buildGUI()
         resetCodes()
     end)
     
-    -- ======== Code-Liste ========
+    -- ======== Code-Liste (jetzt mit "Pasted X/Y" und grünen Einträgen) ========
     local codeListFrame = Instance.new("Frame")
     codeListFrame.Name = "CodeListFrame"
     codeListFrame.Size = UDim2.new(1, -24, 0, 72)
