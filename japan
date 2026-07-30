@@ -15,6 +15,7 @@ local LocalPlayer = Players.LocalPlayer
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 -- 2. PERSISTENZ
 local CONFIG_PATH = "KrimoHub_config.json"
@@ -42,8 +43,6 @@ loadConfig()
 local Announcements = nil
 local CodeTextBox = nil
 local ConfirmButton = nil
-local RedeemRemote = nil
-local Net = nil
 
 local function setupPaths()
     pcall(function()
@@ -69,9 +68,6 @@ local function setupPaths()
                 ConfirmButton = codesInner:FindFirstChild("Confirm")
             end
         end
-        
-        -- Net für Remote finden
-        Net = game:GetService("ReplicatedStorage"):FindFirstChild("Packages"):FindFirstChild("Net")
     end)
 end
 
@@ -81,10 +77,7 @@ local AddedCount = 0
 local history = {}          -- { word, time }
 local lastAddedWord = ""    -- für Duplikatschutz
 local submitCooldown = false
-local lastSubmitTime = 0
 local pendingRejectedText = nil
-local pendingRejectedBox = nil
-local pendingRejectedUntil = 0
 local pendingRejectedToken = 0
 
 -- 5. RIDDLE DATABASE
@@ -305,7 +298,7 @@ local function refreshMainGUI()
     end
 end
 
--- 8. HISTORY (NUR EINZELNE WÖRTER)
+-- 8. HISTORY
 local function updateHistoryContent()
     if not HistoryScroll then return end
     
@@ -441,7 +434,6 @@ local function buildHistoryGUI()
     do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 10) co.Parent = HistoryFrame end
     do local st = Instance.new("UIStroke") st.Color = Color3.fromRGB(80, 180, 255) st.Thickness = 1.5 st.Transparency = 0.3 st.Parent = HistoryFrame end
     
-    -- Title Bar
     local tb = Instance.new("Frame")
     tb.Name = "TitleBar"
     tb.Size = UDim2.new(1, 0, 0, 24)
@@ -465,7 +457,6 @@ local function buildHistoryGUI()
     tl.ZIndex = 10
     tl.Parent = tb
     
-    -- Reset Button für History (NUR History, nicht Pasted)
     local resetHistoryBtn = Instance.new("TextButton")
     resetHistoryBtn.Name = "ResetHistoryBtn"
     resetHistoryBtn.Size = UDim2.new(0, 40, 0, 18)
@@ -481,10 +472,8 @@ local function buildHistoryGUI()
     do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 3) co.Parent = resetHistoryBtn end
     
     resetHistoryBtn.MouseButton1Click:Connect(function()
-        -- NUR History clearen, NICHT collectedCodes!
         table.clear(history)
         updateHistoryContent()
-        -- collectedCodes bleiben erhalten!
     end)
     
     local closeBtn = Instance.new("TextButton")
@@ -513,7 +502,6 @@ local function buildHistoryGUI()
         end
     end)
     
-    -- Scrollbare Liste
     HistoryScroll = Instance.new("ScrollingFrame")
     HistoryScroll.Name = "HistoryScroll"
     HistoryScroll.Size = UDim2.new(1, -6, 1, -30)
@@ -536,7 +524,6 @@ local function buildHistoryGUI()
     
     updateHistoryContent()
     
-    -- Drag
     local dragging = false
     local dragStart = nil
     local startPos = nil
@@ -564,24 +551,7 @@ local function buildHistoryGUI()
     end)
 end
 
--- 9. AUTO SUBMIT LOGIK (AUS DEM ANDEREN SCRIPT)
-local function resolveAceRedeemRemote()
-    if RedeemRemote and RedeemRemote.Parent then return RedeemRemote end
-    if not Net then
-        pcall(function()
-            Net = game:GetService("ReplicatedStorage"):FindFirstChild("Packages"):FindFirstChild("Net")
-        end)
-    end
-    if Net then
-        local ok, api = pcall(require, Net)
-        if ok and type(api) == "table" then
-            local rok, rf = pcall(function() return api:RemoteFunction("7d14a912-1040-4867-b005-98838eb9acc4") end)
-            if rok and typeof(rf) == "Instance" then RedeemRemote = rf end
-        end
-    end
-    return RedeemRemote
-end
-
+-- 9. SUBMIT (SCHNELL - OHNE LANGEN COOLDOWN)
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -596,178 +566,47 @@ local function fireSignal(sig)
     end
 end
 
-local function getupvalues_fn(fn)
-    if debug and debug.getupvalues then
-        return debug.getupvalues(fn)
-    end
-    return {}
-end
-
-local function setupvalue_fn(fn, idx, val)
-    if debug and debug.setupvalue then
-        return debug.setupvalue(fn, idx, val)
-    end
-    return nil
-end
-
-local function killAceDebounce(fn)
-    if not (fn and setupvalue_fn and getupvalues_fn) then return end
-    local ok, ups = pcall(getupvalues_fn, fn)
-    if ok and type(ups) == "table" then
-        for i, v in pairs(ups) do
-            if type(v) == "boolean" then
-                pcall(setupvalue_fn, fn, i, false)
-            end
-        end
-    end
-end
-
-local function aceRedeemViaBox(code)
-    if not getconnections then return false, "no getconnections" end
-    local box = CodeTextBox
-    if not box or not box.Parent then
-        setupPaths()
-        box = CodeTextBox
-    end
-    if not box then return false, "no codebox" end
-    local ok, conns = pcall(getconnections, box.FocusLost)
-    if not ok or type(conns) ~= "table" or #conns == 0 then
-        return false, "no connection"
-    end
-    local fired = false
-    for _, c in ipairs(conns) do
-        local fn
-        pcall(function() fn = c.Function end)
-        killAceDebounce(fn)
-        box.Text = code
-        box.Active = true
-        box.Selectable = true
-        local fok = pcall(function()
-            if c.Enabled ~= false then
-                c:Fire(true)
-            end
-        end)
-        fired = fired or fok
-    end
-    return fired, fired and "sent" or "fire failed"
-end
-
-local function aceRedeemViaRemote(code)
-    local rf = resolveAceRedeemRemote()
-    if not rf then return false, "no remote" end
-    local ok, result = pcall(function() return rf:InvokeServer(code) end)
-    if not ok then return false, tostring(result) end
-    return true, result
-end
-
-local function aceRedeem(code)
-    -- Erst via Box versuchen
-    local ok, res = aceRedeemViaBox(code)
-    if ok then return true, res end
-    -- Dann via Remote
-    if getconnections then return false, res end
-    return aceRedeemViaRemote(code)
-end
-
-local function restoreRejectedText(box, previousText)
-    if not previousText or previousText == "" then return false end
-    if not box or not box.Parent then
-        setupPaths()
-        box = CodeTextBox
-    end
-    if not box or not box.Parent then return false end
-    local restored = pcall(function()
-        box.Text = previousText
-    end)
-    return restored
-end
-
-local function clearPendingSubmission()
-    pendingRejectedToken = pendingRejectedToken + 1
-    pendingRejectedText = nil
-    pendingRejectedBox = nil
-    pendingRejectedUntil = 0
-end
-
-local function rememberPendingSubmission(box, text)
-    if not text or text == "" then return end
-    pendingRejectedToken = pendingRejectedToken + 1
-    local token = pendingRejectedToken
-    pendingRejectedText = text
-    pendingRejectedBox = box
-    pendingRejectedUntil = os.clock() + 8
-    task.delay(8, function()
-        if token == pendingRejectedToken then
-            clearPendingSubmission()
-        end
-    end)
-end
-
-local function handleRedemptionFeedback(text)
-    if not pendingRejectedText then return end
-    if os.clock() > pendingRejectedUntil then
-        clearPendingSubmission()
-        return
-    end
-    local lower = tostring(text or ""):lower()
-    local rejected = lower:find("invalid code", 1, true)
-        or lower:find("code is invalid", 1, true)
-        or lower:find("expired", 1, true)
-        or lower:find("already redeemed", 1, true)
-        or lower:find("already used", 1, true)
-        or lower:find("doesn't exist", 1, true)
-        or lower:find("does not exist", 1, true)
-        or lower:find("not found", 1, true)
-        or lower:find("rejected", 1, true)
-    if not rejected then return end
-    local previousText = pendingRejectedText
-    local previousBox = pendingRejectedBox
-    local restored = restoreRejectedText(previousBox, previousText)
-    clearPendingSubmission()
-end
-
--- ============================================================
--- 10. NEUE AUTO SUBMIT LOGIK (ersetzt die alte)
--- ============================================================
 local function triggerSubmit()
     if submitCooldown then return false end
     submitCooldown = true
-    task.delay(0.5, function() submitCooldown = false end)
+    task.delay(0.15, function() submitCooldown = false end)  -- NUR 0.15 SEKUNDEN
     
     setupPaths()
     
-    -- Versuche erst den Code zu sammeln
-    local combinedCode = table.concat(collectedCodes)
-    if combinedCode == "" then return false end
-    
-    -- Remote finden falls nötig
-    if not RedeemRemote then
-        resolveAceRedeemRemote()
-    end
-    
-    -- Merken für "Retype invalid" (falls aktiv)
-    rememberPendingSubmission(CodeTextBox, combinedCode)
-    
-    -- Redeem versuchen
-    local ok, result = aceRedeem(combinedCode)
-    local success = ok and (type(result) ~= "table" or result.success or result.Success)
-    
-    if success then
-        -- Erfolgreich -> Codes leeren
-        table.clear(collectedCodes)
-        AddedCount = 0
-        refreshMainGUI()
-        if CodeTextBox then CodeTextBox.Text = "" end
-        clearPendingSubmission()
+    -- Erst ConfirmButton versuchen
+    if ConfirmButton and ConfirmButton.Parent then
+        pcall(function()
+            fireSignal(ConfirmButton.MouseButton1Click)
+            fireSignal(ConfirmButton.Activated)
+            ConfirmButton:CaptureFocus()
+            ConfirmButton:ReleaseFocus(true)
+        end)
         return true
-    else
-        -- Fehlgeschlagen -> Prüfen ob invalid
-        handleRedemptionFeedback(tostring(result))
-        return false
     end
+    
+    -- Alternative: PlayerGui durchsuchen
+    local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if PlayerGui then
+        for _, obj in ipairs(PlayerGui:GetDescendants()) do
+            if obj:IsA("TextButton") or obj:IsA("ImageButton") then
+                local txt = (obj:IsA("TextButton") and obj.Text or ""):lower()
+                if txt:find("submit") or txt:find("redeem") or txt:find("confirm") or txt:find("einlösen") then
+                    pcall(function()
+                        fireSignal(obj.MouseButton1Click)
+                        fireSignal(obj.Activated)
+                        obj:CaptureFocus()
+                        obj:ReleaseFocus(true)
+                    end)
+                    return true
+                end
+            end
+        end
+    end
+    
+    return false
 end
 
--- 11. HISTORY SPEICHERN (NUR EINZELNE WÖRTER)
+-- 10. HISTORY SPEICHERN (NUR EINZELNE WÖRTER)
 local function saveToHistory(Word, fromSammy)
     if not fromSammy then return end
     if not Word or Word == "" then return end
@@ -787,7 +626,7 @@ local function saveToHistory(Word, fromSammy)
     end
 end
 
--- 12. CODE HINZUFÜGEN
+-- 11. CODE HINZUFÜGEN
 local function addCode(Code, fromSammy)
     Code = tostring(Code)
     if Code == "" then return end
@@ -796,7 +635,7 @@ local function addCode(Code, fromSammy)
         return
     end
     lastAddedWord = Code
-    task.delay(0.5, function() lastAddedWord = "" end)
+    task.delay(0.3, function() lastAddedWord = "" end)
     
     if fromSammy then
         saveToHistory(Code, true)
@@ -828,7 +667,7 @@ local function addCode(Code, fromSammy)
     end
 end
 
--- 13. WATCHER
+-- 12. WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -865,7 +704,7 @@ if CodeTextBox then
     end)
 end
 
--- 14. RESET (NUR COLLECTED CODES)
+-- 13. RESET
 local function resetCodes()
     table.clear(collectedCodes)
     AddedCount = 0
@@ -874,7 +713,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 15. SPYDERSAMMY ERKENNUNG
+-- 14. SPYDERSAMMY ERKENNUNG
 local targetUserId = nil
 task.spawn(function()
     pcall(function() targetUserId = Players:GetUserIdFromNameAsync("SpyderSammy") end)
@@ -935,7 +774,7 @@ local function startPlayerGuiScanner()
     PG.DescendantAdded:Connect(hookUiTextObject)
 end
 
--- 16. GUI BAUEN (SCHWARZ + HELLBLAU FLOWER)
+-- 15. GUI BAUEN
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -1470,7 +1309,7 @@ local function buildGUI()
     print("[KrimoHub V4] GUI sichtbar!")
 end
 
--- 17. START
+-- 16. START
 print("[KrimoHub V4] Starte...")
 pcall(setupPaths)
 pcall(buildGUI)
