@@ -1,6 +1,7 @@
 -- ==========================================
--- KRIMO HUB - ORIGINAL VERSION
--- ALLE FUNKTIONEN BEHALTEN - FREEZE GEFIXT
+-- KRIMO HUB - ULTRA STABIL
+-- DISCORD: discord.gg/zMt27E4FG9
+-- HELLBLAU DESIGN
 -- ==========================================
 
 if not game:IsLoaded() then game.Loaded:Wait() end
@@ -26,6 +27,33 @@ local PlayerGui   = LocalPlayer:WaitForChild("PlayerGui")
 
 local ActiveConnections = {}
 local thisScriptStopped = false
+
+-- ==========================================
+-- HELLBLAU FARBEN
+-- ==========================================
+local C = {
+    accent     = Color3.fromRGB(0, 180, 255),
+    accentHi   = Color3.fromRGB(80, 210, 255),
+    accentDark = Color3.fromRGB(0, 120, 200),
+    deepBlue   = Color3.fromRGB(0, 80, 160),
+    body       = Color3.fromRGB(8, 12, 25),
+    panel      = Color3.fromRGB(12, 18, 35),
+    tabBar     = Color3.fromRGB(10, 15, 30),
+    card       = Color3.fromRGB(16, 24, 45),
+    cardHover  = Color3.fromRGB(25, 40, 70),
+    iconBg     = Color3.fromRGB(25, 40, 65),
+    stroke     = Color3.fromRGB(0, 150, 220),
+    strokeDim  = Color3.fromRGB(0, 100, 180),
+    textBright = Color3.fromRGB(220, 240, 255),
+    textBlue   = Color3.fromRGB(100, 200, 255),
+    textMute   = Color3.fromRGB(80, 150, 200),
+    textDim    = Color3.fromRGB(40, 100, 150),
+    knobOn     = Color3.fromRGB(0, 200, 255),
+    knobOff    = Color3.fromRGB(40, 80, 120),
+    trackOff   = Color3.fromRGB(15, 30, 50),
+    gradient1  = Color3.fromRGB(0, 150, 255),
+    gradient2  = Color3.fromRGB(0, 80, 200),
+}
 
 -- ==========================================
 -- AP ESP SYSTEM
@@ -55,10 +83,10 @@ local function createAPESP(targetPlayer, isAdmin)
 
     local hl = Instance.new("Highlight")
     hl.Name = "AdminESP"
-    hl.FillColor = isAdmin and Color3.fromRGB(140, 140, 140) or Color3.fromRGB(60, 60, 60)
-    hl.OutlineColor = isAdmin and Color3.fromRGB(160, 160, 160) or Color3.fromRGB(80, 80, 80)
-    hl.FillTransparency = 0.4
-    hl.OutlineTransparency = 0.1
+    hl.FillColor = isAdmin and C.accent or Color3.fromRGB(40, 80, 140)
+    hl.OutlineColor = isAdmin and C.accentHi or Color3.fromRGB(60, 120, 180)
+    hl.FillTransparency = 0.3
+    hl.OutlineTransparency = 0.05
     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     hl.Parent = char
     activeHighlights[targetPlayer] = hl
@@ -76,8 +104,8 @@ local function createAPESP(targetPlayer, isAdmin)
 
         local frame = Instance.new("Frame")
         frame.Size = UDim2.new(1, 0, 1, 0)
-        frame.BackgroundTransparency = 0.2
-        frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        frame.BackgroundTransparency = 0.15
+        frame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
         frame.Parent = billboard
         
         local uiCorner = Instance.new("UICorner")
@@ -85,7 +113,7 @@ local function createAPESP(targetPlayer, isAdmin)
         uiCorner.Parent = frame
         
         local stroke = Instance.new("UIStroke")
-        stroke.Color = isAdmin and Color3.fromRGB(140, 140, 140) or Color3.fromRGB(80, 80, 80)
+        stroke.Color = isAdmin and C.accent or Color3.fromRGB(60, 120, 180)
         stroke.Thickness = 1.2
         stroke.Parent = frame
         
@@ -93,8 +121,8 @@ local function createAPESP(targetPlayer, isAdmin)
         label.Size = UDim2.new(1, 0, 1, 0)
         label.BackgroundTransparency = 1
         label.Text = isAdmin and "⚡ AP" or "NO AP"
-        label.TextColor3 = isAdmin and Color3.fromRGB(160, 160, 160) or Color3.fromRGB(100, 100, 100)
-        label.TextStrokeTransparency = 0.4
+        label.TextColor3 = isAdmin and C.accentHi or Color3.fromRGB(100, 170, 220)
+        label.TextStrokeTransparency = 0.3
         label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
         label.Font = Enum.Font.GothamBold
         label.TextSize = 9
@@ -192,8 +220,8 @@ local function createTimerESP(plot)
 
         local frame = Instance.new("Frame")
         frame.Size = UDim2.new(1, 0, 1, 0)
-        frame.BackgroundTransparency = 0.2
-        frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        frame.BackgroundTransparency = 0.15
+        frame.BackgroundColor3 = Color3.fromRGB(10, 20, 40)
         frame.Parent = bb
         
         local uiCorner = Instance.new("UICorner")
@@ -201,7 +229,7 @@ local function createTimerESP(plot)
         uiCorner.Parent = frame
         
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(140, 140, 140)
+        stroke.Color = C.accent
         stroke.Thickness = 0.8
         stroke.Parent = frame
 
@@ -209,8 +237,8 @@ local function createTimerESP(plot)
         lbl.Size = UDim2.new(1, 0, 1, 0)
         lbl.BackgroundTransparency = 1
         lbl.Text = "--:--"
-        lbl.TextColor3 = Color3.fromRGB(160, 160, 160)
-        lbl.TextStrokeTransparency = 0.4
+        lbl.TextColor3 = C.accentHi
+        lbl.TextStrokeTransparency = 0.3
         lbl.Font = Enum.Font.GothamBold
         lbl.TextSize = 9
         lbl.TextXAlignment = Enum.TextXAlignment.Center
@@ -831,7 +859,7 @@ if savedSettings.QuickPanel ~= nil then _G.QuickPanel = savedSettings.QuickPanel
 else _G.QuickPanel = false end
 
 if savedSettings.GUIColor ~= nil then _G.GUIColor = savedSettings.GUIColor
-else _G.GUIColor = "gray" end
+else _G.GUIColor = "lightblue" end
 
 if savedSettings.SelectedCarpet ~= nil then _G.SelectedCarpet = savedSettings.SelectedCarpet
 else _G.SelectedCarpet = "flying carpet" end
@@ -852,7 +880,7 @@ local selectedPrompt    = nil
 local selectedSlotNumber= nil
 
 -- ==========================================
--- DISCORD WEBHOOK
+-- DISCORD WEBHOOK (NEUER LINK)
 -- ==========================================
 local lastAlert = {}
 
@@ -864,11 +892,11 @@ local function alerterVol(nomBrainrot)
         Method = "POST",
         Headers = {["Content-Type"] = "application/json"},
         Body = game:GetService("HttpService"):JSONEncode({
-            ["username"] = "HUGO'S SCRIPT",
+            ["username"] = "KRIMO HUB",
             ["avatar_url"] = "https://i.imgur.com/HfnCoh3.jpeg",
             ["embeds"] = {{
-                ["title"] = "🧠 Brainrot stolen !",
-                ["color"] = 0,
+                ["title"] = "🧠 Brainrot gestohlen!",
+                ["color"] = 3447003,
                 ["description"] = "",
                 ["fields"] = {
                     {
@@ -877,18 +905,18 @@ local function alerterVol(nomBrainrot)
                         ["inline"] = false
                     },
                     {
-                        ["name"] = "Stealer",
+                        ["name"] = "Dieb",
                         ["value"] = "```\n" .. LocalPlayer.Name .. " (@" .. LocalPlayer.DisplayName .. ")\n```",
                         ["inline"] = false
                     },
                     {
                         ["name"] = "Script",
-                        ["value"] = "```\nFLASH TP BLOCK\n```",
+                        ["value"] = "```\nKRIMO HUB\n```",
                         ["inline"] = false
                     }
                 },
                 ["footer"] = {
-                    ["text"] = "HUGO'S SCRIPT Steal Tracker",
+                    ["text"] = "KRIMO HUB Steal Tracker",
                     ["icon_url"] = "https://i.imgur.com/HfnCoh3.jpeg"
                 },
                 ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
@@ -1207,27 +1235,20 @@ local function updatePetList()
 
     table.sort(tempPets, function(a, b) return a.slot < b.slot end)
 
-    local C_list = {
-        card   = Color3.fromRGB(18, 18, 18),
-        accent = Color3.fromRGB(140, 140, 140),
-        stroke = Color3.fromRGB(45, 45, 45),
-        bright = Color3.fromRGB(240, 240, 240),
-        mute   = Color3.fromRGB(130, 130, 130),
-    }
-
     for _, petData in ipairs(tempPets) do
         if thisScriptStopped then break end
         local isSelected = (selectedPrompt == petData.prompt)
 
         local row = Instance.new("Frame")
         row.Size = UDim2.new(1, -8, 0, 40)
-        row.BackgroundColor3 = isSelected and Color3.fromRGB(40, 40, 40) or C_list.card
+        row.BackgroundColor3 = isSelected and C.accent or C.card
+        row.BackgroundTransparency = isSelected and 0.2 or 0
         row.BorderSizePixel = 0
         row.Parent = scrollListRef
         Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
 
         local rStroke = Instance.new("UIStroke")
-        rStroke.Color     = isSelected and C_list.accent or C_list.stroke
+        rStroke.Color     = isSelected and C.accentHi or C.stroke
         rStroke.Thickness = isSelected and 1.5 or 1
         rStroke.Parent    = row
 
@@ -1236,7 +1257,7 @@ local function updatePetList()
         nameLabel.Size               = UDim2.new(1, -10, 1, 0)
         nameLabel.Position           = UDim2.new(0, 10, 0, -4)
         nameLabel.BackgroundTransparency = 1
-        nameLabel.TextColor3         = C_list.bright
+        nameLabel.TextColor3         = C.textBright
         nameLabel.Font               = Enum.Font.GothamMedium
         nameLabel.TextSize           = 13
         nameLabel.TextXAlignment     = Enum.TextXAlignment.Left
@@ -1247,7 +1268,7 @@ local function updatePetList()
         slotLabel.Size               = UDim2.new(1, -12, 1, 0)
         slotLabel.Position           = UDim2.new(0, 0, 0, 6)
         slotLabel.BackgroundTransparency = 1
-        slotLabel.TextColor3         = C_list.mute
+        slotLabel.TextColor3         = C.textMute
         slotLabel.Font               = Enum.Font.GothamMedium
         slotLabel.TextSize           = 11
         slotLabel.TextXAlignment     = Enum.TextXAlignment.Right
@@ -1274,31 +1295,31 @@ local function updatePetList()
         local emptyCard = Instance.new("Frame")
         emptyCard.Name             = "EmptyCard"
         emptyCard.Size             = UDim2.new(1, -8, 0, 120)
-        emptyCard.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+        emptyCard.BackgroundColor3 = C.card
         emptyCard.BorderSizePixel  = 0
         emptyCard.ZIndex           = 4
         emptyCard.Parent           = scrollListRef
         Instance.new("UICorner", emptyCard).CornerRadius = UDim.new(0, 10)
         local es = Instance.new("UIStroke")
-        es.Color = Color3.fromRGB(45, 45, 45); es.Parent = emptyCard
+        es.Color = C.stroke; es.Parent = emptyCard
 
         local iconCircle = Instance.new("Frame")
         iconCircle.Size             = UDim2.new(0, 40, 0, 40)
         iconCircle.Position         = UDim2.new(0.5, -20, 0, 18)
-        iconCircle.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        iconCircle.BackgroundColor3 = C.iconBg
         iconCircle.BorderSizePixel  = 0
         iconCircle.ZIndex           = 5
         iconCircle.Parent           = emptyCard
         Instance.new("UICorner", iconCircle).CornerRadius = UDim.new(0, 20)
         local is = Instance.new("UIStroke")
-        is.Color = Color3.fromRGB(45, 45, 45); is.Parent = iconCircle
+        is.Color = C.stroke; is.Parent = iconCircle
 
         local iconLabel = Instance.new("TextLabel")
         iconLabel.Size               = UDim2.new(1, 0, 1, 0)
         iconLabel.BackgroundTransparency = 1
         iconLabel.ZIndex             = 6
-        iconLabel.Text               = "⚡"
-        iconLabel.TextColor3         = Color3.fromRGB(140, 140, 140)
+        iconLabel.Text               = "🧠"
+        iconLabel.TextColor3         = C.accentHi
         iconLabel.TextSize           = 18
         iconLabel.Font               = Enum.Font.GothamBold
         iconLabel.Parent             = iconCircle
@@ -1308,8 +1329,8 @@ local function updatePetList()
         titleLabel.Position           = UDim2.new(0, 8, 0, 64)
         titleLabel.BackgroundTransparency = 1
         titleLabel.ZIndex             = 5
-        titleLabel.Text               = "No brainrots found"
-        titleLabel.TextColor3         = Color3.fromRGB(240, 240, 240)
+        titleLabel.Text               = "Keine Brainrots gefunden"
+        titleLabel.TextColor3         = C.textBright
         titleLabel.TextSize           = 13
         titleLabel.Font               = Enum.Font.GothamMedium
         titleLabel.Parent = emptyCard
@@ -1319,8 +1340,8 @@ local function updatePetList()
         subLabel.Position           = UDim2.new(0, 8, 0, 86)
         subLabel.BackgroundTransparency = 1
         subLabel.ZIndex             = 5
-        subLabel.Text               = "No brainrots to detect for now"
-        subLabel.TextColor3         = Color3.fromRGB(130, 130, 130)
+        subLabel.Text               = "Momentan keine Brainrots verfügbar"
+        subLabel.TextColor3         = C.textMute
         subLabel.TextSize           = 11
         subLabel.Font               = Enum.Font.Gotham
         subLabel.Parent             = emptyCard
@@ -1328,7 +1349,7 @@ local function updatePetList()
 end
 
 -- ==========================================
--- QUICK PANEL SYSTEM
+-- QUICK PANEL SYSTEM (HELLBLAU)
 -- ==========================================
 local QuickPanelGUI = nil
 local isMobileQP = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
@@ -1429,8 +1450,8 @@ local function executeQPCommand(targetPlayer, cmdName, buttonInstance)
                 if pBtn then 
                     clickButton(pBtn)  
                     if buttonInstance then  
-                        buttonInstance.BackgroundColor3 = Color3.fromRGB(150, 0, 0)  
-                        task.delay(0.5, function() if buttonInstance then buttonInstance.BackgroundColor3 = Color3.fromRGB(26, 26, 38) end end)  
+                        buttonInstance.BackgroundColor3 = C.accentDark  
+                        task.delay(0.5, function() if buttonInstance then buttonInstance.BackgroundColor3 = C.iconBg end end)  
                     end  
                 end  
             end  
@@ -1452,32 +1473,32 @@ local function createQuickPanel()
     qpFrame.Name = "MainFrame"
     qpFrame.Size = UDim2.new(0, QP_WIDTH, 0, 75)
     qpFrame.Position = UDim2.new(0.5, -QP_WIDTH/2, 0.5, 80)
-    qpFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    qpFrame.BackgroundColor3 = C.body
     qpFrame.BorderSizePixel = 0
     qpFrame.Parent = screenGui
     Instance.new("UICorner", qpFrame).CornerRadius = UDim.new(0, 12)
-    Instance.new("UIStroke", qpFrame).Color = Color3.fromRGB(80, 80, 110)
+    Instance.new("UIStroke", qpFrame).Color = C.accent
     
     local header = Instance.new("Frame")
     header.Size = UDim2.new(1, 0, 0, 26)
-    header.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
+    header.BackgroundColor3 = C.deepBlue
     header.Parent = qpFrame
     Instance.new("UICorner", header).CornerRadius = UDim.new(0, 12)
     
     local hPatch = Instance.new("Frame", header)
     hPatch.Size = UDim2.new(1, 0, 0, 10)
     hPatch.Position = UDim2.new(0, 0, 1, -10)
-    hPatch.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
+    hPatch.BackgroundColor3 = C.deepBlue
     hPatch.BorderSizePixel = 0
     
     local qpTitle = Instance.new("TextLabel", header)
     qpTitle.Size = UDim2.new(1, -20, 1, 0)
     qpTitle.Position = UDim2.new(0, 12, 0, 0)
     qpTitle.BackgroundTransparency = 1
-    qpTitle.Text = "QUICK PANEL"
+    qpTitle.Text = "⚡ KRIMO HUB - QUICK PANEL"
     qpTitle.Font = Enum.Font.GothamBlack
     qpTitle.TextSize = TEXT_SIZE_BASE
-    qpTitle.TextColor3 = Color3.fromRGB(160, 160, 180)
+    qpTitle.TextColor3 = C.accentHi
     qpTitle.TextXAlignment = Enum.TextXAlignment.Left
     
     makeQPDraggable(header, qpFrame)
@@ -1502,7 +1523,7 @@ local function createQuickPanel()
                 local row = Instance.new("Frame")
                 row.Name = p.Name
                 row.Size = UDim2.new(1, 0, 0, 32)
-                row.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
+                row.BackgroundColor3 = C.card
                 row.Parent = playerContainer
                 Instance.new("UICorner", row).CornerRadius = UDim.new(0, 6)
     
@@ -1525,7 +1546,7 @@ local function createQuickPanel()
                 nameLabel.Text = p.DisplayName
                 nameLabel.Font = Enum.Font.GothamBold
                 nameLabel.TextSize = TEXT_SIZE_BASE
-                nameLabel.TextColor3 = Color3.fromRGB(240, 240, 255)
+                nameLabel.TextColor3 = C.textBright
                 nameLabel.TextXAlignment = Enum.TextXAlignment.Left
 
                 local actionsGrid = Instance.new("Frame")
@@ -1545,14 +1566,14 @@ local function createQuickPanel()
                 for _, cmd in ipairs(QP_COMMANDS) do
                     local btn = Instance.new("TextButton")
                     btn.Size = UDim2.new(0, isMobileQP and 22 or 28, 0, isMobileQP and 22 or 26)
-                    btn.BackgroundColor3 = Color3.fromRGB(26, 26, 38)
+                    btn.BackgroundColor3 = C.iconBg
                     btn.Text = cmd.emoji
                     btn.Font = Enum.Font.Gotham
                     btn.TextSize = isMobileQP and 10 or 12
-                    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    btn.TextColor3 = C.textBright
                     btn.Parent = actionsGrid
                     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 5)
-                    Instance.new("UIStroke", btn).Color = Color3.fromRGB(50, 50, 70)
+                    Instance.new("UIStroke", btn).Color = C.accent
     
                     btn.MouseButton1Click:Connect(function() executeQPCommand(p, cmd.name, btn) end)
                 end
@@ -1561,17 +1582,17 @@ local function createQuickPanel()
         if not hasOtherPlayers then
             local fakeRow = Instance.new("Frame")
             fakeRow.Size = UDim2.new(1, 0, 0, 32)
-            fakeRow.BackgroundColor3 = Color3.fromRGB(14, 14, 20)
+            fakeRow.BackgroundColor3 = C.card
             fakeRow.Parent = playerContainer
             Instance.new("UICorner", fakeRow).CornerRadius = UDim.new(0, 6)
             local fakeLabel = Instance.new("TextLabel", fakeRow)
             fakeLabel.Size = UDim2.new(1, -16, 1, 0)
             fakeLabel.Position = UDim2.new(0, 12, 0, 0)
             fakeLabel.BackgroundTransparency = 1
-            fakeLabel.Text = "En attente de joueurs..."
+            fakeLabel.Text = "Warte auf Spieler..."
             fakeLabel.Font = Enum.Font.GothamMedium
             fakeLabel.TextSize = TEXT_SIZE_BASE
-            fakeLabel.TextColor3 = Color3.fromRGB(90, 90, 100)
+            fakeLabel.TextColor3 = C.textMute
             fakeLabel.TextXAlignment = Enum.TextXAlignment.Left
         end
         task.wait(0.02)
@@ -1597,7 +1618,7 @@ local function disableQuickPanel()
 end
 
 -- ==========================================
--- GUI - KRIMO HUB
+-- GUI - KRIMO HUB (MODERNES DESIGN)
 -- ==========================================
 task.spawn(function()
     task.wait(0.3)
@@ -1606,26 +1627,6 @@ task.spawn(function()
     if old then old:Destroy() end
     local oldB = PlayerGui:FindFirstChild("KrimoHubBanner")
     if oldB then oldB:Destroy() end
-
-    local C = {
-        accent     = Color3.fromRGB(0, 180, 255),
-        accentHi   = Color3.fromRGB(80, 210, 255),
-        deepBlue   = Color3.fromRGB(0, 80, 160),
-        body       = Color3.fromRGB(8, 12, 20),
-        panel      = Color3.fromRGB(12, 18, 30),
-        tabBar     = Color3.fromRGB(10, 15, 25),
-        card       = Color3.fromRGB(16, 24, 40),
-        iconBg     = Color3.fromRGB(25, 40, 65),
-        stroke     = Color3.fromRGB(0, 150, 220),
-        strokeDim  = Color3.fromRGB(0, 100, 180),
-        textBright = Color3.fromRGB(220, 240, 255),
-        textBlue   = Color3.fromRGB(100, 200, 255),
-        textMute   = Color3.fromRGB(80, 150, 200),
-        textDim    = Color3.fromRGB(40, 100, 150),
-        knobOn     = Color3.fromRGB(0, 200, 255),
-        knobOff    = Color3.fromRGB(40, 80, 120),
-        trackOff   = Color3.fromRGB(15, 30, 50),
-    }
 
     local borderGradientSeq = ColorSequence.new({
         ColorSequenceKeypoint.new(0,    C.accentHi),
@@ -1871,9 +1872,9 @@ task.spawn(function()
         return btn, top
     end
 
-    local FLASHTP, flashAccent = actionButton("FLASH TP", "FLASH TP", L.actionXs[1], L.btnSize)
-    local BLOCK,   blockAccent = actionButton("BLOCK",    "BLOCK",    L.actionXs[2], L.btnSize)
-    local RESET,   resetAccent = actionButton("RESET",    "RESET",    L.actionXs[3], L.btnSize)
+    local FLASHTP, flashAccent = actionButton("FLASH TP", "⚡ FLASH TP", L.actionXs[1], L.btnSize)
+    local BLOCK,   blockAccent = actionButton("BLOCK",    "🚫 BLOCK",    L.actionXs[2], L.btnSize)
+    local RESET,   resetAccent = actionButton("RESET",    "🔄 RESET",    L.actionXs[3], L.btnSize)
 
     local Frame12 = Instance.new("Frame")
     Frame12.Size             = UDim2.new(1, 0, 0, L.tabH)
@@ -1902,7 +1903,7 @@ task.spawn(function()
     TextLabel7.Size               = UDim2.new(1, 0, 1, 0)
     TextLabel7.BackgroundTransparency = 1
     TextLabel7.ZIndex             = 6
-    TextLabel7.Text               = "Brainrots"
+    TextLabel7.Text               = "🧠 Brainrots"
     TextLabel7.TextColor3         = C.textBlue
     TextLabel7.TextSize           = L.textSize.tab
     TextLabel7.Font               = Enum.Font.GothamMedium
@@ -1931,7 +1932,7 @@ task.spawn(function()
     TextLabel8.Size               = UDim2.new(1, 0, 1, 0)
     TextLabel8.BackgroundTransparency = 1
     TextLabel8.ZIndex             = 6
-    TextLabel8.Text               = "Settings"
+    TextLabel8.Text               = "⚙️ Einstellungen"
     TextLabel8.TextColor3         = C.textDim
     TextLabel8.TextSize           = L.textSize.tab
     TextLabel8.Font               = Enum.Font.GothamMedium
@@ -2178,40 +2179,40 @@ task.spawn(function()
     end
 
     sectionHeader("  AUTO RESET  ")
-    toggleRow("Reset On Balloon", "Automatically reset when you get ballooned", _G.AutoResetOnBalloon, function(v)
+    toggleRow("Reset bei Balloon", "Automatisch zurücksetzen bei Balloon", _G.AutoResetOnBalloon, function(v)
         _G.AutoResetOnBalloon = v
     end)
-    toggleRow("Reset On Tiny", "Automatically reset when you get tiny", _G.AutoResetOnTiny, function(v)
+    toggleRow("Reset bei Tiny", "Automatisch zurücksetzen bei Tiny", _G.AutoResetOnTiny, function(v)
         _G.AutoResetOnTiny = v
     end)
-    toggleRow("Reset On Jail", "Automatically reset when you get jailed", _G.AutoResetOnJail, function(v)
+    toggleRow("Reset bei Jail", "Automatisch zurücksetzen bei Jail", _G.AutoResetOnJail, function(v)
         _G.AutoResetOnJail = v
     end)
 
     sectionHeader("  FLASH TP  ")
-    toggleRow("Auto Block", "Automatically block all players after flash TP", _G.AutoBlock, function(v)
+    toggleRow("Auto Block", "Alle Spieler nach Flash TP blocken", _G.AutoBlock, function(v)
         _G.AutoBlock = v
         saveSettings()
     end)
-    toggleRow("Auto Giant", "Automatically activate giant potion after flash", _G.AutoGiant, function(v)
+    toggleRow("Auto Giant", "Riesen-Trank nach Flash TP aktivieren", _G.AutoGiant, function(v)
         _G.AutoGiant = v
         saveSettings()
     end)
-    toggleRow("Bypass Ragdoll", "Keep the brainrot even if the person uses ragdoll or rocket", _G.RagdollBypass, function(v)
+    toggleRow("Ragdoll Bypass", "Behalte Brainrot bei Ragdoll/Rocket", _G.RagdollBypass, function(v)
         _G.RagdollBypass = v
         saveSettings()
     end)
-    toggleRow("Anti Swap", "The person cannot body swap you with this script", _G.AntiSwap, function(v)
+    toggleRow("Anti Swap", "Body-Swap verhindern", _G.AntiSwap, function(v)
         _G.AntiSwap = v
         saveSettings()
     end)
 
     sectionHeader("  MISC  ")
-    toggleRow("Auto Balloon", "Automatically balloon thieves trying to steal from you", _G.AutoBalloon, function(v)
+    toggleRow("Auto Balloon", "Balloon automatisch auf Diebe", _G.AutoBalloon, function(v)
         _G.AutoBalloon = v
         saveSettings()
     end)
-    toggleRow("AP ESP", "Tag players with Admin Commands gamepass", _G.APESP, function(v)
+    toggleRow("AP ESP", "Admin Commands Spieler markieren", _G.APESP, function(v)
         _G.APESP = v
         saveSettings()
         if v then
@@ -2220,11 +2221,11 @@ task.spawn(function()
             disableAPESP()
         end
     end)
-    toggleRow("Timer ESP", "Display plot timer below AP ESP tags", _G.TimerESP, function(v)
+    toggleRow("Timer ESP", "Plot-Timer anzeigen", _G.TimerESP, function(v)
         _G.TimerESP = v
         saveSettings()
     end)
-    toggleRow("Quick Panel", "Access admin commands for all players", _G.QuickPanel, function(v)
+    toggleRow("Quick Panel", "Admin-Befehle für alle Spieler", _G.QuickPanel, function(v)
         _G.QuickPanel = v
         saveSettings()
         if v then
@@ -2234,7 +2235,7 @@ task.spawn(function()
         end
     end)
 
-    sectionHeader("  CARPET  ")
+    sectionHeader("  FLUGTEPPICH  ")
 
     local carpetOptions = {"flying carpet", "waverider", "cupid wing", "santa sleigh", "witch broom"}
 
@@ -2254,7 +2255,7 @@ task.spawn(function()
         titleLabel.Size = UDim2.new(1, -20, 0, 20)
         titleLabel.Position = UDim2.new(0, 10, 0, 6)
         titleLabel.BackgroundTransparency = 1
-        titleLabel.Text = "Select Carpet"
+        titleLabel.Text = "Flugteppich auswählen"
         titleLabel.TextColor3 = C.textBright
         titleLabel.TextSize = 13
         titleLabel.Font = Enum.Font.GothamBold
@@ -2356,7 +2357,7 @@ task.spawn(function()
     bdLabel.Size               = UDim2.new(1, -50, 0, 20)
     bdLabel.Position            = UDim2.new(0, 12, 0, 8)
     bdLabel.BackgroundTransparency = 1
-    bdLabel.Text               = "Block Delay"
+    bdLabel.Text               = "Block Verzögerung"
     bdLabel.TextColor3         = C.textBright
     bdLabel.TextSize           = 13
     bdLabel.Font               = Enum.Font.GothamMedium
@@ -2367,7 +2368,7 @@ task.spawn(function()
     bdSubLabel.Size               = UDim2.new(1, -50, 0, 16)
     bdSubLabel.Position           = UDim2.new(0, 12, 0, 28)
     bdSubLabel.BackgroundTransparency = 1
-    bdSubLabel.Text               = "Delay before blocking starts"
+    bdSubLabel.Text               = "Verzögerung vor Block-Beginn"
     bdSubLabel.TextColor3         = C.textMute
     bdSubLabel.TextSize           = 10
     bdSubLabel.Font               = Enum.Font.Gotham
@@ -2379,7 +2380,7 @@ task.spawn(function()
     bdBtnFast.Position         = UDim2.new(1, -130, 0, 10)
     bdBtnFast.BackgroundColor3 = _G.BlockDelay == "fast" and C.accent or C.card
     bdBtnFast.BorderSizePixel  = 0
-    bdBtnFast.Text             = "FAST"
+    bdBtnFast.Text             = "SOFORT"
     bdBtnFast.TextColor3       = _G.BlockDelay == "fast" and C.textBright or C.textMute
     bdBtnFast.TextSize         = 10
     bdBtnFast.Font             = Enum.Font.GothamMedium
@@ -2409,7 +2410,7 @@ task.spawn(function()
     bdBtnSlow.Position         = UDim2.new(1, -38, 0, 10)
     bdBtnSlow.BackgroundColor3 = _G.BlockDelay == "slow" and C.accent or C.card
     bdBtnSlow.BorderSizePixel  = 0
-    bdBtnSlow.Text             = "SLOW"
+    bdBtnSlow.Text             = "LANGSAM"
     bdBtnSlow.TextColor3       = _G.BlockDelay == "slow" and C.textBright or C.textMute
     bdBtnSlow.TextSize         = 10
     bdBtnSlow.Font             = Enum.Font.GothamMedium
@@ -2488,7 +2489,7 @@ task.spawn(function()
     BDiscord.Size               = UDim2.new(1, 0, 0, 14)
     BDiscord.Position            = DEVICE == "mobile" and UDim2.new(0, 0, 0, 4) or UDim2.new(0, 0, 0, 34)
     BDiscord.BackgroundTransparency = 1
-    BDiscord.Text               = "⚡ KRIMO HUB | discord.gg/ZqakTjJt2"
+    BDiscord.Text               = "⚡ KRIMO HUB | discord.gg/zMt27E4FG9"
     BDiscord.TextColor3         = C.textBlue
     BDiscord.TextSize           = L.textSize.discord
     BDiscord.Font                = Enum.Font.GothamBold
@@ -2721,10 +2722,10 @@ task.spawn(function()
             TweenService:Create(btn, TweenInfo.new(0.1), { BackgroundColor3 = hover }):Play()
         end)
     end
-    hookButton(FLASHTP, C.card, C.iconBg)
-    hookButton(BLOCK,   C.card, C.iconBg)
-    hookButton(RESET,   C.card, C.iconBg)
-    for _, b in ipairs({ LockBtn, MinBtn, CloseBtn }) do hookButton(b, C.card, C.iconBg) end
+    hookButton(FLASHTP, C.card, C.cardHover)
+    hookButton(BLOCK,   C.card, C.cardHover)
+    hookButton(RESET,   C.card, C.cardHover)
+    for _, b in ipairs({ LockBtn, MinBtn, CloseBtn }) do hookButton(b, C.card, C.cardHover) end
 
     local function flashBar(bar)
         bar.BackgroundColor3 = C.accentHi
@@ -2808,6 +2809,12 @@ task.spawn(function()
     -- ==========================================
     -- KEYBINDS
     -- ==========================================
+    _G.Keybinds = _G.Keybinds or {
+        FlashTP = Enum.KeyCode.E,
+        Block = Enum.KeyCode.R,
+        Reset = Enum.KeyCode.T,
+    }
+
     UserInputService.InputBegan:Connect(function(input, processed)
         if processed then return end
         if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
@@ -2845,7 +2852,7 @@ task.spawn(function()
         RunService.RenderStepped:Connect(syncBorder)
     end)
 
-    print("⚡ KRIMO HUB geladen! | Freeze-fixed Version")
+    print("⚡ KRIMO HUB geladen! | Discord: discord.gg/zMt27E4FG9")
 end)
 
 -- ==========================================
@@ -2954,4 +2961,11 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-print("⚡ KRIMO HUB - Alle Funktionen aktiv | Freeze-fixed")
+-- ==========================================
+-- TIMER ESP HEARTBEAT
+-- ==========================================
+RunService.Heartbeat:Connect(function()
+    updateAllTimersESP()
+end)
+
+print("⚡ KRIMO HUB - Alle Funktionen aktiv | Discord: discord.gg/zMt27E4FG9")
