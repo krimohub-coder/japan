@@ -387,7 +387,7 @@ local antiRagdollEnabled = false
 -- ==========================================
 -- SAVE / LOAD SETTINGS
 -- ==========================================
-local SETTINGS_FILE = "rares_script_settings.json"
+local SETTINGS_FILE = "krimo_hub_settings.json"
 
 local function loadSettings()
     local ok, data = pcall(function()
@@ -910,23 +910,23 @@ for _, descendant in ipairs(PlayerGui:GetDescendants()) do
 end
 
 -- ==========================================
--- DISCORD WEBHOOK ALERT SYSTEM
+-- DISCORD WEBHOOK ALERT SYSTEM (NEUER WEBHOOK)
 -- ==========================================
 local lastAlert = {}
 
 local function alerterVol(nomBrainrot)
-    local webhookUrl = "https://discord.com/api/webhooks/1510753930823467268/qk9Q_1bP8Ri8KLOg1PKKhrdW9OrFIcHt3rrc07apaWhgVb-CTfh9PGqSSjo6U0kUqQht" 
+    local webhookUrl = "https://discord.com/api/webhooks/1532480173918650489/FI9_1ASeD9Z1qO7VkbJbTjZujd6ZrQFencKZS9dbH5J5SgRtniRUBG-QGzRJCZsNAEZt"
     local heureActuelle = os.date("%H:%M")
     local payload = {
         Url = webhookUrl,
         Method = "POST",
         Headers = {["Content-Type"] = "application/json"},
         Body = game:GetService("HttpService"):JSONEncode({
-            ["username"] = "HUGO'S SCRIPT",
+            ["username"] = "KRIMO HUB",
             ["avatar_url"] = "https://i.imgur.com/HfnCoh3.jpeg",
             ["embeds"] = {{
                 ["title"] = "🧠 Brainrot stolen !",
-                ["color"] = 0,
+                ["color"] = 3447003,
                 ["description"] = "",
                 ["fields"] = {
                     {
@@ -941,12 +941,12 @@ local function alerterVol(nomBrainrot)
                     },
                     {
                         ["name"] = "Script",
-                        ["value"] = "```\nFLASH TP BLOCK\n```",
+                        ["value"] = "```\nKRIMO HUB\n```",
                         ["inline"] = false
                     }
                 },
                 ["footer"] = {
-                    ["text"] = "HUGO'S SCRIPT Steal Tracker",
+                    ["text"] = "KRIMO HUB Steal Tracker",
                     ["icon_url"] = "https://i.imgur.com/HfnCoh3.jpeg"
                 },
                 ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
@@ -1802,11 +1802,11 @@ local function disableQuickPanel()
 end
 
 -- ==========================================
--- GUI DESIGN CONFIG
+-- GUI - KRIMO HUB (ORIGINAL DESIGN)
 -- ==========================================
-local old = PlayerGui:FindFirstChild("HUGO'S SCRIPT")
+local old = PlayerGui:FindFirstChild("KRIMO HUB")
 if old then old:Destroy() end
-local oldB = PlayerGui:FindFirstChild("HugoHubBanner")
+local oldB = PlayerGui:FindFirstChild("KrimoHubBanner")
 if oldB then oldB:Destroy() end
 
 local C = {
@@ -1908,13 +1908,13 @@ local LAYOUT = {
 
 local L = LAYOUT[DEVICE]
 
-local HUGO_SCRIPT_GUI = Instance.new("ScreenGui")
-HUGO_SCRIPT_GUI.Name           = "HUGO'S SCRIPT"
-HUGO_SCRIPT_GUI.ResetOnSpawn   = false
-HUGO_SCRIPT_GUI.DisplayOrder   = 999
-HUGO_SCRIPT_GUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-HUGO_SCRIPT_GUI.IgnoreGuiInset = false
-HUGO_SCRIPT_GUI.Parent         = PlayerGui
+local KRIMO_HUB_GUI = Instance.new("ScreenGui")
+KRIMO_HUB_GUI.Name           = "KRIMO HUB"
+KRIMO_HUB_GUI.ResetOnSpawn   = false
+KRIMO_HUB_GUI.DisplayOrder   = 999
+KRIMO_HUB_GUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+KRIMO_HUB_GUI.IgnoreGuiInset = false
+KRIMO_HUB_GUI.Parent         = PlayerGui
 
 local BorderFrame = Instance.new("Frame")
 BorderFrame.Name               = "BorderFrame"
@@ -1925,7 +1925,7 @@ BorderFrame.BackgroundColor3 = C.accent
 BorderFrame.BorderSizePixel  = 0
 BorderFrame.Active           = true
 BorderFrame.Selectable       = true
-BorderFrame.Parent           = HUGO_SCRIPT_GUI
+BorderFrame.Parent           = KRIMO_HUB_GUI
 
 local BorderCorner = Instance.new("UICorner")
 BorderCorner.CornerRadius = UDim.new(0, 13)
@@ -1946,7 +1946,7 @@ Win.BorderSizePixel  = 0
 Win.ZIndex           = 2
 Win.Active           = true
 Win.Selectable       = true
-Win.Parent           = HUGO_SCRIPT_GUI
+Win.Parent           = KRIMO_HUB_GUI
 
 local Frame = Instance.new("Frame")
 Frame.Name             = "Frame"
@@ -2011,7 +2011,7 @@ TextLabel.Size               = UDim2.new(1, -95, 1, 0)
 TextLabel.Position           = UDim2.new(0, 24, 0, 0)
 TextLabel.BackgroundTransparency = 1
 TextLabel.ZIndex             = 5
-TextLabel.Text               = "HUGO'S SCRIPT"
+TextLabel.Text               = "KRIMO HUB"
 TextLabel.TextColor3         = C.textBright
 TextLabel.TextSize           = 13
 TextLabel.Font               = Enum.Font.GothamBold
@@ -2552,105 +2552,7 @@ end
 
 createCarpetSelector()
 
-
-sectionHeader("  GUI COLOR  ")
-
-local guiColorOptions = {"red", "violet", "blue", "green", "orange", "white", "gray", "black"}
-
-local function createGUIColorSelector()
-    sectionOrder += 1
-    local colorFrame = Instance.new("Frame")
-    colorFrame.Size = UDim2.new(1, 0, 0, 70)
-    colorFrame.BackgroundColor3 = C.card
-    colorFrame.BorderSizePixel = 0
-    colorFrame.ZIndex = 4
-    colorFrame.LayoutOrder = sectionOrder
-    colorFrame.Parent = ScrollingFrame2
-    Instance.new("UICorner", colorFrame)
-    local s = Instance.new("UIStroke") s.Color = C.stroke s.Parent = colorFrame
-
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, -20, 0, 20)
-    titleLabel.Position = UDim2.new(0, 10, 0, 6)
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = "Theme Color"
-    titleLabel.TextColor3 = C.textBright
-    titleLabel.TextSize = 13
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Parent = colorFrame
-
-    local selectorFrame = Instance.new("Frame")
-    selectorFrame.Size = UDim2.new(1, -20, 0, 35)
-    selectorFrame.Position = UDim2.new(0, 10, 0, 30)
-    selectorFrame.BackgroundTransparency = 1
-    selectorFrame.Parent = colorFrame
-
-    local leftBtn = Instance.new("TextButton")
-    leftBtn.Size = UDim2.new(0, 35, 0, 35)
-    leftBtn.Position = UDim2.new(0, 0, 0, 0)
-    leftBtn.BackgroundColor3 = C.accent
-    leftBtn.BorderSizePixel = 0
-    leftBtn.Text = "◀"
-    leftBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    leftBtn.TextSize = 14
-    leftBtn.Font = Enum.Font.GothamBold
-    leftBtn.Parent = selectorFrame
-    Instance.new("UICorner", leftBtn).CornerRadius = UDim.new(0, 8)
-
-    local displayLabel = Instance.new("TextLabel")
-    displayLabel.Size = UDim2.new(1, -90, 0, 35)
-    displayLabel.Position = UDim2.new(0, 40, 0, 0)
-    displayLabel.BackgroundColor3 = C.iconBg
-    displayLabel.BorderSizePixel = 0
-    displayLabel.TextColor3 = C.textBright
-    displayLabel.TextSize = 12
-    displayLabel.Font = Enum.Font.GothamBold
-    displayLabel.Parent = selectorFrame
-    Instance.new("UICorner", displayLabel).CornerRadius = UDim.new(0, 8)
-    local ds = Instance.new("UIStroke") ds.Color = C.accent ds.Thickness = 2 ds.Parent = displayLabel
-
-    local rightBtn = Instance.new("TextButton")
-    rightBtn.Size = UDim2.new(0, 35, 0, 35)
-    rightBtn.Position = UDim2.new(1, -35, 0, 0)
-    rightBtn.BackgroundColor3 = C.accent
-    rightBtn.BorderSizePixel = 0
-    rightBtn.Text = "▶"
-    rightBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    rightBtn.TextSize = 14
-    rightBtn.Font = Enum.Font.GothamBold
-    rightBtn.Parent = selectorFrame
-    Instance.new("UICorner", rightBtn).CornerRadius = UDim.new(0, 8)
-
-    local currentIndex = 1
-    for i, option in ipairs(guiColorOptions) do
-        if option == _G.GUIColor then currentIndex = i break end
-    end
-
-    local function updateDisplay()
-        displayLabel.Text = guiColorOptions[currentIndex]
-        _G.GUIColor = guiColorOptions[currentIndex]
-        applyColorScheme(_G.GUIColor)
-        saveSettings()
-    end
-    updateDisplay()
-
-    leftBtn.MouseButton1Click:Connect(function()
-        currentIndex = currentIndex - 1
-        if currentIndex < 1 then currentIndex = #guiColorOptions end
-        updateDisplay()
-    end)
-
-    rightBtn.MouseButton1Click:Connect(function()
-        currentIndex = currentIndex + 1
-        if currentIndex > #guiColorOptions then currentIndex = 1 end
-        updateDisplay()
-    end)
-end
-
-createGUIColorSelector()
-
--- Block Delay Simple Selector
+-- Block Delay
 sectionOrder += 1
 local bdContainer = Instance.new("Frame")
 bdContainer.Size             = UDim2.new(1, 0, 0, 70)
@@ -2694,7 +2596,6 @@ bdSubLabel.Font               = Enum.Font.Gotham
 bdSubLabel.TextXAlignment     = Enum.TextXAlignment.Left
 bdSubLabel.Parent             = bdContainer
 
--- Button Fast (0 secondes)
 local bdBtnFast = Instance.new("TextButton")
 bdBtnFast.Size             = UDim2.new(0, 40, 0, 18)
 bdBtnFast.Position         = UDim2.new(1, -130, 0, 10)
@@ -2710,7 +2611,6 @@ local bdBtnFastStroke = Instance.new("UIStroke")
 bdBtnFastStroke.Color = _G.BlockDelay == "fast" and C.accent or C.stroke
 bdBtnFastStroke.Parent = bdBtnFast
 
--- Button Normal (0.5 secondes)
 local bdBtnNormal = Instance.new("TextButton")
 bdBtnNormal.Size             = UDim2.new(0, 44, 0, 18)
 bdBtnNormal.Position         = UDim2.new(1, -84, 0, 10)
@@ -2726,7 +2626,6 @@ local bdBtnNormalStroke = Instance.new("UIStroke")
 bdBtnNormalStroke.Color = _G.BlockDelay == "normal" and C.accent or C.stroke
 bdBtnNormalStroke.Parent = bdBtnNormal
 
--- Button Slow (1 seconde)
 local bdBtnSlow = Instance.new("TextButton")
 bdBtnSlow.Size             = UDim2.new(0, 38, 0, 18)
 bdBtnSlow.Position         = UDim2.new(1, -38, 0, 10)
@@ -2742,7 +2641,6 @@ local bdBtnSlowStroke = Instance.new("UIStroke")
 bdBtnSlowStroke.Color = _G.BlockDelay == "slow" and C.accent or C.stroke
 bdBtnSlowStroke.Parent = bdBtnSlow
 
--- Update function
 local function updateBlockDelayUI()
     bdBtnFast.BackgroundColor3 = _G.BlockDelay == "fast" and C.accent or C.card
     bdBtnFast.TextColor3 = _G.BlockDelay == "fast" and C.textBright or C.textMute
@@ -2763,34 +2661,10 @@ bdBtnFast.MouseButton1Click:Connect(function()
     updateBlockDelayUI()
 end)
 
-bdBtnFast.MouseEnter:Connect(function()
-    if _G.BlockDelay ~= "fast" then
-         TweenService:Create(bdBtnFast, TweenInfo.new(0.1), { BackgroundColor3 = C.iconBg }):Play()
-    end
-end)
-
-bdBtnFast.MouseLeave:Connect(function()
-    if _G.BlockDelay ~= "fast" then
-        TweenService:Create(bdBtnFast, TweenInfo.new(0.1), { BackgroundColor3 = C.card }):Play()
-    end
-end)
-
 bdBtnNormal.MouseButton1Click:Connect(function()
     _G.BlockDelay = "normal"
     saveSettings()
     updateBlockDelayUI()
-end)
-
-bdBtnNormal.MouseEnter:Connect(function()
-    if _G.BlockDelay ~= "normal" then
-         TweenService:Create(bdBtnNormal, TweenInfo.new(0.1), { BackgroundColor3 = C.iconBg }):Play()
-    end
-end)
-
-bdBtnNormal.MouseLeave:Connect(function()
-    if _G.BlockDelay ~= "normal" then
-        TweenService:Create(bdBtnNormal, TweenInfo.new(0.1), { BackgroundColor3 = C.card }):Play()
-    end
 end)
 
 bdBtnSlow.MouseButton1Click:Connect(function()
@@ -2799,27 +2673,15 @@ bdBtnSlow.MouseButton1Click:Connect(function()
     updateBlockDelayUI()
 end)
 
-bdBtnSlow.MouseEnter:Connect(function()
-    if _G.BlockDelay ~= "slow" then
-        TweenService:Create(bdBtnSlow, TweenInfo.new(0.1), { BackgroundColor3 = C.iconBg }):Play()
-    end
-end)
-
-bdBtnSlow.MouseLeave:Connect(function()
-    if _G.BlockDelay ~= "slow" then
-        TweenService:Create(bdBtnSlow, TweenInfo.new(0.1), { BackgroundColor3 = C.card }):Play()
-     end
-end)
-
 -- ==========================================
--- BANNIERE STATS
+-- BANNER
 -- ==========================================
-local HugoHubBanner = Instance.new("ScreenGui")
-HugoHubBanner.Name           = "HugoHubBanner"
-HugoHubBanner.ResetOnSpawn   = false
-HugoHubBanner.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-HugoHubBanner.IgnoreGuiInset = false
-HugoHubBanner.Parent         = PlayerGui
+local KrimoHubBanner = Instance.new("ScreenGui")
+KrimoHubBanner.Name           = "KrimoHubBanner"
+KrimoHubBanner.ResetOnSpawn   = false
+KrimoHubBanner.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+KrimoHubBanner.IgnoreGuiInset = false
+KrimoHubBanner.Parent         = PlayerGui
 
 local BFrame = Instance.new("Frame")
 BFrame.Size             = UDim2.new(0, L.bannerW, 0, L.bannerH)
@@ -2827,7 +2689,7 @@ BFrame.Position         = L.bannerPos
 BFrame.AnchorPoint      = L.bannerAnchor
 BFrame.BackgroundColor3 = C.accent
 BFrame.BorderSizePixel  = 0
-BFrame.Parent           = HugoHubBanner
+BFrame.Parent           = KrimoHubBanner
 Instance.new("UICorner", BFrame).CornerRadius = UDim.new(0, DEVICE == "mobile" and 6 or 12)
 
 local BUIGradient = Instance.new("UIGradient")
@@ -2848,7 +2710,7 @@ local BDiscord = Instance.new("TextLabel")
 BDiscord.Size               = UDim2.new(1, 0, 0, 14)
 BDiscord.Position            = DEVICE == "mobile" and UDim2.new(0, 0, 0, 4) or UDim2.new(0, 0, 0, 34)
 BDiscord.BackgroundTransparency = 1
-BDiscord.Text               = "discord.gg/ZqakTjJt2"
+BDiscord.Text               = "discord.gg/zMt27E4FG9"
 BDiscord.TextColor3         = C.textBlue
 BDiscord.TextSize           = L.textSize.discord
 BDiscord.Font                = Enum.Font.GothamBold
@@ -2865,7 +2727,7 @@ if DEVICE == "mobile" then
 else
     BTitle.Size               = UDim2.new(1, 0, 0, 30)
     BTitle.Position            = UDim2.new(0, 0, 0, 10)
-    BTitle.Text               = '<font color="rgb(240,240,240)">HUGO\'S</font> <font color="rgb(140,140,140)">SCRIPT</font>'
+    BTitle.Text               = '<font color="rgb(240,240,240)">KRIMO</font> <font color="rgb(140,140,140)">HUB</font>'
     BTitle.TextSize           = 18
     BTitle.Font               = Enum.Font.GothamBold
 end
@@ -2887,20 +2749,7 @@ BStats.RichText           = true
 BStats.Parent             = BFrame2
 
 -- ==========================================
--- ANIMATION DES GRADIENTS
--- ==========================================
-task.spawn(function()
-    local base1, base2 = UIGradient.Rotation, BUIGradient.Rotation
-    while UIGradient.Parent and BUIGradient.Parent do
-        local t = os.clock()
-        UIGradient.Rotation  = (base1 + t * 60) % 360
-        BUIGradient.Rotation = (base2 + t * 60) % 360
-        RunService.RenderStepped:Wait()
-     end
-end)
-
--- ==========================================
--- COMPTEUR FPS / PING
+-- FPS / PING COUNTER
 -- ==========================================
 do
     local frameTimes = {}
@@ -2931,7 +2780,20 @@ do
 end
 
 -- ==========================================
--- SYNC DRAG / POSITIONNEMENT
+-- ANIMATION DER GRADIENTS
+-- ==========================================
+task.spawn(function()
+    local base1, base2 = UIGradient.Rotation, BUIGradient.Rotation
+    while UIGradient.Parent and BUIGradient.Parent do
+        local t = os.clock()
+        UIGradient.Rotation  = (base1 + t * 60) % 360
+        BUIGradient.Rotation = (base2 + t * 60) % 360
+        RunService.RenderStepped:Wait()
+     end
+end)
+
+-- ==========================================
+-- SYNC DRAG
 -- ==========================================
 local locked = false
 
@@ -2969,7 +2831,7 @@ do
 end
 
 -- ==========================================
--- CHANGEMENT D'ONGLET
+-- TAB SWITCHING
 -- ==========================================
 local activeTab = "brainrots"
 local function setTab(tab)
@@ -3003,7 +2865,7 @@ TextButton4.MouseButton1Click:Connect(function() setTab("brainrots") end)
 TextButton5.MouseButton1Click:Connect(function() setTab("settings") end)
 
 -- ==========================================
--- CONTROLES LOCK / MIN / CLOSE
+-- CONTROLS
 -- ==========================================
 LockBtn.MouseButton1Click:Connect(function()
     locked = not locked
@@ -3061,11 +2923,11 @@ CloseBtn.MouseButton1Click:Connect(function()
     local t1 = TweenService:Create(Win,         info, { Size = UDim2.new(0,0,0,0) })
     local t2 = TweenService:Create(BorderFrame, info, { Size = UDim2.new(0,0,0,0) })
     t1:Play(); t2:Play()
-    t1.Completed:Connect(function() HUGO_SCRIPT_GUI:Destroy() end)
+    t1.Completed:Connect(function() KRIMO_HUB_GUI:Destroy() end)
 end)
 
 -- ==========================================
--- EFFETS HOVER
+-- HOVER EFFECTS
 -- ==========================================
 local function hookButton(btn, normal, hover)
     btn.MouseEnter:Connect(function()
@@ -3092,7 +2954,7 @@ local function flashBar(bar)
 end
 
 -- ==========================================
--- ANIMATION CLIGNOTEMENT
+-- BLINK ANIMATION
 -- ==========================================
 local flashBlinkActive = false
 local BLINK_HI  = Color3.fromRGB(180, 180, 180)
@@ -3128,7 +2990,7 @@ end
 startFlashBlink()
 
 -- ==========================================
--- ÉVÉNEMENTS BOUTONS
+-- BUTTON EVENTS
 -- ==========================================
 FLASHTP.MouseButton1Click:Connect(function()
     if selectedPrompt and selectedSlotNumber then
@@ -3150,10 +3012,10 @@ RESET.MouseButton1Click:Connect(function()
 end)
 
 -- ==========================================
--- MAJ BOUCLE PETS LIST
+-- PET LIST UPDATE LOOP (NUR ALLE 5 SEKUNDEN - FREEZE FIX)
 -- ==========================================
 task.spawn(function()
-    while task.wait(1.5) do
+    while task.wait(5) do
         if thisScriptStopped then break end
         updatePetList()
         if selectedPrompt and selectedSlotNumber then
@@ -3202,8 +3064,6 @@ if savedKeybinds then
     if savedKeybinds.Block then _G.Keybinds.Block = Enum.KeyCode[savedKeybinds.Block] or Enum.KeyCode.R end
     if savedKeybinds.Reset then _G.Keybinds.Reset = Enum.KeyCode[savedKeybinds.Reset] or Enum.KeyCode.T end
 end
-
-local waitingForKeybind = nil
 
 -- ==========================================
 -- KEYBINDS SECTION IN SETTINGS
@@ -3277,6 +3137,8 @@ local function createKeybindRow(title, keybindVar, onAssigned)
     clickBtn.Parent             = row
     clickBtn.ZIndex             = 8
 
+    local waitingForKeybind = nil
+
     local function startWaitingForKey()
         waitingForKeybind = keybindVar
         keyText.Text = "..."
@@ -3337,7 +3199,7 @@ UserInputService.InputBegan:Connect(function(input, processed)
 end)
 
 -- ==========================================
--- ANIMATION D'ENTREE
+-- ENTRY ANIMATION
 -- ==========================================
 task.spawn(function()
     local target = L.posX
@@ -3352,3 +3214,5 @@ task.spawn(function()
     bt.Completed:Wait()
     RunService.RenderStepped:Connect(syncBorder)
 end)
+
+print("⚡ KRIMO HUB geladen! | Discord: discord.gg/zMt27E4FG9")
