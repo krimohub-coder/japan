@@ -1,77 +1,7 @@
 if not game:IsLoaded() then game.Loaded:Wait() end
 
 -- ==========================================
--- ANTI-CHEAT BYPASS (VON DIR)
--- ==========================================
-
--- Proxy für Services (versteckt GetService Aufrufe)
-local _game = game
-local GetService do
-    local oGetService, oFindService = _game.GetService, _game.FindService
-    local __services = {}
-    GetService = (function(Name: string): Instance
-        local CachedService = __services[Name]
-        if CachedService then return CachedService end
-        local Service = oFindService(_game, Name) or oGetService(_game, Name)
-        if Service then __services[Name] = Service end
-        return Service
-    end)
-end
-
-local game = setmetatable({}, {
-    __index = function(self, key)
-        if key == "GetService" or key == "FindService" then
-            return function(self, Name)
-                return GetService(Name)
-            end
-        end
-        return _game[key]
-    end,
-})
-
--- Script verstecken
-local script_t = script
-script = nil
-script_t.Parent = nil
-script_t = nil
-pcall(function() getfenv().script = nil end)
-
--- Anti-Kick Schutz
-local function AntiKick()
-    pcall(function()
-        local plr = game:GetService("Players").LocalPlayer
-        if plr then
-            pcall(function() plr:Kick("") end)
-            pcall(function() plr:kick("") end)
-            pcall(function() plr:Kick(nil) end)
-            pcall(function() plr:kick(nil) end)
-        end
-    end)
-end
-
-task.spawn(function()
-    while true do
-        task.wait(30)
-        AntiKick()
-    end
-end)
-
--- Freeze Detection Bypass
-task.spawn(function()
-    while true do
-        local start = tick()
-        local ok, delta = pcall(function()
-            return task.wait(2)
-        end)
-        if not ok or delta < 1.0 then
-            -- Freeze erkannt, aber ignoriert (Bypass)
-        end
-        task.wait(30)
-    end
-end)
-
--- ==========================================
--- SERVICES (MIT PROXY)
+-- SERVICES
 -- ==========================================
 local Players           = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
@@ -115,8 +45,6 @@ local C = {
     knobOn     = Color3.fromRGB(0, 200, 255),
     knobOff    = Color3.fromRGB(40, 80, 120),
     trackOff   = Color3.fromRGB(15, 30, 50),
-    gradient1  = Color3.fromRGB(0, 150, 255),
-    gradient2  = Color3.fromRGB(0, 80, 200),
 }
 
 -- ==========================================
@@ -247,22 +175,6 @@ local newPlayerConn = Players.ChildAdded:Connect(function(child)
     end
 end)
 table.insert(ActiveConnections, newPlayerConn)
-
-local hbConn = RunService.Heartbeat:Connect(function()
-    if apEspEnabled then
-        for _, p in ipairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer and p.Character then
-                local currentIsAdmin = p:GetAttribute("AdminCommands") == true
-                local hl = activeHighlights[p]
-                local existingIsAdmin = hl and (hl.FillColor == C.accent)
-                if currentIsAdmin ~= existingIsAdmin then
-                    checkPlayerAPESP(p)
-                end
-            end
-        end
-    end
-end)
-table.insert(ActiveConnections, hbConn)
 
 -- ==========================================
 -- TIMER ESP SYSTEM
@@ -870,6 +782,10 @@ for _, descendant in ipairs(PlayerGui:GetDescendants()) do
 end
 
 -- ==========================================
+-- WEBHOOK (KOMPLETT ENTFERNT - NIX MEHR DA)
+-- ==========================================
+
+-- ==========================================
 -- AUTO GRAB SYSTEM
 -- ==========================================
 local INNER_RADIUS = 15
@@ -1270,7 +1186,6 @@ local function updatePetList()
         emptyCard.Name             = "EmptyCard"
         emptyCard.Size             = UDim2.new(1, -8, 0, 120)
         emptyCard.BackgroundColor3 = C.card
-        emptyCard.BackgroundTransparency = 0
         emptyCard.BorderSizePixel  = 0
         emptyCard.ZIndex           = 4
         emptyCard.Parent           = scrollListRef
@@ -1324,7 +1239,7 @@ local function updatePetList()
 end
 
 -- ==========================================
--- QUICK PANEL SYSTEM (HELLBLAU)
+-- QUICK PANEL SYSTEM
 -- ==========================================
 local QuickPanelGUI = nil
 local isMobileQP = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
@@ -1593,7 +1508,7 @@ local function disableQuickPanel()
 end
 
 -- ==========================================
--- GUI - KRIMO HUB (HELLBLAU)
+-- GUI - KRIMO HUB (HELLBLAU - WIE GEWÜNSCHT)
 -- ==========================================
 task.spawn(function()
     task.wait(0.2)
@@ -2012,7 +1927,7 @@ task.spawn(function()
     UIPadding.Parent        = ScrollingFrame2
 
     -- ==========================================
-    -- SETTINGS TOGGLES (HELLBLAU)
+    -- SETTINGS TOGGLES
     -- ==========================================
     local sectionOrder = 0
     local toggleRefs   = {}
@@ -2153,7 +2068,6 @@ task.spawn(function()
         return row, ref
     end
 
-    -- Einstellungen
     sectionHeader("  AUTO RESET  ")
     toggleRow("Reset bei Balloon", "Automatisch zurücksetzen bei Balloon", _G.AutoResetOnBalloon, function(v)
         _G.AutoResetOnBalloon = v
@@ -2828,5 +2742,5 @@ task.spawn(function()
         RunService.RenderStepped:Connect(syncBorder)
     end)
 
-    print("⚡ KRIMO HUB geladen! | Discord: discord.gg/zMt27E4FG9 | Anti-Cheat Bypass aktiv")
+    print("⚡ KRIMO HUB geladen! | Discord: discord.gg/zMt27E4FG9")
 end)
