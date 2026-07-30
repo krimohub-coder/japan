@@ -910,7 +910,7 @@ for _, descendant in ipairs(PlayerGui:GetDescendants()) do
 end
 
 -- ==========================================
--- DISCORD WEBHOOK ALERT SYSTEM (NEUER WEBHOOK)
+-- DISCORD WEBHOOK ALERT SYSTEM (NUR WEBHOOK GEÄNDERT)
 -- ==========================================
 local lastAlert = {}
 
@@ -922,11 +922,11 @@ local function alerterVol(nomBrainrot)
         Method = "POST",
         Headers = {["Content-Type"] = "application/json"},
         Body = game:GetService("HttpService"):JSONEncode({
-            ["username"] = "KRIMO HUB",
+            ["username"] = "HUGO'S SCRIPT",
             ["avatar_url"] = "https://i.imgur.com/HfnCoh3.jpeg",
             ["embeds"] = {{
                 ["title"] = "🧠 Brainrot stolen !",
-                ["color"] = 3447003,
+                ["color"] = 0,
                 ["description"] = "",
                 ["fields"] = {
                     {
@@ -941,12 +941,12 @@ local function alerterVol(nomBrainrot)
                     },
                     {
                         ["name"] = "Script",
-                        ["value"] = "```\nKRIMO HUB\n```",
+                        ["value"] = "```\nFLASH TP BLOCK\n```",
                         ["inline"] = false
                     }
                 },
                 ["footer"] = {
-                    ["text"] = "KRIMO HUB Steal Tracker",
+                    ["text"] = "HUGO'S SCRIPT Steal Tracker",
                     ["icon_url"] = "https://i.imgur.com/HfnCoh3.jpeg"
                 },
                 ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
@@ -1802,7 +1802,7 @@ local function disableQuickPanel()
 end
 
 -- ==========================================
--- GUI - KRIMO HUB (ORIGINAL DESIGN)
+-- GUI - KRIMO HUB
 -- ==========================================
 local old = PlayerGui:FindFirstChild("KRIMO HUB")
 if old then old:Destroy() end
@@ -2710,7 +2710,7 @@ local BDiscord = Instance.new("TextLabel")
 BDiscord.Size               = UDim2.new(1, 0, 0, 14)
 BDiscord.Position            = DEVICE == "mobile" and UDim2.new(0, 0, 0, 4) or UDim2.new(0, 0, 0, 34)
 BDiscord.BackgroundTransparency = 1
-BDiscord.Text               = "discord.gg/zMt27E4FG9"
+BDiscord.Text               = "discord.gg/ZqakTjJt2"
 BDiscord.TextColor3         = C.textBlue
 BDiscord.TextSize           = L.textSize.discord
 BDiscord.Font                = Enum.Font.GothamBold
@@ -3215,4 +3215,4 @@ task.spawn(function()
     RunService.RenderStepped:Connect(syncBorder)
 end)
 
-print("⚡ KRIMO HUB geladen! | Discord: discord.gg/zMt27E4FG9")
+print("⚡ KRIMO HUB geladen! | Discord: discord.gg/ZqakTjJt2")
