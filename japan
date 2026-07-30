@@ -42,6 +42,8 @@ loadConfig()
 local Announcements = nil
 local CodeTextBox = nil
 local ConfirmButton = nil
+local RedeemRemote = nil
+local Net = nil
 
 local function setupPaths()
     pcall(function()
@@ -67,6 +69,9 @@ local function setupPaths()
                 ConfirmButton = codesInner:FindFirstChild("Confirm")
             end
         end
+        
+        -- Net für Remote finden
+        Net = game:GetService("ReplicatedStorage"):FindFirstChild("Packages"):FindFirstChild("Net")
     end)
 end
 
@@ -75,8 +80,14 @@ local collectedCodes = {}
 local AddedCount = 0
 local history = {}          -- { word, time }
 local lastAddedWord = ""    -- für Duplikatschutz
+local submitCooldown = false
+local lastSubmitTime = 0
+local pendingRejectedText = nil
+local pendingRejectedBox = nil
+local pendingRejectedUntil = 0
+local pendingRejectedToken = 0
 
--- 5. RIDDLE DATABASE (korrigiert)
+-- 5. RIDDLE DATABASE
 local SAB_DB = {
     -- Team
     ["who is the owner"] = "SPYDERSAMMY",
@@ -231,13 +242,12 @@ local PANEL_H = 280
 local isMinimized = false
 local historyOpen = false
 
--- 7. REFRESH MAIN GUI (angepasst: "Pasted X/Y" + grüne Code-Einträge)
+-- 7. REFRESH MAIN GUI
 local function refreshMainGUI()
     if not MainFrame then return end
     local ContentFrame = MainFrame:FindFirstChild("ContentFrame")
     if not ContentFrame then return end
     
-    -- Optional: CollectedLabel oben als Zusatzinfo
     local collectedLabel = ContentFrame:FindFirstChild("CollectedLabel")
     if collectedLabel then
         collectedLabel.Text = "🌸 Pasted: " .. #collectedCodes .. "/" .. _G.SubmitAfterCount
@@ -248,7 +258,6 @@ local function refreshMainGUI()
     local scroll = listFrame:FindFirstChild("Scrolling")
     if not scroll then return end
     
-    -- Alte Einträge entfernen (außer Placeholder)
     for _, child in ipairs(scroll:GetChildren()) do
         if child:IsA("TextLabel") and child.Name ~= "Placeholder" then
             child:Destroy()
@@ -261,7 +270,6 @@ local function refreshMainGUI()
     end
     
     if #collectedCodes > 0 then
-        -- Fortschrittsanzeige "Pasted X/Y" (wie im Screenshot)
         local progressLabel = Instance.new("TextLabel")
         progressLabel.Name = "ProgressLabel"
         progressLabel.Size = UDim2.new(1, -6, 0, 16)
@@ -274,7 +282,6 @@ local function refreshMainGUI()
         progressLabel.TextYAlignment = Enum.TextYAlignment.Top
         progressLabel.Parent = scroll
         
-        -- Code-Einträge mit grüner Farbe (wie "[code] -> EZ")
         for i, code in ipairs(collectedCodes) do
             if code and code ~= "" then
                 local label = Instance.new("TextLabel")
@@ -282,7 +289,7 @@ local function refreshMainGUI()
                 label.Size = UDim2.new(1, -6, 0, 14)
                 label.BackgroundTransparency = 1
                 label.Text = "[code] -> " .. code
-                label.TextColor3 = Color3.fromRGB(0, 200, 80)  -- Grün
+                label.TextColor3 = Color3.fromRGB(0, 200, 80)
                 label.Font = Enum.Font.Gotham
                 label.TextSize = 10
                 label.TextXAlignment = Enum.TextXAlignment.Left
@@ -298,7 +305,7 @@ local function refreshMainGUI()
     end
 end
 
--- 8. HISTORY (NUR EINZELNE WÖRTER SPEICHERN)
+-- 8. HISTORY (NUR EINZELNE WÖRTER)
 local function updateHistoryContent()
     if not HistoryScroll then return end
     
@@ -458,7 +465,7 @@ local function buildHistoryGUI()
     tl.ZIndex = 10
     tl.Parent = tb
     
-    -- Reset Button für History
+    -- Reset Button für History (NUR History, nicht Pasted)
     local resetHistoryBtn = Instance.new("TextButton")
     resetHistoryBtn.Name = "ResetHistoryBtn"
     resetHistoryBtn.Size = UDim2.new(0, 40, 0, 18)
@@ -474,12 +481,10 @@ local function buildHistoryGUI()
     do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 3) co.Parent = resetHistoryBtn end
     
     resetHistoryBtn.MouseButton1Click:Connect(function()
+        -- NUR History clearen, NICHT collectedCodes!
         table.clear(history)
         updateHistoryContent()
-        table.clear(collectedCodes)
-        AddedCount = 0
-        refreshMainGUI()
-        if CodeTextBox then CodeTextBox.Text = "" end
+        -- collectedCodes bleiben erhalten!
     end)
     
     local closeBtn = Instance.new("TextButton")
@@ -559,8 +564,24 @@ local function buildHistoryGUI()
     end)
 end
 
--- 9. SUBMIT
-local submitCooldown = false
+-- 9. AUTO SUBMIT LOGIK (AUS DEM ANDEREN SCRIPT)
+local function resolveAceRedeemRemote()
+    if RedeemRemote and RedeemRemote.Parent then return RedeemRemote end
+    if not Net then
+        pcall(function()
+            Net = game:GetService("ReplicatedStorage"):FindFirstChild("Packages"):FindFirstChild("Net")
+        end)
+    end
+    if Net then
+        local ok, api = pcall(require, Net)
+        if ok and type(api) == "table" then
+            local rok, rf = pcall(function() return api:RemoteFunction("7d14a912-1040-4867-b005-98838eb9acc4") end)
+            if rok and typeof(rf) == "Instance" then RedeemRemote = rf end
+        end
+    end
+    return RedeemRemote
+end
+
 local function fireSignal(sig)
     if not sig then return end
     pcall(function()
@@ -575,49 +596,182 @@ local function fireSignal(sig)
     end
 end
 
-local function triggerSubmit()
-    if submitCooldown then return false end
-    submitCooldown = true
-    task.delay(0.3, function() submitCooldown = false end)
-    
-    setupPaths()
-    
-    if ConfirmButton and ConfirmButton.Parent then
-        pcall(function()
-            fireSignal(ConfirmButton.MouseButton1Click)
-            fireSignal(ConfirmButton.Activated)
-            ConfirmButton:CaptureFocus()
-            ConfirmButton:ReleaseFocus(true)
-        end)
-        return true
+local function getupvalues_fn(fn)
+    if debug and debug.getupvalues then
+        return debug.getupvalues(fn)
     end
-    
-    local PlayerGui = LocalPlayer:FindFirstChild("PlayerGui")
-    if PlayerGui then
-        for _, obj in ipairs(PlayerGui:GetDescendants()) do
-            if obj:IsA("TextButton") or obj:IsA("ImageButton") then
-                local txt = (obj:IsA("TextButton") and obj.Text or ""):lower()
-                if txt:find("submit") or txt:find("redeem") or txt:find("confirm") or txt:find("einlösen") then
-                    pcall(function()
-                        fireSignal(obj.MouseButton1Click)
-                        fireSignal(obj.Activated)
-                        obj:CaptureFocus()
-                        obj:ReleaseFocus(true)
-                    end)
-                    return true
-                end
+    return {}
+end
+
+local function setupvalue_fn(fn, idx, val)
+    if debug and debug.setupvalue then
+        return debug.setupvalue(fn, idx, val)
+    end
+    return nil
+end
+
+local function killAceDebounce(fn)
+    if not (fn and setupvalue_fn and getupvalues_fn) then return end
+    local ok, ups = pcall(getupvalues_fn, fn)
+    if ok and type(ups) == "table" then
+        for i, v in pairs(ups) do
+            if type(v) == "boolean" then
+                pcall(setupvalue_fn, fn, i, false)
             end
         end
     end
-    
-    return false
 end
 
--- 10. HISTORY SPEICHERN (NUR EINZELNE WÖRTER)
+local function aceRedeemViaBox(code)
+    if not getconnections then return false, "no getconnections" end
+    local box = CodeTextBox
+    if not box or not box.Parent then
+        setupPaths()
+        box = CodeTextBox
+    end
+    if not box then return false, "no codebox" end
+    local ok, conns = pcall(getconnections, box.FocusLost)
+    if not ok or type(conns) ~= "table" or #conns == 0 then
+        return false, "no connection"
+    end
+    local fired = false
+    for _, c in ipairs(conns) do
+        local fn
+        pcall(function() fn = c.Function end)
+        killAceDebounce(fn)
+        box.Text = code
+        box.Active = true
+        box.Selectable = true
+        local fok = pcall(function()
+            if c.Enabled ~= false then
+                c:Fire(true)
+            end
+        end)
+        fired = fired or fok
+    end
+    return fired, fired and "sent" or "fire failed"
+end
+
+local function aceRedeemViaRemote(code)
+    local rf = resolveAceRedeemRemote()
+    if not rf then return false, "no remote" end
+    local ok, result = pcall(function() return rf:InvokeServer(code) end)
+    if not ok then return false, tostring(result) end
+    return true, result
+end
+
+local function aceRedeem(code)
+    -- Erst via Box versuchen
+    local ok, res = aceRedeemViaBox(code)
+    if ok then return true, res end
+    -- Dann via Remote
+    if getconnections then return false, res end
+    return aceRedeemViaRemote(code)
+end
+
+local function restoreRejectedText(box, previousText)
+    if not previousText or previousText == "" then return false end
+    if not box or not box.Parent then
+        setupPaths()
+        box = CodeTextBox
+    end
+    if not box or not box.Parent then return false end
+    local restored = pcall(function()
+        box.Text = previousText
+    end)
+    return restored
+end
+
+local function clearPendingSubmission()
+    pendingRejectedToken = pendingRejectedToken + 1
+    pendingRejectedText = nil
+    pendingRejectedBox = nil
+    pendingRejectedUntil = 0
+end
+
+local function rememberPendingSubmission(box, text)
+    if not text or text == "" then return end
+    pendingRejectedToken = pendingRejectedToken + 1
+    local token = pendingRejectedToken
+    pendingRejectedText = text
+    pendingRejectedBox = box
+    pendingRejectedUntil = os.clock() + 8
+    task.delay(8, function()
+        if token == pendingRejectedToken then
+            clearPendingSubmission()
+        end
+    end)
+end
+
+local function handleRedemptionFeedback(text)
+    if not pendingRejectedText then return end
+    if os.clock() > pendingRejectedUntil then
+        clearPendingSubmission()
+        return
+    end
+    local lower = tostring(text or ""):lower()
+    local rejected = lower:find("invalid code", 1, true)
+        or lower:find("code is invalid", 1, true)
+        or lower:find("expired", 1, true)
+        or lower:find("already redeemed", 1, true)
+        or lower:find("already used", 1, true)
+        or lower:find("doesn't exist", 1, true)
+        or lower:find("does not exist", 1, true)
+        or lower:find("not found", 1, true)
+        or lower:find("rejected", 1, true)
+    if not rejected then return end
+    local previousText = pendingRejectedText
+    local previousBox = pendingRejectedBox
+    local restored = restoreRejectedText(previousBox, previousText)
+    clearPendingSubmission()
+end
+
+-- ============================================================
+-- 10. NEUE AUTO SUBMIT LOGIK (ersetzt die alte)
+-- ============================================================
+local function triggerSubmit()
+    if submitCooldown then return false end
+    submitCooldown = true
+    task.delay(0.5, function() submitCooldown = false end)
+    
+    setupPaths()
+    
+    -- Versuche erst den Code zu sammeln
+    local combinedCode = table.concat(collectedCodes)
+    if combinedCode == "" then return false end
+    
+    -- Remote finden falls nötig
+    if not RedeemRemote then
+        resolveAceRedeemRemote()
+    end
+    
+    -- Merken für "Retype invalid" (falls aktiv)
+    rememberPendingSubmission(CodeTextBox, combinedCode)
+    
+    -- Redeem versuchen
+    local ok, result = aceRedeem(combinedCode)
+    local success = ok and (type(result) ~= "table" or result.success or result.Success)
+    
+    if success then
+        -- Erfolgreich -> Codes leeren
+        table.clear(collectedCodes)
+        AddedCount = 0
+        refreshMainGUI()
+        if CodeTextBox then CodeTextBox.Text = "" end
+        clearPendingSubmission()
+        return true
+    else
+        -- Fehlgeschlagen -> Prüfen ob invalid
+        handleRedemptionFeedback(tostring(result))
+        return false
+    end
+end
+
+-- 11. HISTORY SPEICHERN (NUR EINZELNE WÖRTER)
 local function saveToHistory(Word, fromSammy)
     if not fromSammy then return end
     if not Word or Word == "" then return end
-    if Word:find(" ") then return end  -- Nur einzelne Wörter
+    if Word:find(" ") then return end
     
     local time = os.date("%H:%M:%S")
     table.insert(history, { word = Word, time = time, fromSammy = true })
@@ -633,7 +787,7 @@ local function saveToHistory(Word, fromSammy)
     end
 end
 
--- 11. CODE HINZUFÜGEN
+-- 12. CODE HINZUFÜGEN
 local function addCode(Code, fromSammy)
     Code = tostring(Code)
     if Code == "" then return end
@@ -674,7 +828,7 @@ local function addCode(Code, fromSammy)
     end
 end
 
--- 12. WATCHER
+-- 13. WATCHER
 local function watchLabel(Label)
     if not Label:IsA("TextLabel") then return end
     local text = Label.Text
@@ -711,7 +865,7 @@ if CodeTextBox then
     end)
 end
 
--- 13. RESET
+-- 14. RESET (NUR COLLECTED CODES)
 local function resetCodes()
     table.clear(collectedCodes)
     AddedCount = 0
@@ -720,7 +874,7 @@ local function resetCodes()
     if CodeTextBox then CodeTextBox.Text = "" end
 end
 
--- 14. SPYDERSAMMY ERKENNUNG
+-- 15. SPYDERSAMMY ERKENNUNG
 local targetUserId = nil
 task.spawn(function()
     pcall(function() targetUserId = Players:GetUserIdFromNameAsync("SpyderSammy") end)
@@ -781,7 +935,7 @@ local function startPlayerGuiScanner()
     PG.DescendantAdded:Connect(hookUiTextObject)
 end
 
--- 15. NEUES GUI (SCHWARZ + HELLBLAU FLOWER)
+-- 16. GUI BAUEN (SCHWARZ + HELLBLAU FLOWER)
 local function buildGUI()
     local old = CoreGui:FindFirstChild("KrimoHubGui")
     if old then old:Destroy() end
@@ -810,7 +964,6 @@ local function buildGUI()
     corner.CornerRadius = UDim.new(0, 12)
     corner.Parent = MainFrame
     
-    -- Helles Blumen-Design: Hellblaue Blütenblätter als Rahmen
     local flowerGradient = Instance.new("UIGradient")
     flowerGradient.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, Color3.fromRGB(30, 60, 120)),
@@ -851,7 +1004,6 @@ local function buildGUI()
     titleLabel.ZIndex = 10
     titleLabel.Parent = titleBar
     
-    -- Minimize Button
     local toggleMinBtn = Instance.new("TextButton")
     toggleMinBtn.Name = "ToggleMinBtn"
     toggleMinBtn.Size = UDim2.new(0, 22, 0, 22)
@@ -866,7 +1018,6 @@ local function buildGUI()
     toggleMinBtn.Parent = titleBar
     do local co = Instance.new("UICorner") co.CornerRadius = UDim.new(0, 4) co.Parent = toggleMinBtn end
     
-    -- Global ON/OFF
     local toggleButton = Instance.new("TextButton")
     toggleButton.Name = "SwitchBtn"
     toggleButton.Size = UDim2.new(0, 48, 0, 22)
@@ -896,7 +1047,7 @@ local function buildGUI()
     ContentFrame.ZIndex = 5
     ContentFrame.Parent = MainFrame
     
-    -- ======== ROW 1: Auto Type ========
+    -- ROW 1: Auto Type
     local awLabel = Instance.new("TextLabel")
     awLabel.Size = UDim2.new(0, 100, 0, 22)
     awLabel.Position = UDim2.new(0, 12, 0, 6)
@@ -933,7 +1084,7 @@ local function buildGUI()
         end
     end)
     
-    -- ======== ROW 2: Auto Submit ========
+    -- ROW 2: Auto Submit
     local asLabel = Instance.new("TextLabel")
     asLabel.Size = UDim2.new(0, 100, 0, 22)
     asLabel.Position = UDim2.new(0, 12, 0, 32)
@@ -965,7 +1116,7 @@ local function buildGUI()
         asToggle.Text = _G.AutoSubmitEnabled and "ON" or "OFF"
     end)
     
-    -- ======== Submit After Count ========
+    -- Submit After Count
     local countLabel = Instance.new("TextLabel")
     countLabel.Size = UDim2.new(0, 120, 0, 22)
     countLabel.Position = UDim2.new(0, 12, 0, 58)
@@ -1021,15 +1172,17 @@ local function buildGUI()
     plusBtn.MouseButton1Click:Connect(function()
         _G.SubmitAfterCount = _G.SubmitAfterCount + 1
         countDisplay.Text = tostring(_G.SubmitAfterCount)
+        refreshMainGUI()
     end)
     minusBtn.MouseButton1Click:Connect(function()
         if _G.SubmitAfterCount > 1 then
             _G.SubmitAfterCount = _G.SubmitAfterCount - 1
             countDisplay.Text = tostring(_G.SubmitAfterCount)
+            refreshMainGUI()
         end
     end)
     
-    -- ======== ROW 3: Riddle Solver ========
+    -- ROW 3: Riddle Solver
     local rsLabel = Instance.new("TextLabel")
     rsLabel.Size = UDim2.new(0, 100, 0, 22)
     rsLabel.Position = UDim2.new(0, 12, 0, 84)
@@ -1062,7 +1215,7 @@ local function buildGUI()
         rsToggle.Text = _G.RiddleSolverEnabled and "ON" or "OFF"
     end)
     
-    -- ======== ROW 4: History ========
+    -- ROW 4: History
     local historyLabel = Instance.new("TextLabel")
     historyLabel.Size = UDim2.new(0, 100, 0, 22)
     historyLabel.Position = UDim2.new(0, 12, 0, 110)
@@ -1104,7 +1257,7 @@ local function buildGUI()
         end
     end)
     
-    -- ======== Collected Label (oben) – jetzt "Pasted X/Y" ========
+    -- Collected Label
     local collectedLabel = Instance.new("TextLabel")
     collectedLabel.Name = "CollectedLabel"
     collectedLabel.Size = UDim2.new(0.6, 0, 0, 18)
@@ -1136,7 +1289,7 @@ local function buildGUI()
         resetCodes()
     end)
     
-    -- ======== Code-Liste (jetzt mit "Pasted X/Y" und grünen Einträgen) ========
+    -- Code-Liste
     local codeListFrame = Instance.new("Frame")
     codeListFrame.Name = "CodeListFrame"
     codeListFrame.Size = UDim2.new(1, -24, 0, 72)
@@ -1184,7 +1337,7 @@ local function buildGUI()
     placeholder.Parent = scroll
     placeholder.Visible = (#collectedCodes == 0)
     
-    -- ======== Separator ========
+    -- Separator
     local sep = Instance.new("Frame")
     sep.Size = UDim2.new(1, -24, 0, 1)
     sep.Position = UDim2.new(0, 12, 0, 233)
@@ -1317,7 +1470,7 @@ local function buildGUI()
     print("[KrimoHub V4] GUI sichtbar!")
 end
 
--- 16. START
+-- 17. START
 print("[KrimoHub V4] Starte...")
 pcall(setupPaths)
 pcall(buildGUI)
