@@ -1,4 +1,4 @@
-local Players           = game:GetService("Players")
+local Players         = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService        = game:GetService("RunService")
 local TweenService      = game:GetService("TweenService")
@@ -13,28 +13,30 @@ local _focused  = nil
 
 local ANTHROPIC_KEY = "sk-ant-api03-placeholder-replace-with-real-key"
 
+-- CYBERPUNK / TECH NEON PALETTE
 local T = {
-    BG     = Color3.fromRGB(18,18,20),
-    Card   = Color3.fromRGB(24,24,26),
-    Border = Color3.fromRGB(45,45,50),
-    Accent = Color3.fromRGB(100,220,100),
-    Green  = Color3.fromRGB(80,220,80),
-    Red    = Color3.fromRGB(255,70,70),
-    Yellow = Color3.fromRGB(255,195,50),
-    White  = Color3.fromRGB(230,230,235),
-    Dim    = Color3.fromRGB(90,90,100),
-    HdrBG  = Color3.fromRGB(20,20,22),
+    BG     = Color3.fromRGB(15, 17, 23),       -- Cyber Obsidian
+    Card   = Color3.fromRGB(22, 26, 36),       -- Tech Slate
+    Border = Color3.fromRGB(35, 42, 58),       -- Dark Steel
+    Accent = Color3.fromRGB(0, 230, 255),      -- Neon Cyan
+    Green  = Color3.fromRGB(0, 255, 150),      -- Electric Lime (Active)
+    Red    = Color3.fromRGB(255, 45, 85),      -- Laser Pink/Red
+    Yellow = Color3.fromRGB(255, 200, 0),       -- Warning Gold
+    White  = Color3.fromRGB(240, 244, 250),     -- Crisp Platinum
+    Dim    = Color3.fromRGB(110, 125, 150),    -- Hologram Blue-Gray
 }
+
 local F = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local function Tw(o,i,p) TweenService:Create(o,i,p):Play() end
 local function Corner(p,r)
-    local c=Instance.new("UICorner"); c.CornerRadius=UDim.new(0,r or 8); c.Parent=p
+    local c=Instance.new("UICorner"); c.CornerRadius=UDim.new(0,r or 6); c.Parent=p
 end
 local function Stroke(p,col,th)
     local s=Instance.new("UIStroke"); s.Color=col or T.Border
     s.Thickness=th or 1; s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border; s.Parent=p; return s
 end
 
+-- Clean up older frames
 pcall(function()
     if game.CoreGui:FindFirstChild("SDLCPaste") then game.CoreGui.SDLCPaste:Destroy() end
 end)
@@ -47,23 +49,36 @@ GUI.Name="SDLCPaste"; GUI.ResetOnSpawn=false; GUI.IgnoreGuiInset=true
 GUI.DisplayOrder=999
 if not pcall(function() GUI.Parent=game.CoreGui end) then GUI.Parent=playerGui end
 
-local WIN_W = 230
+local WIN_W = 220
 
 local Win = Instance.new("Frame")
 Win.Name="Win"
 Win.Size=UDim2.new(0,WIN_W,0,10)
 Win.AutomaticSize=Enum.AutomaticSize.Y
 Win.AnchorPoint=Vector2.new(1,0)
-Win.Position=UDim2.new(1,-14,0,52)
-Win.BackgroundColor3=Color3.fromRGB(18,18,20)
+Win.Position=UDim2.new(1,-20,0,60)
+Win.BackgroundColor3=T.BG
 Win.BackgroundTransparency=0
 Win.BorderSizePixel=0
 Win.ZIndex=100
 Win.ClipsDescendants=true
 Win.Parent=GUI
-Corner(Win,10)
+Corner(Win,8)
 
-local WBorder=Stroke(Win, Color3.fromRGB(50,50,55), 1)
+-- Neon Shifting Glow Border
+local WBorder=Stroke(Win, T.Accent, 1.5)
+local WBG=Instance.new("UIGradient")
+WBG.Color=ColorSequence.new({
+    ColorSequenceKeypoint.new(0,   T.Accent),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 100, 255)),
+    ColorSequenceKeypoint.new(1,   T.Accent),
+})
+WBG.Rotation=0
+WBG.Parent=WBorder
+
+RunService.RenderStepped:Connect(function(dt)
+    WBG.Rotation = (WBG.Rotation + dt*90) % 360
+end)
 
 local WinList=Instance.new("UIListLayout")
 WinList.FillDirection=Enum.FillDirection.Vertical
@@ -72,22 +87,21 @@ WinList.SortOrder=Enum.SortOrder.LayoutOrder
 WinList.HorizontalAlignment=Enum.HorizontalAlignment.Center
 WinList.Parent=Win
 
+-- HEADER DESIGN
 local Hdr=Instance.new("Frame")
-Hdr.Size=UDim2.new(1,0,0,52)
-Hdr.BackgroundColor3=Color3.fromRGB(20,20,22)
-Hdr.BackgroundTransparency=0
+Hdr.Size=UDim2.new(1,0,0,40)
+Hdr.BackgroundColor3=Color3.fromRGB(18, 22, 30)
 Hdr.BorderSizePixel=0
 Hdr.LayoutOrder=1
 Hdr.Active=true
 Hdr.ZIndex=101
 Hdr.Parent=Win
-Corner(Hdr,10)
-
+Corner(Hdr,8)
 
 local HdrFill=Instance.new("Frame")
-HdrFill.Size=UDim2.new(1,0,0,12)
-HdrFill.Position=UDim2.new(0,0,1,-12)
-HdrFill.BackgroundColor3=Color3.fromRGB(20,20,22)
+HdrFill.Size=UDim2.new(1,0,0,10)
+HdrFill.Position=UDim2.new(0,0,1,-10)
+HdrFill.BackgroundColor3=Color3.fromRGB(18, 22, 30)
 HdrFill.BorderSizePixel=0
 HdrFill.ZIndex=101
 HdrFill.Parent=Hdr
@@ -95,74 +109,53 @@ HdrFill.Parent=Hdr
 local HdrLine=Instance.new("Frame")
 HdrLine.Size=UDim2.new(1,0,0,1)
 HdrLine.Position=UDim2.new(0,0,1,0)
-HdrLine.BackgroundColor3=Color3.fromRGB(45,45,50)
-HdrLine.BackgroundTransparency=0
+HdrLine.BackgroundColor3=T.Accent
+HdrLine.BackgroundTransparency=0.7
 HdrLine.BorderSizePixel=0
 HdrLine.ZIndex=102
 HdrLine.Parent=Hdr
 
-local Logo=Instance.new("Frame")
-Logo.Size=UDim2.new(0,28,0,28)
-Logo.Position=UDim2.new(0,12,0.5,-14)
-Logo.BackgroundColor3=Color3.fromRGB(50,50,55)
-Logo.BorderSizePixel=0
-Logo.ZIndex=103
-Logo.Parent=Hdr
-Corner(Logo,7)
-local LogoTxt=Instance.new("TextLabel")
-LogoTxt.Size=UDim2.new(1,0,1,0)
-LogoTxt.BackgroundTransparency=1
-LogoTxt.Text="S"
-LogoTxt.TextSize=14
-LogoTxt.Font=Enum.Font.GothamBlack
-LogoTxt.TextColor3=T.White
-LogoTxt.TextXAlignment=Enum.TextXAlignment.Center
-LogoTxt.TextYAlignment=Enum.TextYAlignment.Center
-LogoTxt.ZIndex=104
-LogoTxt.Parent=Logo
+-- Minimalist Tech Tag instead of an "F" box
+local TechTag=Instance.new("Frame")
+TechTag.Size=UDim2.new(0,4,0,16)
+TechTag.Position=UDim2.new(0,10,0.5,-8)
+TechTag.BackgroundColor3=T.Accent
+TechTag.BorderSizePixel=0
+TechTag.ZIndex=103
+TechTag.Parent=Hdr
+Corner(TechTag,2)
 
 local TitleL=Instance.new("TextLabel")
-TitleL.Size=UDim2.new(0,120,0,20)
-TitleL.Position=UDim2.new(0,50,0,10)
+TitleL.Size=UDim2.new(0,120,1,0)
+TitleL.Position=UDim2.new(0,20,0,0)
 TitleL.BackgroundTransparency=1
-TitleL.Text="HUGO'S SCRIPT"
+TitleL.RichText=true
+TitleL.Text='<font color="rgb(0,230,255)">CYBER</font><font color="rgb(240,244,250)">.HUD</font> <font color="rgb(110,125,150)" size="9">// v2</font>'
 TitleL.TextSize=13
-TitleL.Font=Enum.Font.GothamBlack
+TitleL.Font=Enum.Font.Code
 TitleL.TextColor3=T.White
 TitleL.TextXAlignment=Enum.TextXAlignment.Left
 TitleL.TextYAlignment=Enum.TextYAlignment.Center
 TitleL.ZIndex=102
 TitleL.Parent=Hdr
 
-local SubTitleL=Instance.new("TextLabel")
-SubTitleL.Size=UDim2.new(0,120,0,14)
-SubTitleL.Position=UDim2.new(0,50,0,28)
-SubTitleL.BackgroundTransparency=1
-SubTitleL.Text="auto redeem"
-SubTitleL.TextSize=10
-SubTitleL.Font=Enum.Font.Gotham
-SubTitleL.TextColor3=T.Dim
-SubTitleL.TextXAlignment=Enum.TextXAlignment.Left
-SubTitleL.TextYAlignment=Enum.TextYAlignment.Center
-SubTitleL.ZIndex=102
-SubTitleL.Parent=Hdr
-
 local OnBtn=Instance.new("TextButton")
-OnBtn.Size=UDim2.new(0,46,0,26)
+OnBtn.Size=UDim2.new(0,42,0,20)
 OnBtn.AnchorPoint=Vector2.new(1,0.5)
 OnBtn.Position=UDim2.new(1,-10,0.5,0)
-OnBtn.BackgroundColor3=Color3.fromRGB(80,220,80)
+OnBtn.BackgroundColor3=Color3.fromRGB(24, 40, 36)
 OnBtn.BorderSizePixel=0
 OnBtn.AutoButtonColor=false
-OnBtn.Text="ON"
-OnBtn.TextSize=11
-OnBtn.Font=Enum.Font.GothamBlack
-OnBtn.TextColor3=Color3.fromRGB(10,10,10)
+OnBtn.Text="ONLINE"
+OnBtn.TextSize=8
+OnBtn.Font=Enum.Font.Code
+OnBtn.TextColor3=T.Green
 OnBtn.ZIndex=103
 OnBtn.Parent=Hdr
-Corner(OnBtn,8)
-local OnS=Stroke(OnBtn,Color3.fromRGB(80,220,80),1)
+Corner(OnBtn,4)
+local OnS=Stroke(OnBtn,T.Green,1)
 
+-- Dragging Functionality
 do
     local drag,ds,ws,mv
     Hdr.InputBegan:Connect(function(inp)
@@ -197,121 +190,125 @@ Body.Parent=Win
 
 local BL=Instance.new("UIListLayout")
 BL.FillDirection=Enum.FillDirection.Vertical
-BL.Padding=UDim.new(0,5)
+BL.Padding=UDim.new(0,6)
 BL.HorizontalAlignment=Enum.HorizontalAlignment.Center
 BL.Parent=Body
 
 local BPad=Instance.new("UIPadding")
-BPad.PaddingTop=UDim.new(0,7)
-BPad.PaddingBottom=UDim.new(0,9)
-BPad.PaddingLeft=UDim.new(0,8)
-BPad.PaddingRight=UDim.new(0,8)
+BPad.PaddingTop=UDim.new(0,8)
+BPad.PaddingBottom=UDim.new(0,10)
+BPad.PaddingLeft=UDim.new(0,10)
+BPad.PaddingRight=UDim.new(0,10)
 BPad.Parent=Body
 
+-- STATUS MODULE
 local StatusCard=Instance.new("Frame")
-StatusCard.Size=UDim2.new(1,0,0,32)
-StatusCard.BackgroundColor3=Color3.fromRGB(22,22,24)
-StatusCard.BackgroundTransparency=0
+StatusCard.Size=UDim2.new(1,0,0,28)
+StatusCard.BackgroundColor3=T.Card
 StatusCard.BorderSizePixel=0
 StatusCard.ZIndex=102
 StatusCard.Parent=Body
-Corner(StatusCard,8)
-Stroke(StatusCard,Color3.fromRGB(45,45,50),1)
+Corner(StatusCard,5)
+Stroke(StatusCard,T.Border,1)
 
 local SDot=Instance.new("Frame")
-SDot.Size=UDim2.new(0,7,0,7)
-SDot.Position=UDim2.new(0,10,0.5,-3.5)
+SDot.Size=UDim2.new(0,4,0,4)
+SDot.Position=UDim2.new(0,10,0.5,-2)
 SDot.BackgroundColor3=T.Dim
 SDot.BorderSizePixel=0
 SDot.ZIndex=103
 SDot.Parent=StatusCard
-Corner(SDot,4)
+Corner(SDot,2)
 
 local SLbl=Instance.new("TextLabel")
 SLbl.Size=UDim2.new(1,-26,1,0)
-SLbl.Position=UDim2.new(0,24,0,0)
+SLbl.Position=UDim2.new(0,20,0,0)
 SLbl.BackgroundTransparency=1
-SLbl.Text="Click the code box first"
-SLbl.TextSize=11
-SLbl.Font=Enum.Font.GothamMedium
+SLbl.Text="SYSTEM INITIALIZED"
+SLbl.TextSize=9
+SLbl.Font=Enum.Font.Code
 SLbl.TextColor3=T.Dim
 SLbl.TextXAlignment=Enum.TextXAlignment.Left
 SLbl.TextYAlignment=Enum.TextYAlignment.Center
 SLbl.ZIndex=103
 SLbl.Parent=StatusCard
 
+-- CODE BOX MODULE
 local CodeCard=Instance.new("Frame")
-CodeCard.Size=UDim2.new(1,0,0,60)
-CodeCard.BackgroundColor3=Color3.fromRGB(16,16,18)
-CodeCard.BackgroundTransparency=0
+CodeCard.Size=UDim2.new(1,0,0,48)
+CodeCard.BackgroundColor3=T.Card
 CodeCard.BorderSizePixel=0
 CodeCard.ZIndex=102
 CodeCard.Parent=Body
-Corner(CodeCard,8)
-local CodeStroke=Stroke(CodeCard,Color3.fromRGB(45,45,50),1)
+Corner(CodeCard,5)
+local CodeStroke=Stroke(CodeCard,T.Border,1)
 
 local CodeSmall=Instance.new("TextLabel")
-CodeSmall.Size=UDim2.new(1,-10,0,14)
-CodeSmall.Position=UDim2.new(0,10,0,8)
+CodeSmall.Size=UDim2.new(1,-12,0,14)
+CodeSmall.Position=UDim2.new(0,10,0,6)
 CodeSmall.BackgroundTransparency=1
-CodeSmall.Text="DETECTED"
+CodeSmall.Text="DATA_STREAM // DETECTED"
 CodeSmall.TextSize=8
-CodeSmall.Font=Enum.Font.GothamBold
-CodeSmall.TextColor3=Color3.fromRGB(80,80,90)
+CodeSmall.Font=Enum.Font.Code
+CodeSmall.TextColor3=T.Dim
 CodeSmall.TextXAlignment=Enum.TextXAlignment.Left
 CodeSmall.ZIndex=103
 CodeSmall.Parent=CodeCard
 
 local CodeVal=Instance.new("TextLabel")
-CodeVal.Size=UDim2.new(1,-10,0,28)
-CodeVal.Position=UDim2.new(0,10,0,26)
+CodeVal.Size=UDim2.new(1,-12,0,24)
+CodeVal.Position=UDim2.new(0,10,0,18)
 CodeVal.BackgroundTransparency=1
-CodeVal.Text="—"
-CodeVal.TextSize=18
-CodeVal.Font=Enum.Font.GothamBlack
+CodeVal.Text="NULL"
+CodeVal.TextSize=15
+CodeVal.Font=Enum.Font.Code
 CodeVal.TextColor3=T.Dim
 CodeVal.TextXAlignment=Enum.TextXAlignment.Left
 CodeVal.TextYAlignment=Enum.TextYAlignment.Center
 CodeVal.ZIndex=103
 CodeVal.Parent=CodeCard
 
+-- RIDDLE CARD MODULE
 local RiddleCard=Instance.new("Frame")
 RiddleCard.Size=UDim2.new(1,0,0,0)
 RiddleCard.AutomaticSize=Enum.AutomaticSize.Y
-RiddleCard.BackgroundColor3=Color3.fromRGB(30,22,8)
-RiddleCard.BackgroundTransparency=0
-RiddleCard.BorderSizePixel=0
+RiddleCard.BackgroundColor3=Color3.fromRGB(35, 30, 20)
 RiddleCard.Visible=false
 RiddleCard.ZIndex=102
 RiddleCard.Parent=Body
-Corner(RiddleCard,7)
+Corner(RiddleCard,5)
 Stroke(RiddleCard,T.Yellow,1)
+
 local RiddlePad=Instance.new("UIPadding")
-RiddlePad.PaddingTop=UDim.new(0,5); RiddlePad.PaddingBottom=UDim.new(0,6)
-RiddlePad.PaddingLeft=UDim.new(0,8); RiddlePad.PaddingRight=UDim.new(0,8)
+RiddlePad.PaddingTop=UDim.new(0,6); RiddlePad.PaddingBottom=UDim.new(0,8)
+RiddlePad.PaddingLeft=UDim.new(0,10); RiddlePad.PaddingRight=UDim.new(0,10)
 RiddlePad.Parent=RiddleCard
+
 local RLL=Instance.new("UIListLayout")
 RLL.FillDirection=Enum.FillDirection.Vertical
-RLL.Padding=UDim.new(0,2)
+RLL.Padding=UDim.new(0,4)
 RLL.Parent=RiddleCard
+
 local RTag=Instance.new("TextLabel")
-RTag.Size=UDim2.new(1,0,0,11)
+RTag.Size=UDim2.new(1,0,0,12)
 RTag.BackgroundTransparency=1
-RTag.Text="🧩 RIDDLE SOLVER"
-RTag.TextSize=7; RTag.Font=Enum.Font.GothamBold
+RTag.Text="[!] NET_DECODER ACTIVE"
+RTag.TextSize=8; RTag.Font=Enum.Font.Code
 RTag.TextColor3=T.Yellow
 RTag.TextXAlignment=Enum.TextXAlignment.Left
 RTag.ZIndex=103; RTag.Parent=RiddleCard
+
 local RMsg=Instance.new("TextLabel")
 RMsg.Size=UDim2.new(1,0,0,14)
 RMsg.BackgroundTransparency=1; RMsg.Text=""
-RMsg.TextSize=10; RMsg.Font=Enum.Font.GothamMedium
+RMsg.TextSize=11; RMsg.Font=Enum.Font.Code
 RMsg.TextColor3=T.White; RMsg.TextXAlignment=Enum.TextXAlignment.Left
 RMsg.TextWrapped=true; RMsg.ZIndex=103; RMsg.Parent=RiddleCard
 
+-- Control updates
 local function setStatus(msg, col)
     col=col or T.Dim
-    SLbl.Text=msg; SLbl.TextColor3=col; SDot.BackgroundColor3=col
+    SLbl.Text=msg:upper(); SLbl.TextColor3=col; SDot.BackgroundColor3=col
 end
 
 local function flashCode(code, col)
@@ -335,13 +332,13 @@ end
 OnBtn.MouseButton1Click:Connect(function()
     _enabled=not _enabled
     if _enabled then
-        OnBtn.Text="ON"; OnBtn.BackgroundColor3=Color3.fromRGB(80,220,80); OnS.Color=Color3.fromRGB(80,220,80)
-        OnBtn.TextColor3=Color3.fromRGB(10,10,10)
-        setStatus(_focused and "Ready — watching" or "Click the code box first",
+        OnBtn.Text="ONLINE"; OnBtn.BackgroundColor3=Color3.fromRGB(24, 40, 36); OnS.Color=T.Green
+        OnBtn.TextColor3=T.Green
+        setStatus(_focused and "Ready — watching" or "Select input target",
             _focused and T.Green or T.Dim)
     else
-        OnBtn.Text="OFF"; OnBtn.BackgroundColor3=T.Red; OnS.Color=T.Red
-        OnBtn.TextColor3=T.White; setStatus("Paused",T.Dim)
+        OnBtn.Text="OFFLINE"; OnBtn.BackgroundColor3=Color3.fromRGB(40, 24, 30); OnS.Color=T.Red
+        OnBtn.TextColor3=T.Red; setStatus("Core Paused",T.Dim)
     end
 end)
 
@@ -352,14 +349,14 @@ end)
 UserInputService.TextBoxFocusReleased:Connect(function(box)
     if _focused==box then
         _focused=nil
-        if _enabled then setStatus("Click the code box first",T.Dim) end
+        if _enabled then setStatus("Select input target",T.Dim) end
     end
 end)
 
 local function appendToBox(text)
     if not text or text=="" then return end
     if not _focused or not _focused.Parent then
-        setStatus("Click the code box first!",T.Yellow)
+        setStatus("Target lost! Select box",T.Yellow)
         flashCode(text, T.Yellow)
         return
     end
@@ -369,7 +366,7 @@ local function appendToBox(text)
     else
         _focused.Text=cur.." "..text
     end
-    setStatus("Appended!",T.Green)
+    setStatus("Data injected",T.Green)
     flashCode(text,T.Green)
 end
 
@@ -451,29 +448,29 @@ local function processGlobal(txt)
     task.delay(20, function() _seen[txt]=nil end)
 
     if isRiddle(txt) then
-        showRiddle("Solving...",T.Yellow)
-        setStatus("Riddle detected...",T.Yellow)
+        showRiddle("Processing Stream...",T.Yellow)
+        setStatus("Riddle captured",T.Yellow)
         local ans=solveLocal(txt)
         if ans then
-            showRiddle("Answer: "..ans,T.Green)
-            setStatus("Solved: "..ans,T.Green)
+            showRiddle("Resolved: "..ans,T.Green)
+            setStatus("Success",T.Green)
             appendToBox(ans)
             task.delay(4,hideRiddle); return
         end
-        showRiddle("Asking AI...",T.Yellow)
+        showRiddle("Querying Uplink...",T.Yellow)
         task.spawn(function()
             local ai=callAI("Sammy said: \""..txt.."\". SAB=May2024,Sammy=24. Code only.")
             if ai then
-                showRiddle("AI: "..ai,T.Green)
-                setStatus("AI solved: "..ai,T.Green)
+                showRiddle("Resolved via Net: "..ai,T.Green)
+                setStatus("Success",T.Green)
                 appendToBox(ai)
                 task.delay(4,hideRiddle)
             else
-                showRiddle("Could not solve",T.Red)
-                setStatus("Riddle unsolved",T.Red)
+                showRiddle("Matrix Failure",T.Red)
+                setStatus("Unresolved",T.Red)
                 task.delay(3,function()
                     hideRiddle()
-                    setStatus(_focused and "Ready — watching" or "Click the code box first",
+                    setStatus(_focused and "Ready — watching" or "Select input target",
                         _focused and T.Green or T.Dim)
                 end)
             end
@@ -561,5 +558,5 @@ pcall(function()
     end)
 end)
 
-setStatus("Click the code box first",T.Dim)
-flashCode("—",T.Dim)
+setStatus("Select input target",T.Dim)
+flashCode("NULL",T.Dim)
